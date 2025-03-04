@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.session.model;
+package com.synergy.backend.domain.session.entity;
 
 
 import com.synergy.backend.domain.conference.model.Conference;
