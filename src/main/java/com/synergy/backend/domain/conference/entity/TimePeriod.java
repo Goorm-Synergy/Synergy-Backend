@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.conference.model;
 
+import com.synergy.backend.domain.conference.exception.InvalidTimePeriodException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
@@ -26,6 +27,9 @@ public class TimePeriod {
     }
 
     public static TimePeriod of(LocalDateTime startDateTime, LocalDateTime endDate) {
+        if(startDateTime.isAfter(endDate) || startDateTime.isEqual(endDate)) {
+            throw new InvalidTimePeriodException();
+        }
         return new TimePeriod(startDateTime, endDate);
     }
 }
