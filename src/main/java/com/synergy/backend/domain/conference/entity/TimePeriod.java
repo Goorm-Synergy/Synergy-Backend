@@ -15,17 +15,17 @@ import static lombok.AccessLevel.PROTECTED;
 public class TimePeriod {
 
     @Column(nullable = false)
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
 
     @Column(nullable = false)
-    private LocalDateTime endDate;
+    private LocalDateTime endDateTime;
 
-    private TimePeriod(LocalDateTime startDate, LocalDateTime endDate) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+    private TimePeriod(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
-    public static TimePeriod of(LocalDateTime startDate, LocalDateTime endDate) {
-        return new TimePeriod(startDate, endDate);
+    public static TimePeriod of(LocalDateTime startDateTime, LocalDateTime endDate) {
+        return new TimePeriod(startDateTime, endDate);
     }
 }
