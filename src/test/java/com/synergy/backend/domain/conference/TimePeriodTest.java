@@ -1,7 +1,7 @@
-package com.synergy.backend.domain.conference.model;
+package com.synergy.backend.domain.conference;
 
 import com.synergy.backend.domain.conference.exception.InvalidTimePeriodException;
-import org.assertj.core.api.Assertions;
+import com.synergy.backend.domain.conference.model.TimePeriod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+
 class TimePeriodTest {
 
     @DisplayName("기간을 설정합니다.")
