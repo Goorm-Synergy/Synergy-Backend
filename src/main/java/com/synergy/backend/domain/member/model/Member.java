@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.member.model;
 
+import com.synergy.backend.domain.conference.model.Conference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
