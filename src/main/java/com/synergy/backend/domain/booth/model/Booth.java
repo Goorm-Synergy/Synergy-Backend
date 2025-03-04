@@ -1,10 +1,12 @@
 package com.synergy.backend.domain.booth.model;
 
 
+import com.synergy.backend.domain.conference.model.Conference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -28,5 +30,8 @@ public class Booth {
     @Column(nullable = false, length = 1000)
     private String description;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "conference_id")
+    private Conference conference;
 
 }

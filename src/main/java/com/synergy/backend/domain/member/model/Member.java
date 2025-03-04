@@ -45,7 +45,7 @@ public class Member {
     @Column(nullable = false, length = 1000)
     private String information;
 
-    @ManyToOne(fetch = LAZY,cascade = {PERSIST, REMOVE})
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "conference_id")
     private Conference conference;
 }
