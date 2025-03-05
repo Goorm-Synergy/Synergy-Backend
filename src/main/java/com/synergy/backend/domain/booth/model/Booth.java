@@ -1,7 +1,7 @@
 package com.synergy.backend.domain.booth.model;
 
 
-import com.synergy.backend.domain.conference.model.Conference;
+import com.synergy.backend.domain.conference.entity.Conference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

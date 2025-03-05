@@ -1,12 +1,10 @@
 package com.synergy.backend.domain.member.model;
 
-import com.synergy.backend.domain.conference.model.Conference;
+import com.synergy.backend.domain.conference.entity.Conference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 

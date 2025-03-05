@@ -1,7 +1,7 @@
 package com.synergy.backend.domain.session.entity;
 
 
-import com.synergy.backend.domain.conference.model.Conference;
+import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.session.dto.SessionReqDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

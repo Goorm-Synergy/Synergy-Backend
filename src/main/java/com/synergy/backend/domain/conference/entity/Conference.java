@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.conference.model;
+package com.synergy.backend.domain.conference.entity;
 
 
 import jakarta.persistence.*;
@@ -19,10 +19,10 @@ public class Conference {
     private Long id;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String conferenceName;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate conferencingDate; // 명명 규칙으로 인한 컬럼명 변경
 
     @Column(nullable = false, length = 100)
     private String location;
