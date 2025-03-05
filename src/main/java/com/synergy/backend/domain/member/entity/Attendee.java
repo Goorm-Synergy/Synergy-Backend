@@ -21,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -38,12 +39,14 @@ public class Attendee extends Member {
 
 	// 현재 포인트 합계
 	@Column(nullable = false)
+	@Builder.Default
 	private int point = 0;
 
 	// 등급
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private MembershipLevelType membershipLevelType;
+	@Builder.Default
+	private MembershipLevelType membershipLevelType = MembershipLevelType.BRONZE;
 
 	// 현재 직업
 	@Enumerated(EnumType.STRING)
