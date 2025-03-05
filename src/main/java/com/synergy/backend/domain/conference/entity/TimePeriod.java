@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.conference.model;
+package com.synergy.backend.domain.conference.entity;
 
 import com.synergy.backend.domain.conference.exception.InvalidTimePeriodException;
 import jakarta.persistence.Column;

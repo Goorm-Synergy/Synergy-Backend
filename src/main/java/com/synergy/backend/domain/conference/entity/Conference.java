@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.conference.model;
+package com.synergy.backend.domain.conference.entity;
 
 
 import com.synergy.backend.domain.booth.model.Booth;

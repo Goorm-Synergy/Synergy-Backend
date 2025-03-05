@@ -1,7 +1,7 @@
 package com.synergy.backend.domain.conference;
 
+import com.synergy.backend.domain.conference.entity.TimePeriod;
 import com.synergy.backend.domain.conference.exception.InvalidTimePeriodException;
-import com.synergy.backend.domain.conference.model.TimePeriod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
