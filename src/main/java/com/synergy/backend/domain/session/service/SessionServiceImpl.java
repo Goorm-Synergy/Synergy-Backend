@@ -1,6 +1,7 @@
 package com.synergy.backend.domain.session.service;
 
 import com.synergy.backend.domain.conference.entity.Conference;
+import com.synergy.backend.domain.conference.exception.NotFoundConference;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
 import com.synergy.backend.domain.session.dto.SessionDetailResDto;
 import com.synergy.backend.domain.session.dto.SessionReqDto;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,25 +27,28 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void createSession(Long conferenceId, SessionReqDto reqDto) {
+        Conference conference = ifConferenceExists(conferenceId);
+
         LocalDateTime startTime = DateTimeValidator.isValidLocalDateTime(reqDto.startTime());
         LocalDateTime endTime = DateTimeValidator.isValidLocalDateTime(reqDto.endTime());
 
-        Session session = new Session(reqDto, startTime, endTime);
-        // conference와 매핑
+        Session session = new Session(reqDto, startTime, endTime, conference);
         sessionRepository.save(session);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<SessionResDto> getSessions(Long conferenceId) {
-        // conference 찾기
-        return null;
+        Conference conference = ifConferenceExists(conferenceId);
+        List<Session> sessions = sessionRepository.findAllByConferenceOOrderByStartTime(conference);
+
+        return sessions.stream().map(SessionResDto::new).toList();
     }
 
     @Transactional(readOnly = true)
     @Override
     public SessionDetailResDto getSessionInfo(Long conferenceId, Long sessionId) {
-        // conferenceId 존재 확인
+        ifConferenceExists(conferenceId);
         Session session = ifSessionExists(sessionId);
         return new SessionDetailResDto(session);
     }
@@ -66,7 +71,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     private Conference ifConferenceExists(Long conferenceId) {
-        return conferenceRepository.findById(conferenceId).orElseThrow(NotFoundSession::new);
+        return conferenceRepository.findById(conferenceId).orElseThrow(NotFoundConference::new);
     }
 
     private Session ifSessionExists(Long sessionId) {

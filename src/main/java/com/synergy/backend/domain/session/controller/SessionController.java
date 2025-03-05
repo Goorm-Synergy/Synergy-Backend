@@ -2,10 +2,13 @@ package com.synergy.backend.domain.session.controller;
 
 import com.synergy.backend.domain.session.dto.SessionDetailResDto;
 import com.synergy.backend.domain.session.dto.SessionReqDto;
+import com.synergy.backend.domain.session.dto.SessionResDto;
 import com.synergy.backend.domain.session.service.SessionService;
 import com.synergy.backend.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,11 +24,13 @@ public class SessionController {
         return ApiResponse.ok("Session created successfully!", 200);
     }
 
-//    @GetMapping
-//    public ApiResponse getSessions(@RequestParam Long conferenceId) {
-//
-//    }
-//
+    @GetMapping
+    public ApiResponse getSessions(@PathVariable(name = "conferenceId") Long conferenceId) {
+        List<SessionResDto> result = sessionService.getSessions(conferenceId);
+
+        return ApiResponse.ok(result, 200);
+    }
+
     @GetMapping("/{sessionId}")
     public ApiResponse getSession(@PathVariable(name = "conferenceId") Long conferenceId, @PathVariable(name = "sessionId") Long sessionId) {
         SessionDetailResDto result = sessionService.getSessionInfo(conferenceId, sessionId);

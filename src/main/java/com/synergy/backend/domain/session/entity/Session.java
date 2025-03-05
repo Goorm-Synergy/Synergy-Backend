@@ -45,12 +45,13 @@ public class Session {
     private Conference conference;
 
     @Builder
-    public Session(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime) {
+    public Session(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime, Conference conference) {
         this.title = reqDto.title();
         this.speaker = reqDto.speaker();
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = reqDto.description();
+        this.conference = conference;
     }
 
     public void updateSession(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime) {
