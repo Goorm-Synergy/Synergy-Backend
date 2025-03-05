@@ -49,11 +49,11 @@ public class Conference {
 
     public static Conference of(String name, TimePeriod period, String location) {
         if (name.length() > MAX_NAME_LENGTH || name.isBlank()) {
-            throw new IllegalArgumentException("Name is too long");
+            throw new IllegalArgumentException("Name is invalid");
         }
 
         if (location.length() > MAX_LOCATION_LENGTH || location.isBlank()) {
-            throw new IllegalArgumentException("Location is too long");
+            throw new IllegalArgumentException("Location is invalid");
         }
         return new Conference(name, period, location);
     }
