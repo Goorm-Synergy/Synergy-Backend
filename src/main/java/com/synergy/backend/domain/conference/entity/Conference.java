@@ -2,6 +2,8 @@ package com.synergy.backend.domain.conference.entity;
 
 
 import com.synergy.backend.domain.booth.model.Booth;
+import com.synergy.backend.domain.conference.exception.InvalidLocationException;
+import com.synergy.backend.domain.conference.exception.InvalidNameException;
 import com.synergy.backend.domain.session.entity.Session;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,11 +51,11 @@ public class Conference {
 
     public static Conference of(String name, TimePeriod period, String location) {
         if (name.length() > MAX_NAME_LENGTH || name.isBlank()) {
-            throw new IllegalArgumentException("Name is invalid");
+            throw new InvalidNameException();
         }
 
         if (location.length() > MAX_LOCATION_LENGTH || location.isBlank()) {
-            throw new IllegalArgumentException("Location is invalid");
+            throw new InvalidLocationException();
         }
         return new Conference(name, period, location);
     }
