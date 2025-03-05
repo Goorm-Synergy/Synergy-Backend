@@ -1,5 +1,7 @@
 package com.synergy.backend.domain.session.service;
 
+import com.synergy.backend.domain.conference.entity.Conference;
+import com.synergy.backend.domain.conference.repository.ConferenceRepository;
 import com.synergy.backend.domain.session.dto.SessionDetailResDto;
 import com.synergy.backend.domain.session.dto.SessionReqDto;
 import com.synergy.backend.domain.session.dto.SessionResDto;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
 
+    private final ConferenceRepository conferenceRepository;
     private final SessionRepository sessionRepository;
 
     @Override
@@ -60,6 +63,10 @@ public class SessionServiceImpl implements SessionService {
         Session session = ifSessionExists(sessionId);
         // session에 대한 본인 소지 여부 확인
         sessionRepository.delete(session);
+    }
+
+    private Conference ifConferenceExists(Long conferenceId) {
+        return conferenceRepository.findById(conferenceId).orElseThrow(NotFoundSession::new);
     }
 
     private Session ifSessionExists(Long sessionId) {
