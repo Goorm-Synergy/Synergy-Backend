@@ -7,16 +7,18 @@ import com.synergy.backend.domain.session.entity.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface SessionService {
 
-    void createSession(SessionReqDto reqDto);
+    void createSession(Long conferenceId, SessionReqDto reqDto);
 
-    Page<SessionResDto> getSessions();
+    List<SessionResDto> getSessions(Long conferenceId);
 
-    SessionDetailResDto getSessionInfo(String sessionId);
+    SessionDetailResDto getSessionInfo(Long sessionId);
 
-    void updateSession(String sessionId, SessionReqDto reqDto);
+    void updateSession(Long sessionId, SessionReqDto reqDto);
 
-    void deleteSession(String sessionId);
+    void deleteSession(Long sessionId);
 }

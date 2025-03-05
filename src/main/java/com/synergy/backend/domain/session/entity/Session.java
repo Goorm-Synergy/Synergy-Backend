@@ -2,12 +2,13 @@ package com.synergy.backend.domain.session.entity;
 
 
 import com.synergy.backend.domain.conference.model.Conference;
+import com.synergy.backend.domain.session.dto.SessionReqDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -42,4 +43,21 @@ public class Session {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "conference_id")
     private Conference conference;
+
+    @Builder
+    public Session(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime) {
+        this.title = reqDto.title();
+        this.speaker = reqDto.speaker();
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.description = reqDto.description();
+    }
+
+    public void updateSession(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime) {
+        this.title = reqDto.title();
+        this.speaker = reqDto.speaker();
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.description = reqDto.description();
+    }
 }

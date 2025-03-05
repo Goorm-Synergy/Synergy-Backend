@@ -1,4 +1,13 @@
 package com.synergy.backend.domain.session.dto;
 
-public class SessionDetailResDto {
+import java.time.LocalDateTime;
+
+public record SessionDetailResDto(
+        String sessionId,
+        String title,
+        String speaker,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        String description
+) {
 }
