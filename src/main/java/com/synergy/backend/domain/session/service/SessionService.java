@@ -16,7 +16,7 @@ public interface SessionService {
 
     List<SessionResDto> getSessions(Long conferenceId);
 
-    SessionDetailResDto getSessionInfo(Long sessionId);
+    SessionDetailResDto getSessionInfo(Long conferenceId, Long sessionId);
 
     void updateSession(Long sessionId, SessionReqDto reqDto);
 

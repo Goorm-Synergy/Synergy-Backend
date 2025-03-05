@@ -8,12 +8,13 @@ import com.synergy.backend.domain.session.exception.NotFoundSession;
 import com.synergy.backend.domain.session.repository.SessionRepository;
 import com.synergy.backend.domain.session.service.validate.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.regex.Pattern;
 
+@Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
 
@@ -29,17 +30,19 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.save(session);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<SessionResDto> getSessions(Long conferenceId) {
         // conference 찾기
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public SessionDetailResDto getSessionInfo(Long sessionId) {
+    public SessionDetailResDto getSessionInfo(Long conferenceId, Long sessionId) {
+        // conferenceId 존재 확인
         Session session = ifSessionExists(sessionId);
-        return null;
-
+        return new SessionDetailResDto(session);
     }
 
     @Override
