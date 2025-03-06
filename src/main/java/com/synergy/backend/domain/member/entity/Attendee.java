@@ -37,6 +37,9 @@ public class Attendee extends Member {
 	@Column(name = "member_id")
 	private Long id;
 
+	@Column(nullable = false)
+	private String phone;
+
 	// 현재 포인트 합계
 	@Column(nullable = false)
 	@Builder.Default
