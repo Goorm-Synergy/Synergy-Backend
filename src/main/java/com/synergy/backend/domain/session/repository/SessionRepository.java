@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
-    List<Session> findAllByConferenceOOrderByStartTime(Conference conference);
+    List<Session> findAllByConferenceOrderByStartTime(Conference conference);
 }
