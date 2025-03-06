@@ -99,6 +99,15 @@ public class Attendee extends BaseEntity implements User {
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
 
+	public static Attendee of(String email, String encodedPassword, String name, String phone) {
+		return Attendee.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.phone(phone)
+			.build();
+	}
+
 	@Override
 	public Long getId() {
 		return this.id;
@@ -108,4 +117,5 @@ public class Attendee extends BaseEntity implements User {
 	public RoleType getRole() {
 		return RoleType.ATTENDEE;
 	}
+
 }
