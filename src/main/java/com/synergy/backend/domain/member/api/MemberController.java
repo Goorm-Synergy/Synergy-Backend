@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.synergy.backend.domain.member.api.dto.LoginRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
@@ -37,11 +36,5 @@ public class MemberController {
 	public ApiResponse<?> registerRecruiter(@RequestBody SignupRecruiterRequestDto request) {
 		memberService.registerRecruiter(request);
 		return ApiResponse.ok("Recruiter registered successfully!", 200);
-	}
-
-	// 로그인 엔드포인트
-	@PostMapping("/signin")
-	public ApiResponse<?> login(@RequestBody LoginRequestDto loginRequest) {
-		return ApiResponse.ok(null, 200);
 	}
 }

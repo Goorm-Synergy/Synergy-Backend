@@ -17,9 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MemberService {
 
-	private final AdminRepository memberRepository;
+	// private final AdminRepository memberRepository;
 
 	public void registerAttendee(SignupAttendeeRequestDto request) {
+
 	}
 
 	public void registerAdmin(SignupAdminRequestDto request) {
