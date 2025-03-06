@@ -26,4 +26,15 @@ public class Recruiter extends Member {
 	@Column
 	private String responsibility;
 
+	public static Recruiter of(String name, String email, String encodedPassword, String company,
+		String responsibility) {
+		return Recruiter.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.company(company)
+			.responsibility(responsibility)
+			.build();
+	}
+
 }

@@ -20,4 +20,13 @@ public class Admin extends Member {
 
 	@Column
 	private String assignedAdminId;
+
+	public static Admin of(String name, String email, String encodedPassword, String assignedAdminId) {
+		return Admin.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.assignedAdminId(assignedAdminId)
+			.build();
+	}
 }
