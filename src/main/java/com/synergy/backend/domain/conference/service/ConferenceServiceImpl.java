@@ -29,6 +29,12 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     public ConferenceUpdateResponse update(Long conferenceId, ConferenceUpdateRequest request) {
-        return null;
+        // 컨퍼런스 조회 -> 예외 처리
+
+        //dto 필드 유무 확인
+
+        // 컨퍼런스 정보 변경
+
+        return null; // 반영된 정보 반환
     }
 }
