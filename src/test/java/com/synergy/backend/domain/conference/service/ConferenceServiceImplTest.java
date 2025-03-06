@@ -78,10 +78,10 @@ class ConferenceServiceImplTest {
                         ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
                         //then
                             assertThat(result)
-                                    .extracting(ConferenceUpdateResponse::getName,
-                                            ConferenceUpdateResponse::getStartTime,
-                                            ConferenceUpdateResponse::getEndTime,
-                                            ConferenceUpdateResponse::getLocation)
+                                    .extracting(ConferenceUpdateResponse::name,
+                                            ConferenceUpdateResponse::startTime,
+                                            ConferenceUpdateResponse::endTime,
+                                            ConferenceUpdateResponse::location)
                                     .containsExactly("컨퍼런스명@@",
                                             LocalDateTime.of(2024, 3, 5, 13, 0),
                                             LocalDateTime.of(2024, 3, 5, 21, 0),

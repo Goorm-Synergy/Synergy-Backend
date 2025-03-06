@@ -59,4 +59,14 @@ public class Conference {
         }
         return new Conference(name, period, location);
     }
+
+    public void updateName(String name){
+        this.name = name;
+    }
+    public void updateLocation(String location){
+        this.location = location;
+    }
+    public void updatePeriod(TimePeriod period){
+        this.period = period;
+    }
 }
