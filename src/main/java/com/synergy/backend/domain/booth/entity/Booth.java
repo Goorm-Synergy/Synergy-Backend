@@ -1,5 +1,4 @@
-package com.synergy.backend.domain.booth.model;
-
+package com.synergy.backend.domain.booth.entity;
 
 import com.synergy.backend.domain.conference.entity.Conference;
 import jakarta.persistence.*;
@@ -13,6 +12,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Booth {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booth_id")
@@ -34,4 +34,17 @@ public class Booth {
     @JoinColumn(name = "conference_id")
     private Conference conference;
 
+    public Booth(String name, String company, String location, String description) {
+        this.name = name;
+        this.company = company;
+        this.location = location;
+        this.description = description;
+    }
+
+    public void updateInfo(String name, String company, String location, String description) {
+        this.name = name;
+        this.company = company;
+        this.location = location;
+        this.description = description;
+    }
 }
