@@ -1,11 +1,11 @@
 package com.synergy.backend.domain.member.api.dto;
 
-public record SignupAttendeeRequestDto(
+public record SignupRecruiterResponseDto(
 	String name,
 	String email,
 	String password,
-	String phone
-	// 인증 코드 추가
+	String company,
+	String responsibility
 ) {
 
 }

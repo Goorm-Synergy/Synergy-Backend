@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupAdminResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupRecruiterResponseDto;
 import com.synergy.backend.domain.member.service.MemberService;
 import com.synergy.backend.global.common.ApiResponse;
 
@@ -21,9 +24,9 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/signup/attendee")
-	public ApiResponse<?> registerAttendee(@RequestBody SignupAttendeeRequestDto request) {
-		memberService.registerAttendee(request);
-		return ApiResponse.ok("Attendee registered successfully!", 200);
+	public ApiResponse<SignupAttendeeResponseDto> registerAttendee(@RequestBody SignupAttendeeRequestDto request) {
+		SignupAttendeeResponseDto response = memberService.registerAttendee(request);
+		return ApiResponse.ok(response, 200);
 	}
 
 	@PostMapping("/signup/admin")

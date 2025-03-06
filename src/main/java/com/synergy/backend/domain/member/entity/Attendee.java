@@ -87,4 +87,13 @@ public class Attendee extends Member {
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
 
+	public static Attendee of(String email, String encodedPassword, String name, String phone) {
+		return Attendee.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.phone(phone)
+			.build();
+	}
+
 }
