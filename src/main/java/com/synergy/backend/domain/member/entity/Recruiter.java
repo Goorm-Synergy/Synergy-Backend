@@ -24,6 +24,6 @@ public class Recruiter extends Member {
 
 	// 담당 업무
 	@Column
-	private String Responsibility;
+	private String responsibility;
 
 }

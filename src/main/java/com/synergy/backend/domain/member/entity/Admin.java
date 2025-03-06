@@ -19,5 +19,5 @@ public class Admin extends Member {
 	private Long id;
 
 	@Column
-	private Long assignedAdminId;
+	private String assignedAdminId;
 }
