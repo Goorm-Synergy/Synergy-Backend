@@ -77,4 +77,13 @@ public class Admin extends BaseEntity implements User {
 		this.conferences.add(conference);
 		conference.getAdmins().add(this);
 	}
+
+	public static Admin of(String name, String email, String encodedPassword, String assignedAdminId) {
+		return Admin.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.assignedAdminId(assignedAdminId)
+			.build();
+	}
 }

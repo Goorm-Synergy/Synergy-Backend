@@ -5,10 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupAdminResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupRecruiterResponseDto;
+import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
+import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -20,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class MemberService {
+public class AuthService {
 
 	private final AttendeeRepository attendeeRepository;
 	private final AdminRepository adminRepository;
@@ -38,11 +42,27 @@ public class MemberService {
 		return SignupAttendeeResponseDto.from(attendee);
 	}
 
-	public void registerAdmin(SignupAdminRequestDto request) {
-
+	public SignupAdminResponseDto registerAdmin(SignupAdminRequestDto request) {
+		Admin admin = Admin.of(
+			request.name(),
+			request.email(),
+			encodePassword(request.password()),
+			request.assignedAdminId()
+		);
+		adminRepository.save(admin);
+		return SignupAdminResponseDto.from(admin);
 	}
 
-	public void registerRecruiter(SignupRecruiterRequestDto request) {
+	public SignupRecruiterResponseDto registerRecruiter(SignupRecruiterRequestDto request) {
+		Recruiter recruiter = Recruiter.of(
+			request.name(),
+			request.email(),
+			encodePassword(request.password()),
+			request.company(),
+			request.responsibility()
+		);
+		recruiterRepository.save(recruiter);
+		return SignupRecruiterResponseDto.from(recruiter);
 	}
 
 	private String encodePassword(String rawPassword) {

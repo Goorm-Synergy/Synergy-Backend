@@ -14,7 +14,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
@@ -42,8 +41,20 @@ public class Recruiter extends BaseEntity implements User {
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
 
+	public static Recruiter of(String name, String email, String encodedPassword, String company,
+		String responsibility) {
+		return Recruiter.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.company(company)
+			.responsibility(responsibility)
+			.build();
+	}
+
 	@Override
 	public RoleType getRole() {
 		return RoleType.RECRUITER;
 	}
+
 }
