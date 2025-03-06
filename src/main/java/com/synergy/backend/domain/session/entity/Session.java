@@ -1,12 +1,15 @@
 package com.synergy.backend.domain.session.entity;
 
 
-import com.synergy.backend.domain.conference.model.Conference;
+import com.synergy.backend.domain.conference.entity.Conference;
+import com.synergy.backend.domain.session.dto.SessionReqDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -20,17 +23,19 @@ public class Session {
     @Column(name = "session_id")
     private Long id;
 
+    @NotNull
     @Column(nullable = false, length = 100)
     private String title;
 
     @Column(nullable = false, length = 100)
     private String speaker;
 
+    @NotNull
     @Column(nullable = false)
-    private LocalDate startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private LocalDate endTime;
+    private LocalDateTime endTime;
 
     @Column(nullable = false, length = 3000)
     private String description;
@@ -38,4 +43,22 @@ public class Session {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "conference_id")
     private Conference conference;
+
+    @Builder
+    public Session(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime, Conference conference) {
+        this.title = reqDto.title();
+        this.speaker = reqDto.speaker();
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.description = reqDto.description();
+        this.conference = conference;
+    }
+
+    public void updateSession(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime) {
+        this.title = reqDto.title();
+        this.speaker = reqDto.speaker();
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.description = reqDto.description();
+    }
 }

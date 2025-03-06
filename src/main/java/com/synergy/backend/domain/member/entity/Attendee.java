@@ -4,7 +4,7 @@ import static jakarta.persistence.FetchType.*;
 
 import java.util.Set;
 
-import com.synergy.backend.domain.conference.model.Conference;
+import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.interest.entity.MemberInterest;
 import com.synergy.backend.domain.techstack.entity.MemberTechStack;
 
