@@ -10,7 +10,7 @@ public record SessionResDto(
         LocalDateTime startDate,
         LocalDateTime endDate
 ) {
-    public SessionResDto(Session session){
-        this(session.getId(), session.getTitle(), session.getStartTime(), session.getEndTime());
+    public static SessionResDto from(Session session){
+        return new SessionResDto(session.getId(), session.getTitle(), session.getStartTime(), session.getEndTime());
     }
 }

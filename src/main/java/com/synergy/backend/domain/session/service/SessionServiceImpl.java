@@ -32,7 +32,12 @@ public class SessionServiceImpl implements SessionService {
         LocalDateTime startTime = DateTimeValidator.isValidLocalDateTime(reqDto.startTime());
         LocalDateTime endTime = DateTimeValidator.isValidLocalDateTime(reqDto.endTime());
 
-        Session session = new Session(reqDto, startTime, endTime, conference);
+        Session session = Session.builder()
+                        .reqDto(reqDto)
+                        .startTime(startTime)
+                        .endTime(endTime)
+                        .conference(conference)
+                    .build();
         sessionRepository.save(session);
     }
 
@@ -40,9 +45,9 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public List<SessionResDto> getSessions(Long conferenceId) {
         Conference conference = ifConferenceExists(conferenceId);
-        List<Session> sessions = sessionRepository.findAllByConferenceOOrderByStartTime(conference);
+        List<Session> sessions = sessionRepository.findAllByConferenceOrderByStartTime(conference);
 
-        return sessions.stream().map(SessionResDto::new).toList();
+        return sessions.stream().map(SessionResDto::from).toList();
     }
 
     @Transactional(readOnly = true)
