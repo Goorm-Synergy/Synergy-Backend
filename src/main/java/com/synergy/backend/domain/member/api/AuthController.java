@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.synergy.backend.domain.member.entity.Member;
 import com.synergy.backend.global.common.ApiResponse;
-import com.synergy.backend.global.jwt.JwtProvider;
+import com.synergy.backend.global.security.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 

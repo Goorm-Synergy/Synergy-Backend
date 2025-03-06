@@ -1,4 +1,4 @@
-package com.synergy.backend.global.jwt;
+package com.synergy.backend.global.security;
 
 import org.springframework.stereotype.Component;
 
