@@ -1,12 +1,13 @@
 package com.synergy.backend.domain.conference.api;
 
 import com.synergy.backend.domain.conference.dto.requset.ConferenceCreateRequest;
+import com.synergy.backend.domain.conference.dto.requset.ConferenceUpdateRequest;
+import com.synergy.backend.domain.conference.dto.response.ConferenceCreateResponse;
+import com.synergy.backend.domain.conference.dto.response.ConferenceUpdateResponse;
 import com.synergy.backend.domain.conference.service.ConferenceService;
 import com.synergy.backend.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +17,12 @@ public class ConferenceController {
     private final ConferenceService conferenceService;
 
     @PostMapping
-    public ApiResponse<?> registerConference(ConferenceCreateRequest request){
+    public ApiResponse<ConferenceCreateResponse> registerConference(ConferenceCreateRequest request){
         return ApiResponse.ok(conferenceService.registerConference(request), 201);
+    }
+
+    @PatchMapping("{id}")
+    public ApiResponse<ConferenceUpdateResponse> updateConference(@PathVariable Long id, ConferenceUpdateRequest request){
+        return ApiResponse.ok(conferenceService.updateConference(id, request), 200);
     }
 }
