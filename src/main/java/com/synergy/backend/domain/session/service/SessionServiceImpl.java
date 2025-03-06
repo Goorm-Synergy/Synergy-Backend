@@ -55,7 +55,7 @@ public class SessionServiceImpl implements SessionService {
     public SessionDetailResDto getSessionInfo(Long conferenceId, Long sessionId) {
         ifConferenceExists(conferenceId);
         Session session = ifSessionExists(sessionId);
-        return new SessionDetailResDto(session);
+        return SessionDetailResDto.from(session);
     }
 
     @Override

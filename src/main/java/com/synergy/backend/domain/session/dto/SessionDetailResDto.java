@@ -12,7 +12,7 @@ public record SessionDetailResDto(
         LocalDateTime endTime,
         String description
 ) {
-    public SessionDetailResDto(Session session) {
-        this(session.getId(), session.getTitle(), session.getSpeaker(), session.getStartTime(), session.getEndTime(), session.getDescription());
+    public static SessionDetailResDto from(Session session) {
+        return new SessionDetailResDto(session.getId(), session.getTitle(), session.getSpeaker(), session.getStartTime(), session.getEndTime(), session.getDescription());
     }
 }
