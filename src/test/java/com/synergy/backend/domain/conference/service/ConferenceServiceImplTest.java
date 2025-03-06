@@ -57,22 +57,27 @@ class ConferenceServiceImplTest {
     @TestFactory
     Collection<DynamicTest> update() {
         // given
-        Conference savedConference = conferenceRepository.save(Conference.of("컨퍼런스명",
-                TimePeriod.of(LocalDateTime.of(2024, 3, 5, 13, 0)
-                        , LocalDateTime.of(2024, 3, 5, 20, 0)),
-                "뉴욕 뉴져지"
-        ));
+        String name = "컨퍼런스명";
+        LocalDateTime startTime = LocalDateTime.of(2024, 3, 5, 13, 0);
+        LocalDateTime endTime = LocalDateTime.of(2024, 3, 5, 20, 0);
+        String location = "뉴욕 뉴져지";
+
+        Conference savedConference = conferenceRepository.save(
+                Conference.of(name, TimePeriod.of(startTime, endTime), location)
+        );
         Long conferenceId = savedConference.getId();
 
+        String updatedName = "카카오 개발자로 살아남기";
+        LocalDateTime updatedStartTime = LocalDateTime.of(2024, 3, 5, 15, 0);
+        LocalDateTime updatedEndTime = LocalDateTime.of(2024, 3, 5, 19, 0);
+        String updatedLocation = "서울 여의도 국회 1층";
         // when & then
         return List.of(
-                DynamicTest.dynamicTest("컨퍼런스명, 시간을 수정합니다.", () -> {
+                DynamicTest.dynamicTest("컨퍼런스명을 수정합니다.", () -> {
                         //given
+
                         ConferenceUpdateRequest request = new ConferenceUpdateRequest(
-                                "컨퍼런스명@@",
-                                LocalDateTime.of(2024, 3, 5, 13, 0),
-                                LocalDateTime.of(2024, 3, 5, 21, 0),
-                                null
+                                updatedName, null, null, null
                         );
                         //when
                         ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
@@ -82,13 +87,54 @@ class ConferenceServiceImplTest {
                                             ConferenceUpdateResponse::startTime,
                                             ConferenceUpdateResponse::endTime,
                                             ConferenceUpdateResponse::location)
-                                    .containsExactly("컨퍼런스명@@",
-                                            LocalDateTime.of(2024, 3, 5, 13, 0),
-                                            LocalDateTime.of(2024, 3, 5, 21, 0),
-                                            "뉴욕 뉴져지"
+                                    .containsExactly(updatedName,
+                                            savedConference.getPeriod().getStartDateTime(),
+                                            savedConference.getPeriod().getEndDateTime(),
+                                            savedConference.getLocation()
                                     );
-
                     }
+                ),
+                DynamicTest.dynamicTest("위치 정보를 수정합니다.", () -> {
+                            //given
+                            ConferenceUpdateRequest request = new ConferenceUpdateRequest(
+                                    null, null, null, updatedLocation
+                            );
+                            //when
+                            ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
+                            //then
+                            assertThat(result)
+                                    .extracting(ConferenceUpdateResponse::name,
+                                            ConferenceUpdateResponse::startTime,
+                                            ConferenceUpdateResponse::endTime,
+                                            ConferenceUpdateResponse::location)
+                                    .containsExactly(
+                                            updatedName,
+                                            savedConference.getPeriod().getStartDateTime(),
+                                            savedConference.getPeriod().getEndDateTime(),
+                                            updatedLocation
+                                    );
+                        }
+                ),
+                DynamicTest.dynamicTest("컨퍼런스 기간을 수정합니다.", () -> {
+                            //given
+                            ConferenceUpdateRequest request = new ConferenceUpdateRequest(
+                                    null, updatedStartTime, updatedEndTime, null
+                            );
+                            //when
+                            ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
+                            //then
+                            assertThat(result)
+                                    .extracting(ConferenceUpdateResponse::name,
+                                            ConferenceUpdateResponse::startTime,
+                                            ConferenceUpdateResponse::endTime,
+                                            ConferenceUpdateResponse::location)
+                                    .containsExactly(
+                                            updatedName,
+                                            updatedStartTime,
+                                            updatedEndTime,
+                                            updatedLocation
+                                    );
+                        }
                 )
         );
     }
