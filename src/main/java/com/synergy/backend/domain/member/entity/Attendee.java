@@ -2,7 +2,6 @@ package com.synergy.backend.domain.member.entity;
 
 import static jakarta.persistence.FetchType.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.synergy.backend.domain.conference.model.Conference;
@@ -20,15 +19,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 public class Attendee extends Member {
 
@@ -67,8 +63,8 @@ public class Attendee extends Member {
 	private String yearsOfExperience;
 
 	// 참가자-보유기술
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<MemberTechStack> memberTechStacks = new HashSet<>();
+	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<MemberTechStack> memberTechStacks;
 
 	// 자기소개서
 	private String selfIntroduction;
@@ -83,8 +79,8 @@ public class Attendee extends Member {
 	private String information;
 
 	// 참가자-관심분야
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<MemberInterest> memberInterests = new HashSet<>();
+	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<MemberInterest> memberInterests;
 
 	// 컨퍼런스
 	@ManyToOne(fetch = LAZY)
