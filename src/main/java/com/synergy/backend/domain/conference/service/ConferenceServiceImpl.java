@@ -6,6 +6,7 @@ import com.synergy.backend.domain.conference.dto.requset.ConferenceUpdateRequest
 import com.synergy.backend.domain.conference.dto.response.ConferenceCreateResponse;
 import com.synergy.backend.domain.conference.dto.response.ConferenceUpdateResponse;
 import com.synergy.backend.domain.conference.entity.Conference;
+import com.synergy.backend.domain.conference.entity.TimePeriod;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,11 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Transactional
     @Override
     public ConferenceCreateResponse register(ConferenceCreateRequest request) {
-        // sessionRepository의 기능 사용
-        // conferenceRepository 기능 사용
-        // 등 비즈니스 처리
-        return null;
+        TimePeriod timePeriod = TimePeriod.of(request.startDate(), request.endDate());
+        Conference conference = Conference.of(request.name(), timePeriod, request.location());
+        Conference savedConference = conferenceRepository.save(conference);
+
+        return ConferenceCreateResponse.from(savedConference);
     }
 
     @Override
