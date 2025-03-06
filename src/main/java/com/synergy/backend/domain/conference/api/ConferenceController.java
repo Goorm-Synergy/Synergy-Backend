@@ -6,6 +6,7 @@ import com.synergy.backend.domain.conference.dto.response.ConferenceCreateRespon
 import com.synergy.backend.domain.conference.dto.response.ConferenceUpdateResponse;
 import com.synergy.backend.domain.conference.service.ConferenceService;
 import com.synergy.backend.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +18,12 @@ public class ConferenceController {
     private final ConferenceService conferenceService;
 
     @PostMapping
-    public ApiResponse<ConferenceCreateResponse> registerConference(ConferenceCreateRequest request){
+    public ApiResponse<ConferenceCreateResponse> registerConference(@RequestBody @Valid ConferenceCreateRequest request){
         return ApiResponse.ok(conferenceService.registerConference(request), 201);
     }
 
     @PatchMapping("{id}")
-    public ApiResponse<ConferenceUpdateResponse> updateConference(@PathVariable Long id, ConferenceUpdateRequest request){
+    public ApiResponse<ConferenceUpdateResponse> updateConference(@PathVariable Long id, @RequestBody @Valid ConferenceUpdateRequest request){
         return ApiResponse.ok(conferenceService.updateConference(id, request), 200);
     }
 }
