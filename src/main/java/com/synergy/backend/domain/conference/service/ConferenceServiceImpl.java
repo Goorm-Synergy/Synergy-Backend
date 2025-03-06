@@ -28,7 +28,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    public ConferenceUpdateResponse update(ConferenceUpdateRequest request) {
+    public ConferenceUpdateResponse update(Long conferenceId, ConferenceUpdateRequest request) {
         return null;
     }
 }
