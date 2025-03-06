@@ -6,9 +6,7 @@ import com.synergy.backend.domain.conference.dto.response.ConferenceCreateRespon
 import com.synergy.backend.domain.conference.dto.response.ConferenceUpdateResponse;
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.conference.entity.TimePeriod;
-import com.synergy.backend.domain.conference.exception.InvalidLocationException;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -21,9 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import static com.synergy.backend.domain.conference.exception.ErrorType._INVALID_CONFERENCE_LOCATION;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -36,7 +32,7 @@ class ConferenceServiceImplTest {
 
     @DisplayName("")
     @Test
-    void register() {
+    void registerConference() {
         // given
         ConferenceCreateRequest request = new ConferenceCreateRequest(
                 "컨퍼런스명",
@@ -45,7 +41,7 @@ class ConferenceServiceImplTest {
                 "부천시 오정구 고강동 311-25 1층"
         );
         // when
-        ConferenceCreateResponse result = conferenceService.register(request);
+        ConferenceCreateResponse result = conferenceService.registerConference(request);
         // then
         assertThat(result)
                 .isNotNull()
@@ -55,7 +51,7 @@ class ConferenceServiceImplTest {
 
     @DisplayName("컨퍼런스 정보 변경하는 시나리오")
     @TestFactory
-    Collection<DynamicTest> update() {
+    Collection<DynamicTest> updateConference() {
         // given
         String name = "컨퍼런스명";
         LocalDateTime startTime = LocalDateTime.of(2024, 3, 5, 13, 0);
@@ -80,7 +76,7 @@ class ConferenceServiceImplTest {
                                 updatedName, null, null, null
                         );
                         //when
-                        ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
+                        ConferenceUpdateResponse result = conferenceService.updateConference(conferenceId, request);
                         //then
                             assertThat(result)
                                     .extracting(ConferenceUpdateResponse::name,
@@ -100,7 +96,7 @@ class ConferenceServiceImplTest {
                                     null, null, null, updatedLocation
                             );
                             //when
-                            ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
+                            ConferenceUpdateResponse result = conferenceService.updateConference(conferenceId, request);
                             //then
                             assertThat(result)
                                     .extracting(ConferenceUpdateResponse::name,
@@ -121,7 +117,7 @@ class ConferenceServiceImplTest {
                                     null, updatedStartTime, updatedEndTime, null
                             );
                             //when
-                            ConferenceUpdateResponse result = conferenceService.update(conferenceId, request);
+                            ConferenceUpdateResponse result = conferenceService.updateConference(conferenceId, request);
                             //then
                             assertThat(result)
                                     .extracting(ConferenceUpdateResponse::name,

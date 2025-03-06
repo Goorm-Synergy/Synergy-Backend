@@ -24,7 +24,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Transactional
     @Override
-    public ConferenceCreateResponse register(ConferenceCreateRequest request) {
+    public ConferenceCreateResponse registerConference(ConferenceCreateRequest request) {
         TimePeriod timePeriod = TimePeriod.of(request.startDate(), request.endDate());
         Conference conference = Conference.of(request.name(), timePeriod, request.location());
         Conference savedConference = conferenceRepository.save(conference);
@@ -34,12 +34,17 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Transactional
     @Override
-    public ConferenceUpdateResponse update(Long conferenceId, ConferenceUpdateRequest request) {
+    public ConferenceUpdateResponse updateConference(Long conferenceId, ConferenceUpdateRequest request) {
         Conference findConference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(NotFoundConference::new);
         applyUpdatesToConference(request, findConference);
 
         return ConferenceUpdateResponse.from(findConference); // 반영된 정보 반환
+    }
+
+    @Override
+    public ConferenceDetailResponse findConference(Long conferenceId) {
+        return null;
     }
 
     private void applyUpdatesToConference(ConferenceUpdateRequest request, Conference findConference) {
