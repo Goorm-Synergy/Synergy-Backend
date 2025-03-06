@@ -35,7 +35,7 @@ public class Recruiter extends BaseEntity implements User {
 
 	// 담당 업무
 	@Column
-	private String Responsibility;
+	private String responsibility;
 
 	// 컨퍼런스
 	@ManyToOne(fetch = FetchType.LAZY)

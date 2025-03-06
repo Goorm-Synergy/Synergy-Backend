@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.synergy.backend.domain.member.api.dto.LoginRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
+import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
 import com.synergy.backend.domain.member.service.MemberService;
 import com.synergy.backend.global.common.ApiResponse;
 
@@ -19,10 +21,22 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-	// 회원가입 엔드포인트
-	@PostMapping("/signup")
-	public ApiResponse<?> signup(@RequestBody SignupRequestDto request) {
-		return ApiResponse.ok(null, 200);
+	@PostMapping("/signup/attendee")
+	public ApiResponse<?> registerAttendee(@RequestBody SignupAttendeeRequestDto request) {
+		memberService.registerAttendee(request);
+		return ApiResponse.ok("Attendee registered successfully!", 200);
+	}
+
+	@PostMapping("/signup/admin")
+	public ApiResponse<?> registerAdmin(@RequestBody SignupAdminRequestDto request) {
+		memberService.registerAdmin(request);
+		return ApiResponse.ok("Admin registered successfully!", 200);
+	}
+
+	@PostMapping("/signup/recruiter")
+	public ApiResponse<?> registerRecruiter(@RequestBody SignupRecruiterRequestDto request) {
+		memberService.registerRecruiter(request);
+		return ApiResponse.ok("Recruiter registered successfully!", 200);
 	}
 
 	// 로그인 엔드포인트

@@ -8,20 +8,23 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
 
+import com.synergy.backend.domain.member.entity.Member;
+
 @Component
 public class JwtProvider {
 
 	private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 시크릿 키 생성
 	private final long expirationMs = 1000 * 60 * 60; // 1시간
+	private final String secretKey = "your-secret-key-your-secret-key"; // 반드시 256bit 이상 길이
 
 	// JWT 생성
-	public String generateToken(String username, String role) {
+	public String generateToken(Member member) {
 		return Jwts.builder()
-			.setSubject(username)
-			.claim("role", role)
+			.setSubject(member.getEmail())
+			.claim("role", member.getClass().getSimpleName())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-			.signWith(key)
+			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
 
@@ -43,5 +46,14 @@ public class JwtProvider {
 			.parseClaimsJws(token)
 			.getBody()
 			.getSubject();
+	}
+
+	public String getRoleFromToken(String token) {
+		return Jwts.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(token)
+			.getBody()
+			.get("role", String.class);
 	}
 }
