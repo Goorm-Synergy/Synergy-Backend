@@ -1,9 +1,10 @@
 package com.synergy.backend.global.exception;
 
-import static com.synergy.backend.global.exception.ErrorType._UNAUTHORIZED;
+
+import static com.synergy.backend.global.exception.ErrorType._NOT_AUTHORIZED;
 
 public class AuthorizedException extends BaseErrorException {
     public AuthorizedException() {
-        super(_UNAUTHORIZED.getCode(), _UNAUTHORIZED.getMessage());
+        super(_NOT_AUTHORIZED.getCode(), _NOT_AUTHORIZED.getMessage());
     }
 }
