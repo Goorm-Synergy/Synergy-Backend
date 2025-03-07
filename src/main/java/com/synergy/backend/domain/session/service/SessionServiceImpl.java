@@ -3,6 +3,7 @@ package com.synergy.backend.domain.session.service;
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.conference.exception.NotFoundConference;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
+import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Member;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -30,7 +31,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
 
-    private final AttendeeRepository attendeeRepository;
     private final ConferenceRepository conferenceRepository;
     private final SessionRepository sessionRepository;
     private final AttendeeSessionRepository attendeeSessionRepository;
@@ -41,6 +41,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void createSession(Long conferenceId, SessionReqDto reqDto) {
+        Admin member = (Admin) getCurrentMember();
         Conference conference = ifConferenceExists(conferenceId);
 
         LocalDateTime startTime = DateTimeValidator.isValidLocalDateTime(reqDto.startTime());
@@ -84,9 +85,12 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.delete(session);
     }
 
+    // -------------------------------------- QnA ------------------------------------------------
+
     @Override
     public QuestionResDto createQuestion(Long conferenceId, Long sessionId, QuestionReqDto reqDto) {
         Attendee attendee = (Attendee) getCurrentMember();
+        // 참가자에 대한 QR 인증 여부를 확인해야 할듯
         ifConferenceExists(conferenceId);
         Session session = ifSessionExists(sessionId);
         AttendeeSession attendeeSession = AttendeeSession.of(attendee, session);
