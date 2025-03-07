@@ -26,6 +26,20 @@ public class SecurityConfig {
 	private final UserDetailsService userDetailsService;
 
 	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+			.csrf(AbstractHttpConfigurer::disable)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers("/api/v1/auth/**").permitAll()
+				.anyRequest().authenticated()
+			);
+
+		return http.build();
+	}
+
+	@Bean
 	public AuthenticationManager authenticationManager() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(userDetailsService);
@@ -36,23 +50,5 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.csrf(AbstractHttpConfigurer::disable)
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-				.requestMatchers("/api/v1/auth/**").permitAll()
-				.requestMatchers("/api/v1/auth/**").permitAll()
-				.requestMatchers("/api/admin/**").hasRole("ADMIN")
-				.requestMatchers("/api/recruiter/**").hasAnyRole("RECRUITER", "ADMIN")
-				.requestMatchers("/api/attendee/**").hasAnyRole("ATTENDEE", "RECRUITER", "ADMIN")
-				.anyRequest().authenticated()
-			);
-
-		return http.build();
 	}
 }

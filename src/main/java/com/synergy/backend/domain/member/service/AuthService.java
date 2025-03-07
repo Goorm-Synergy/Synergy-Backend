@@ -72,8 +72,8 @@ public class AuthService {
 			throw new BadCredentialsException("Invalid credentials");
 		}
 
-		String accessToken = jwtProvider.generateToken(member.getEmail(), role.name(), true);
-		String refreshToken = jwtProvider.generateToken(member.getEmail(), role.name(), false);
+		String accessToken = jwtProvider.generateToken(member.getEmail(), role, true);
+		String refreshToken = jwtProvider.generateToken(member.getEmail(), role, false);
 
 		refreshTokenRepository.save(member.getEmail(), refreshToken);
 

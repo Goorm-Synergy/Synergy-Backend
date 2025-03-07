@@ -10,4 +10,8 @@ public enum RoleType {
 	ATTENDEE,
 	ADMIN,
 	RECRUITER;
+
+	public String getRole() {
+		return this.name();
+	}
 }

@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.synergy.backend.domain.member.entity.Member;
+import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -29,6 +30,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.password(member.getPassword())
 			.roles(member.getClass().getSimpleName()) // Attendee, Admin, Recruiter 중 하나
 			.build();
+	}
+
+	public UserDetails loadUserByEmailAndRole(String email, RoleType role) {
+		return switch (role) {
+			case ADMIN -> adminRepository.findByEmail(email)
+				.map(CustomUserDetails::new)
+				.orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
+			case RECRUITER -> recruiterRepository.findByEmail(email)
+				.map(CustomUserDetails::new)
+				.orElseThrow(() -> new UsernameNotFoundException("Recruiter not found"));
+			case ATTENDEE -> attendeeRepository.findByEmail(email)
+				.map(CustomUserDetails::new)
+				.orElseThrow(() -> new UsernameNotFoundException("Attendee not found"));
+		};
 	}
 
 	private Member findMemberByEmail(String email) {

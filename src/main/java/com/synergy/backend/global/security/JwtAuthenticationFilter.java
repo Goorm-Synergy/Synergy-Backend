@@ -5,9 +5,10 @@ import java.io.IOException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.synergy.backend.domain.member.entity.RoleType;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,18 +21,20 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private final UserDetailsService userDetailsService;
+	private final CustomUserDetailsService userDetailsService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
+
 		String token = resolveToken(request);
 
 		if (token != null && jwtProvider.validateToken(token)) {
 			String email = jwtProvider.getEmailFromToken(token);
+			RoleType role = jwtProvider.getRoleFromToken(token);
 			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 			UsernamePasswordAuthenticationToken authentication =
-				new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+				new UsernamePasswordAuthenticationToken(userDetails, role, userDetails.getAuthorities());
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
