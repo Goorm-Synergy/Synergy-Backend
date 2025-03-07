@@ -22,8 +22,8 @@ public class ConferenceController {
         return ApiResponse.ok(conferenceService.registerConference(request), 201);
     }
 
-    @PatchMapping("{id}")
-    public ApiResponse<ConferenceUpdateResponse> updateConference(@PathVariable Long id, @RequestBody @Valid ConferenceUpdateRequest request){
+    @PatchMapping("/{id}")
+    public ApiResponse<ConferenceUpdateResponse> updateConference(@PathVariable(name = "id") Long id, @RequestBody @Valid ConferenceUpdateRequest request){
         return ApiResponse.ok(conferenceService.updateConference(id, request), 200);
     }
 }

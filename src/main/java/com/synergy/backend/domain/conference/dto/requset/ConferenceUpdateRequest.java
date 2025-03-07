@@ -8,18 +8,16 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ConferenceUpdateRequest{
-
-    private String name;
+public record ConferenceUpdateRequest(
+    String name,
 
     @Future(message = "시작 날짜는 미래여야 합니다.")
-    private LocalDateTime startTime;
+    LocalDateTime startTime,
 
     @Future(message = "종료 날짜는 미래여야 합니다.")
-    private LocalDateTime endTime;
+    LocalDateTime endTime,
 
-    private String location;
+    String location
+) {
 }
+

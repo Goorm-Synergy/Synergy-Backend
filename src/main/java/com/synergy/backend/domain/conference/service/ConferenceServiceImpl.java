@@ -48,12 +48,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     private void applyUpdatesToConference(ConferenceUpdateRequest request, Conference findConference) {
-        Optional.ofNullable(request.getName()).ifPresent(findConference::updateName);
-        Optional.ofNullable(request.getLocation()).ifPresent(findConference::updateLocation);
+        Optional.ofNullable(request.name()).ifPresent(findConference::updateName);
+        Optional.ofNullable(request.location()).ifPresent(findConference::updateLocation);
 
-        Optional<LocalDateTime> optionalStartTime = Optional.ofNullable(request.getStartTime());
-        Optional<LocalDateTime> optionalEndTime = Optional.ofNullable(request.getEndTime());
-        if(optionalStartTime.isPresent() && optionalEndTime.isPresent()) {
+        Optional<LocalDateTime> optionalStartTime = Optional.ofNullable(request.startTime());
+        Optional<LocalDateTime> optionalEndTime = Optional.ofNullable(request.endTime());
+        if (optionalStartTime.isPresent() && optionalEndTime.isPresent()) {
             findConference.updatePeriod(TimePeriod.of(optionalStartTime.get(), optionalEndTime.get()));
         }
 
