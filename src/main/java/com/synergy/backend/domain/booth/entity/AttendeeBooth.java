@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.booth.entity;
 
+import com.synergy.backend.domain.member.entity.Attendee;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,11 +22,12 @@ public class AttendeeBooth {
     @JoinColumn(name = "booth_id")
     private Booth booth;
 
-    @Column(name = "attendee_id", nullable = false)
-    private Long attendeeId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "attendee_id", nullable = false)
+    private Attendee attendee;
 
-    public AttendeeBooth(Booth booth, Long attendeeId) {
+    public AttendeeBooth(Booth booth, Attendee attendee) {
         this.booth = booth;
-        this.attendeeId = attendeeId;
+        this.attendee = attendee;
     }
 }

@@ -31,14 +31,15 @@ public class Booth {
     private String description;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "conference_id")
+    @JoinColumn(name = "conference_id", nullable = false)
     private Conference conference;
 
-    public Booth(String name, String company, String location, String description) {
+    public Booth(String name, String company, String location, String description, Conference conference) {
         this.name = name;
         this.company = company;
         this.location = location;
         this.description = description;
+        this.conference = conference;
     }
 
     public void updateInfo(String name, String company, String location, String description) {
