@@ -32,4 +32,5 @@ public class TimePeriod {
         }
         return new TimePeriod(startDateTime, endDate);
     }
+
 }
