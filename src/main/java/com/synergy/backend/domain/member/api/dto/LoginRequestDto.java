@@ -1,4 +1,7 @@
 package com.synergy.backend.domain.member.api.dto;
 
-public class LoginRequestDto {
+public record LoginRequestDto(
+	String email,
+	String password
+) {
 }

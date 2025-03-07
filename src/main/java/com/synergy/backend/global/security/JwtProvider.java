@@ -10,36 +10,50 @@ import java.util.Date;
 
 import com.synergy.backend.domain.member.entity.Member;
 
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+
 @Component
 public class JwtProvider {
 
-	private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 시크릿 키 생성
-	private final long expirationMs = 1000 * 60 * 60; // 1시간
-	private final String secretKey = "your-secret-key-your-secret-key"; // 반드시 256bit 이상 길이
+	private final Key key;
 
-	// JWT 생성
-	public String generateToken(Member member) {
+	private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15분
+	private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일
+
+	public JwtProvider(@Value("${jwt.secret}") String secret) {
+		byte[] decodedKey = Base64.getDecoder().decode(secret);
+		this.key = Keys.hmacShaKeyFor(decodedKey);
+	}
+
+	public String generateToken(String email, String role, boolean isAccessToken) {
+		long expiration = isAccessToken ? ACCESS_TOKEN_EXPIRATION : REFRESH_TOKEN_EXPIRATION;
+
 		return Jwts.builder()
-			.setSubject(member.getEmail())
-			.claim("role", member.getClass().getSimpleName())
+			.setSubject(email)
+			.claim("role", role)
 			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+			.setExpiration(new Date(System.currentTimeMillis() + expiration))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
 
-	// JWT 검증
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
-		} catch (Exception e) {
+		} catch (JwtException | IllegalArgumentException e) {
 			return false;
 		}
 	}
 
-	// JWT에서 사용자 정보 추출
-	public String getUsernameFromToken(String token) {
+	public String getEmailFromToken(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(key)
 			.build()

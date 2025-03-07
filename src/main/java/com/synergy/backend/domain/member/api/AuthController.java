@@ -1,23 +1,21 @@
 package com.synergy.backend.domain.member.api;
 
-import java.util.Map;
-
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.synergy.backend.domain.member.api.dto.LoginRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAdminResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupRecruiterResponseDto;
-import com.synergy.backend.domain.member.entity.Member;
+import com.synergy.backend.domain.member.api.dto.TokenResponseDto;
+import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.service.AuthService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.JwtProvider;
@@ -34,31 +32,36 @@ public class AuthController {
 	private final UserDetailsService userDetailsService;
 	private final AuthService authService;
 
-	@PostMapping("/signup/attendee")
+	@PostMapping("/attendee/signup")
 	public ApiResponse<?> registerAttendee(@RequestBody SignupAttendeeRequestDto request) {
 		SignupAttendeeResponseDto response = authService.registerAttendee(request);
-		return ApiResponse.ok(response, 200);
+		return ApiResponse.ok(response, 201);
 	}
 
-	@PostMapping("/signup/admin")
+	@PostMapping("/admin/signup")
 	public ApiResponse<?> registerAdmin(@RequestBody SignupAdminRequestDto request) {
 		SignupAdminResponseDto response = authService.registerAdmin(request);
-		return ApiResponse.ok(response, 200);
+		return ApiResponse.ok(response, 201);
 	}
 
-	@PostMapping("/signup/recruiter")
+	@PostMapping("/recruiter/signup")
 	public ApiResponse<?> registerRecruiter(@RequestBody SignupRecruiterRequestDto request) {
 		SignupRecruiterResponseDto response = authService.registerRecruiter(request);
-		return ApiResponse.ok(response, 200);
+		return ApiResponse.ok(response, 201);
 	}
 
-	@PostMapping("/signin")
-	public ApiResponse<?> login(@RequestBody Map<String, String> credentials) {
-		authenticationManager.authenticate(
-			new UsernamePasswordAuthenticationToken(credentials.get("email"), credentials.get("password"))
-		);
-		UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.get("email"));
-		String token = jwtProvider.generateToken((Member)userDetails);
-		return ApiResponse.ok(Map.of("token", token), 200);
+	@PostMapping("/attendee/login")
+	public ApiResponse<TokenResponseDto> loginAttendee(@RequestBody LoginRequestDto request) {
+		return ApiResponse.ok(authService.login(request, RoleType.ATTENDEE), 200);
+	}
+
+	@PostMapping("/admin/login")
+	public ApiResponse<TokenResponseDto> loginAdmin(@RequestBody LoginRequestDto request) {
+		return ApiResponse.ok(authService.login(request, RoleType.ADMIN), 200);
+	}
+
+	@PostMapping("/recruiter/login")
+	public ApiResponse<TokenResponseDto> loginRecruiter(@RequestBody LoginRequestDto request) {
+		return ApiResponse.ok(authService.login(request, RoleType.RECRUITER), 200);
 	}
 }

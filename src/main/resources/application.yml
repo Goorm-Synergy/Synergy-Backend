@@ -1,3 +1,6 @@
+jwt:
+  secret: 18e21a531543f26be08b952e774808b13ba1c76fb0a360777e39279add7d816ddfa1456560d27e4fbdd1bcf353f1d8201ba2cbec7be7b8a12bb26715821fd965ae165f60db17c34d65a53d7fef5c49d29e5f872e939245201b527a3f9c69c5ea1f50ac6ec40a4c9288011335b17416aa320259d989ec9a0cc5335523ef1e95392d526b4f7434a7ca8f1cd46a0560ae1d2d66d9ff9649feeb5fd53901f0d598d5930cfd3d19ff4d530438623e8dca1a6197cfad98e9b059252884fef177c6081b3740017714ab093cf6fb6b153a99beccab7d8a1800b28197a9d06c9ab7b84afdd7d0f8d8c4fae9b92c7a9aa936a8e1d51c7cf23ddb04a6640d81b8b0757279d0
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/conference
@@ -13,7 +16,11 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-        ddl-auto: create-drop
         show-sql: true
         open-in-view: false
 
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
