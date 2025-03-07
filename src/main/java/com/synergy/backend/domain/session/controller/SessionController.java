@@ -3,6 +3,8 @@ package com.synergy.backend.domain.session.controller;
 import com.synergy.backend.domain.session.dto.SessionDetailResDto;
 import com.synergy.backend.domain.session.dto.SessionReqDto;
 import com.synergy.backend.domain.session.dto.SessionResDto;
+import com.synergy.backend.domain.session.dto.question.QuestionReqDto;
+import com.synergy.backend.domain.session.dto.question.QuestionResDto;
 import com.synergy.backend.domain.session.service.SessionService;
 import com.synergy.backend.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +52,17 @@ public class SessionController {
         sessionService.deleteSession(sessionId);
 
         return ApiResponse.ok("Session deleted successfully!", 200);
+    }
+
+    /* ------------------------------------------ Q&A --------------------------------------*/
+
+    @PostMapping("/{sessionId}/participation")
+    public ApiResponse<QuestionResDto> createQuestion(@PathVariable(name = "conferenceId") Long conferenceId,
+                                                      @PathVariable(name = "sessionId") Long sessionId,
+                                                      @RequestBody QuestionReqDto reqDto) {
+
+        QuestionResDto result = sessionService.createQuestion(conferenceId, sessionId, reqDto);
+        return ApiResponse.ok(result, 200);
     }
 
 }

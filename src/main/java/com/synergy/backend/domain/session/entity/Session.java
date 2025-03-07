@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -44,6 +46,9 @@ public class Session {
     @JoinColumn(name = "conference_id")
     private Conference conference;
 
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttendeeSession> attendeeSessions = new ArrayList<>();
+
     @Builder
     public Session(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime, Conference conference) {
         this.title = reqDto.title();
@@ -52,6 +57,15 @@ public class Session {
         this.endTime = endTime;
         this.description = reqDto.description();
         this.conference = conference;
+    }
+
+    public static Session of(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime, Conference conference) {
+        return Session.builder()
+                .reqDto(reqDto)
+                .startTime(startTime)
+                .endTime(endTime)
+                .conference(conference)
+                .build();
     }
 
     public void updateSession(SessionReqDto reqDto, LocalDateTime startTime, LocalDateTime endTime) {

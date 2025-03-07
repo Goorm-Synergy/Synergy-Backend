@@ -2,10 +2,13 @@ package com.synergy.backend.domain.member.entity;
 
 import static jakarta.persistence.FetchType.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.interest.entity.MemberInterest;
+import com.synergy.backend.domain.session.entity.AttendeeSession;
 import com.synergy.backend.domain.techstack.entity.MemberTechStack;
 
 import jakarta.persistence.CascadeType;
@@ -86,5 +89,8 @@ public class Attendee extends Member {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
+
+	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<AttendeeSession> attendeeSessions = new ArrayList<>();
 
 }
