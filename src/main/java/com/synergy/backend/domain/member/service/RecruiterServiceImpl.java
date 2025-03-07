@@ -1,7 +1,7 @@
 package com.synergy.backend.domain.member.service;
 
-import com.synergy.backend.domain.member.dto.AttendeeDetailResponseDto;
-import com.synergy.backend.domain.member.dto.AttendeeListResponseDto;
+import com.synergy.backend.domain.member.api.dto.AttendeeDetailResponseDto;
+import com.synergy.backend.domain.member.api.dto.AttendeeListResponseDto;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

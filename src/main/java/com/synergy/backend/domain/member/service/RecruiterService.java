@@ -1,8 +1,7 @@
 package com.synergy.backend.domain.member.service;
 
-import com.synergy.backend.domain.member.dto.AttendeeDetailResponseDto;
-import com.synergy.backend.domain.member.dto.AttendeeListResponseDto;
-import com.synergy.backend.domain.member.entity.Attendee;
+import com.synergy.backend.domain.member.api.dto.AttendeeDetailResponseDto;
+import com.synergy.backend.domain.member.api.dto.AttendeeListResponseDto;
 
 public interface RecruiterService {
 

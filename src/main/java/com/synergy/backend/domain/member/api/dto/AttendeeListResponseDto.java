@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.member.dto;
+package com.synergy.backend.domain.member.api.dto;
 
 import com.synergy.backend.domain.member.entity.PositionType;
 import com.synergy.backend.domain.techstack.entity.MemberTechStack;
