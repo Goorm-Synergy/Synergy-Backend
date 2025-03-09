@@ -8,4 +8,6 @@ import com.synergy.backend.domain.member.entity.Admin;
 
 public interface AdminRepository extends JpaRepository<Admin, Long> {
 	Optional<Admin> findByEmail(String email);
+
+	Optional<Admin> findByAssignedAdminId(String assignedAdminId);
 }

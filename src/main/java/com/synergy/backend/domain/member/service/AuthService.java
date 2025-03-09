@@ -6,19 +6,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.synergy.backend.domain.member.api.dto.LoginAdminRequestDto;
 import com.synergy.backend.domain.member.api.dto.LoginRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupAdminResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeResponseDto;
-import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupRecruiterResponseDto;
 import com.synergy.backend.domain.member.api.dto.TokenResponseDto;
-import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Member;
-import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.domain.member.exception.AdminOrRecruiterNotFoundException;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -49,23 +45,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public SignupAdminResponseDto registerAdmin(SignupAdminRequestDto request) {
-		Admin admin = Admin.of(request.name(), request.email(), encodePassword(request.password()),
-			request.assignedAdminId());
-		adminRepository.save(admin);
-		return SignupAdminResponseDto.from(admin);
-	}
-
-	@Transactional
-	public SignupRecruiterResponseDto registerRecruiter(SignupRecruiterRequestDto request) {
-		Recruiter recruiter = Recruiter.of(request.name(), request.email(), encodePassword(request.password()),
-			request.company(), request.responsibility());
-		recruiterRepository.save(recruiter);
-		return SignupRecruiterResponseDto.from(recruiter);
-	}
-
-	@Transactional
-	public TokenResponseDto login(LoginRequestDto request, RoleType role) {
+	public TokenResponseDto loginAttendee(LoginRequestDto request, RoleType role) {
 		Member member = findMemberByEmailAndRole(request.email(), role);
 
 		if (!passwordEncoder.matches(request.password(), member.getPassword())) {
@@ -81,14 +61,34 @@ public class AuthService {
 	}
 
 	@Transactional
+	public TokenResponseDto loginAdminOrRecruiter(LoginAdminRequestDto request) {
+		Member member = findAdminOrRecruiterByAssignedAdminId(request.assignedAdminId());
+
+		String accessToken = jwtProvider.generateToken(member.getEmail(), member.getRoleType(), true);
+		String refreshToken = jwtProvider.generateToken(member.getEmail(), member.getRoleType(), false);
+
+		refreshTokenRepository.save(member.getEmail(), refreshToken);
+
+		return new TokenResponseDto(accessToken, refreshToken, member.getRoleType().name());
+	}
+
+	@Transactional
 	public void logout(String email) {
 		refreshTokenRepository.delete(email);
 	}
 
+	private Member findAdminOrRecruiterByAssignedAdminId(String assignedAdminId) {
+		return adminRepository.findByAssignedAdminId(assignedAdminId)
+			.map(admin -> (Member)admin)
+			.orElseGet(() -> recruiterRepository.findByAssignedAdminId(assignedAdminId)
+				.map(recruiter -> (Member)recruiter)
+				.orElseThrow(AdminOrRecruiterNotFoundException::new));
+	}
+
 	private Member findMemberByEmailAndRole(String email, RoleType role) {
 		return switch (role) {
-			case ADMIN -> adminRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
+			case ADMIN ->
+				adminRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
 			case RECRUITER -> recruiterRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("Recruiter not found"));
 			case ATTENDEE -> attendeeRepository.findByEmail(email)

@@ -5,13 +5,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.synergy.backend.domain.member.api.dto.LoginAdminRequestDto;
 import com.synergy.backend.domain.member.api.dto.LoginRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupAdminRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupAdminResponseDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.SignupAttendeeResponseDto;
-import com.synergy.backend.domain.member.api.dto.SignupRecruiterRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupRecruiterResponseDto;
 import com.synergy.backend.domain.member.api.dto.TokenResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.service.AuthService;
@@ -32,30 +29,14 @@ public class AuthController {
 		return ApiResponse.ok(response, 201);
 	}
 
-	@PostMapping("/admin/signup")
-	public ApiResponse<?> registerAdmin(@RequestBody SignupAdminRequestDto request) {
-		SignupAdminResponseDto response = authService.registerAdmin(request);
-		return ApiResponse.ok(response, 201);
-	}
-
-	@PostMapping("/recruiter/signup")
-	public ApiResponse<?> registerRecruiter(@RequestBody SignupRecruiterRequestDto request) {
-		SignupRecruiterResponseDto response = authService.registerRecruiter(request);
-		return ApiResponse.ok(response, 201);
-	}
-
 	@PostMapping("/attendee/login")
 	public ApiResponse<TokenResponseDto> loginAttendee(@RequestBody LoginRequestDto request) {
-		return ApiResponse.ok(authService.login(request, RoleType.ATTENDEE), 200);
+		return ApiResponse.ok(authService.loginAttendee(request, RoleType.ATTENDEE), 200);
 	}
 
 	@PostMapping("/admin/login")
-	public ApiResponse<TokenResponseDto> loginAdmin(@RequestBody LoginRequestDto request) {
-		return ApiResponse.ok(authService.login(request, RoleType.ADMIN), 200);
+	public ApiResponse<TokenResponseDto> loginAdmin(@RequestBody LoginAdminRequestDto request) {
+		return ApiResponse.ok(authService.loginAdminOrRecruiter(request), 200);
 	}
 
-	@PostMapping("/recruiter/login")
-	public ApiResponse<TokenResponseDto> loginRecruiter(@RequestBody LoginRequestDto request) {
-		return ApiResponse.ok(authService.login(request, RoleType.RECRUITER), 200);
-	}
 }

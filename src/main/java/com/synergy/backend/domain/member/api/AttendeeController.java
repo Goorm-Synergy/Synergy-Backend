@@ -32,12 +32,13 @@ public class AttendeeController {
 		@AuthenticationPrincipal CustomUserDetails<? extends Member> userDetails,
 		@RequestBody InterestRequestDto request) {
 
-		Attendee attendee = (Attendee)userDetails.getMember();
-		RoleType role = attendee.getRoleType();
+		Member member = userDetails.getMember();
 
-		if (role != RoleType.ATTENDEE) {
+		if (member.getRoleType() != RoleType.ATTENDEE) {
 			throw new AccessDeniedException();
 		}
+
+		Attendee attendee = (Attendee) member;
 
 		Set<Interest> interests = attendeeService.addInterests(attendee, request.interestIds());
 
