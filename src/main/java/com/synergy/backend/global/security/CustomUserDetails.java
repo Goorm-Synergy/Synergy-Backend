@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.synergy.backend.domain.member.entity.Member;
+import com.synergy.backend.domain.member.entity.RoleType;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomUserDetails<T extends Member> implements UserDetails {
 
-	private final T member;
+	private final Member member;
+	private final RoleType role;
+
+	public CustomUserDetails(Member member) {
+		this.member = member;
+		this.role = RoleType.valueOf(member.getClass().getSimpleName().toUpperCase());
+	}
+
 
 	@Override
 	public String getUsername() {
@@ -29,7 +37,7 @@ public class CustomUserDetails<T extends Member> implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(() -> "ROLE_" + member.getRoleType().name()); // 🔹 RoleType을 직접 참조
+		return List.of(() -> "ROLE_" + role.getRole());
 	}
 
 	@Override

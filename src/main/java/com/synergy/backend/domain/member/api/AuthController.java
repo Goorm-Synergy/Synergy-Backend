@@ -1,7 +1,5 @@
 package com.synergy.backend.domain.member.api;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +16,6 @@ import com.synergy.backend.domain.member.api.dto.TokenResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.service.AuthService;
 import com.synergy.backend.global.common.ApiResponse;
-import com.synergy.backend.global.security.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,9 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final AuthenticationManager authenticationManager;
-	private final JwtProvider jwtProvider;
-	private final UserDetailsService userDetailsService;
 	private final AuthService authService;
 
 	@PostMapping("/attendee/signup")

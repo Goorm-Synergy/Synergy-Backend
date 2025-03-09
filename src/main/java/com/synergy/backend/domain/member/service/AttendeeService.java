@@ -13,6 +13,7 @@ import com.synergy.backend.domain.interest.repository.MemberInterestRepository;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,7 +26,10 @@ public class AttendeeService {
 
 	@Transactional
 	public Set<Interest> addInterests(Attendee attendee, Set<Long> interestIds) {
-		Set<Interest> existingInterests = attendee.getMemberInterests()
+		Attendee managedAttendee = attendeeRepository.findById(attendee.getId())
+			.orElseThrow(() -> new EntityNotFoundException("Attendee not found with id: " + attendee.getId()));
+
+		Set<Interest> existingInterests = managedAttendee.getMemberInterests()
 			.stream()
 			.map(MemberInterest::getInterest)
 			.collect(Collectors.toSet());
@@ -40,13 +44,13 @@ public class AttendeeService {
 		}
 
 		Set<MemberInterest> memberInterestList = newInterests.stream()
-			.map(interest -> new MemberInterest(attendee, interest))
+			.map(interest -> new MemberInterest(managedAttendee, interest))
 			.collect(Collectors.toSet());
 
 		memberInterestRepository.saveAll(memberInterestList);
-		attendee.getMemberInterests().addAll(memberInterestList);
+		managedAttendee.getMemberInterests().addAll(memberInterestList);
 
-		return attendee.getMemberInterests()
+		return managedAttendee.getMemberInterests()
 			.stream()
 			.map(MemberInterest::getInterest)
 			.collect(Collectors.toSet());

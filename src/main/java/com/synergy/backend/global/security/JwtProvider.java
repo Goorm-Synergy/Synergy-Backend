@@ -3,6 +3,7 @@ package com.synergy.backend.global.security;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.synergy.backend.domain.member.entity.RoleType;
@@ -15,7 +16,11 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtProvider {
 
-	private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	private final Key key;
+
+	public JwtProvider(@Value("${jwt.secret}") String secretKey) {
+		this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+	}
 
 	private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15분
 	private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일

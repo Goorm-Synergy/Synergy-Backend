@@ -1,8 +1,11 @@
 package com.synergy.backend.global.security;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,13 +18,24 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
 	private final CustomUserDetailsService userDetailsService;
+
+	private final List<String> excludedPaths = Arrays.asList("/api/v1/auth/attendee/signup",
+		"/api/v1/auth/attendee/login");
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String path = request.getRequestURI();
+		return excludedPaths.stream().anyMatch(path::startsWith);
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,9 +46,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (token != null && jwtProvider.validateToken(token)) {
 			String email = jwtProvider.getEmailFromToken(token);
 			RoleType role = jwtProvider.getRoleFromToken(token);
+
+			log.info("email: {}", email);
+			log.info("role: {}", role);
+
 			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-			UsernamePasswordAuthenticationToken authentication =
-				new UsernamePasswordAuthenticationToken(userDetails, role, userDetails.getAuthorities());
+
+			Authentication authentication =
+				new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
