@@ -21,6 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Conference {
 
     public static final int MAX_NAME_LENGTH = 30;
+    public static final int MAX_ORGANIZER_LENGTH = 10;
     public static final int MAX_COMMON_LENGTH = 50;
     public static final int MAX_LOCATION_LENGTH = 100;
 
@@ -35,7 +36,7 @@ public class Conference {
     @Embedded
     private TimePeriod period;
 
-    @Column(nullable = false, length = MAX_COMMON_LENGTH)
+    @Column(nullable = false, length = MAX_ORGANIZER_LENGTH)
     private String organizer;
 
     @Column(nullable = false, length = MAX_LOCATION_LENGTH)
@@ -63,10 +64,13 @@ public class Conference {
             throw new InvalidNameException();
         }
 
-        if (organizer.length() > MAX_COMMON_LENGTH || organizer.isBlank() || type.length() > MAX_COMMON_LENGTH || type.isBlank()) {
+        if (type.length() > MAX_COMMON_LENGTH || type.isBlank()) {
             throw new InvalidCommonException();
         }
 
+        if (organizer.length() > MAX_ORGANIZER_LENGTH || organizer.isBlank()) {
+            throw new InvalidOrganizerException();
+        }
         if (location.length() > MAX_LOCATION_LENGTH || location.isBlank()) {
             throw new InvalidLocationException();
         }

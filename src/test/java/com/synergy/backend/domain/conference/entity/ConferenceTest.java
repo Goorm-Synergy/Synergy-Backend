@@ -78,20 +78,20 @@ class ConferenceTest {
         return List.of(
                 DynamicTest.dynamicTest("주최자명은 공백으로 작성할 수 없습니다.", () -> {
                             //given
-                            String organizer = " ";
+                            String organizer = "  ";
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
-                                    .hasMessage(_INVALID_COMMON.getMessage())
-                                    .isInstanceOf(InvalidCommonException.class);
+                                    .hasMessage(_INVALID_ORGANIZER.getMessage())
+                                    .isInstanceOf(InvalidOrganizerException.class);
                         }
                 ),
-                DynamicTest.dynamicTest("주최자명은 50자자 이내 입니다.", () -> {
+                DynamicTest.dynamicTest("주최자명은 10자 이내 입니다.", () -> {
                             //given
-                            String organizer = "김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, /";
+                            String organizer = "김 승진 수수깡, /";
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
-                                    .hasMessage(_INVALID_COMMON.getMessage())
-                                    .isInstanceOf(InvalidCommonException.class);
+                                    .hasMessage(_INVALID_ORGANIZER.getMessage())
+                                    .isInstanceOf(InvalidOrganizerException.class);
                         }
                 )
         );
