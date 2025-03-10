@@ -84,4 +84,12 @@ public class Conference {
     public void updatePeriod(TimePeriod period) {
         this.period = period;
     }
+
+    public void updateOrganizer(String organizer) {
+        this.organizer = organizer;
+    }
+
+    public void updateType(String type) {
+        this.type = type;
+    }
 }
