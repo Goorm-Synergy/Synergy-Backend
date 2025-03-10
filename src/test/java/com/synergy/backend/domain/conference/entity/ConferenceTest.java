@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import static com.synergy.backend.domain.conference.exception.ErrorType._INVALID_CONFERENCE_LOCATION;
-import static com.synergy.backend.domain.conference.exception.ErrorType._INVALID_CONFERENCE_NAME;
+import static com.synergy.backend.domain.conference.exception.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -77,22 +76,22 @@ class ConferenceTest {
         String type = "산업";
         // when & then
         return List.of(
-                DynamicTest.dynamicTest("주최자명은 공백으로 작성할 수 없습니다..", () -> {
+                DynamicTest.dynamicTest("주최자명은 공백으로 작성할 수 없습니다.", () -> {
                             //given
                             String organizer = " ";
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
-                                    .hasMessage(_INVALID_CONFERENCE_NAME.getMessage())
-                                    .isInstanceOf(InvalidNameException.class);
+                                    .hasMessage(_INVALID_COMMON.getMessage())
+                                    .isInstanceOf(InvalidCommonException.class);
                         }
                 ),
-                DynamicTest.dynamicTest("컨퍼런스 제목은 30자 이내 입니다.", () -> {
+                DynamicTest.dynamicTest("주최자명은 50자자 이내 입니다.", () -> {
                             //given
-                            String organizer = "김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, ";
+                            String organizer = "김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, 김 승진 수수깡, /";
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
-                                    .hasMessage(_INVALID_CONFERENCE_NAME.getMessage())
-                                    .isInstanceOf(InvalidNameException.class);
+                                    .hasMessage(_INVALID_COMMON.getMessage())
+                                    .isInstanceOf(InvalidCommonException.class);
                         }
                 )
         );
@@ -119,7 +118,7 @@ class ConferenceTest {
                 ),
                 DynamicTest.dynamicTest("컨퍼런스 위치는 100자 이내 입니다.", () -> {
                             //given
-                            String location = "지구에 존재하는 동양 국가로 대한민국 서울특별시에 존재하는 어쩌구 저쩌구 어쩌구 저쩌구 어쩌구 저쩌구 어쩌구 저쩌구저쩌구저쩌구저쩌구저쩌구저쩌구저쩌구저쩌구  마포에 있는 커스텀 건물";
+                            String location = "지구에 존재하는 동양 국가로 대한민국 서울특별시에 존재하는 어쩌구 저쩌구 어쩌구 저쩌구 어쩌구 저쩌구 어쩌구 저쩌구저쩌구저쩌구저쩌구저쩌구저쩌구저쩌구저쩌구 마포에 있는 커스텀 건물12";
 
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
@@ -132,7 +131,7 @@ class ConferenceTest {
 
     @DisplayName("잘못된 유형 형식으로 등록하는 시나리오")
     @TestFactory
-    Collection<DynamicTest> ofExceptionTpye() {
+    Collection<DynamicTest> ofExceptionType() {
         // given
         TimePeriod timePeriod = TimePeriod.of(LocalDateTime.of(2025, 4, 14, 9, 0), LocalDateTime.of(2025, 4, 15, 16, 0));
         String name = "카카오 IT 컨퍼런스";
@@ -145,8 +144,8 @@ class ConferenceTest {
                             String type = "  ";
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
-                                    .hasMessage(_INVALID_CONFERENCE_NAME.getMessage())
-                                    .isInstanceOf(InvalidNameException.class);
+                                    .hasMessage(_INVALID_COMMON.getMessage())
+                                    .isInstanceOf(InvalidCommonException.class);
                         }
                 ),
                 DynamicTest.dynamicTest("유형은 50자 이내 입니다.", () -> {
@@ -154,8 +153,8 @@ class ConferenceTest {
                             String type = "  ";
                             // when & then
                             assertThatThrownBy(() -> Conference.of(name, timePeriod, organizer, location, type))
-                                    .hasMessage(_INVALID_CONFERENCE_NAME.getMessage())
-                                    .isInstanceOf(InvalidNameException.class);
+                                    .hasMessage(_INVALID_COMMON.getMessage())
+                                    .isInstanceOf(InvalidCommonException.class);
                         }
                 )
         );

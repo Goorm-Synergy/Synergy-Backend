@@ -59,9 +59,11 @@ class ConferenceServiceImplTest {
         LocalDateTime startTime = LocalDateTime.of(2024, 3, 5, 13, 0);
         LocalDateTime endTime = LocalDateTime.of(2024, 3, 5, 20, 0);
         String location = "뉴욕 뉴져지";
+        String organizer = "김승진";
+        String type = "IT";
 
         Conference savedConference = conferenceRepository.save(
-                Conference.of(name, TimePeriod.of(startTime, endTime), location)
+                Conference.of(name, TimePeriod.of(startTime, endTime), organizer, location, type)
         );
         Long conferenceId = savedConference.getId();
 
