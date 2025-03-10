@@ -38,7 +38,9 @@ class ConferenceServiceImplTest {
                 "컨퍼런스명",
                 LocalDateTime.of(2025,5,10,9,0),
                 LocalDateTime.of(2025,5,11,18,0),
-                "부천시 오정구 고강동 311-25 1층"
+                "부천시 오정구 고강동 311-25 1층",
+                "김승진",
+                "IT"
         );
         // when
         ConferenceCreateResponse result = conferenceService.registerConference(request);

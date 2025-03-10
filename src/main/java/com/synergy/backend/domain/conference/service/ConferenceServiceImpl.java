@@ -26,7 +26,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     public ConferenceCreateResponse registerConference(ConferenceCreateRequest request) {
         TimePeriod timePeriod = TimePeriod.of(request.startDate(), request.endDate());
-        Conference conference = Conference.of(request.name(), timePeriod, request.location());
+        Conference conference = Conference.of(request.name(), timePeriod, request.organizer(), request.location(), request.type());
         Conference savedConference = conferenceRepository.save(conference);
 
         return ConferenceCreateResponse.from(savedConference);
