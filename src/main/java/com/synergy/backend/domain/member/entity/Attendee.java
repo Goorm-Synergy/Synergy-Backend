@@ -39,7 +39,7 @@ public class Attendee extends Member {
 	// 현재 포인트 합계
 	@Column(nullable = false)
 	@Builder.Default
-	private int point = 0;
+	private int totalPoints = 0;
 
 	// 등급
 	@Column(nullable = false)
