@@ -24,13 +24,15 @@ class ConferenceTest {
         // given
         String name = "컨퍼런스 제목";
         TimePeriod timePeriod = TimePeriod.of(LocalDateTime.of(2025, 4, 14, 9, 0), LocalDateTime.of(2025, 4, 15, 16, 0));
+        String organizer = "김승진";
         String location = "컨퍼런스 위치";
+        String type = "IT";
         // when
-        Conference conference = Conference.of(name, timePeriod, location);
+        Conference conference = Conference.of(name, timePeriod, organizer, location, type);
         // then
         assertThat(conference)
-                .extracting("name", "location")
-                .containsExactly(name, location);
+                .extracting("name", "organizer", "location", "type")
+                .containsExactly(name, organizer, location, type);
     }
 
     @DisplayName("잘못된 컨퍼런스명 형식으로 등록하는 시나리오")
