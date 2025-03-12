@@ -12,6 +12,7 @@ import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
 import com.synergy.backend.domain.member.service.AuthService;
 import com.synergy.backend.global.common.ApiResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,7 +23,7 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/attendee/signup")
-	public ApiResponse<?> registerAttendee(@RequestBody SignupAttendeeRequestDto request) {
+	public ApiResponse<?> registerAttendee(@Valid @RequestBody SignupAttendeeRequestDto request) {
 		return ApiResponse.ok(authService.registerAttendee(request), 201);
 	}
 

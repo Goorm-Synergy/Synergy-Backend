@@ -55,7 +55,7 @@ public class Attendee extends BaseEntity implements User {
 	// 등급
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private MembershipLevelType membershipLevelType = MembershipLevelType.BRONZE;
+	private MembershipLevelType membershipLevelType = MembershipLevelType.DEFAULT;
 
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Point> points;

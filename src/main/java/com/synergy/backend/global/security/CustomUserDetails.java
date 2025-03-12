@@ -11,11 +11,13 @@ import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.entity.User;
+import com.synergy.backend.global.security.exception.UnKnownUserTypeException;
 
 import lombok.Getter;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
+
 	private final Long id;
 	private final RoleType role;
 	private final String username;
@@ -28,14 +30,14 @@ public class CustomUserDetails implements UserDetails {
 		if (user instanceof Attendee attendee) {
 			this.username = attendee.getEmail();
 			this.password = attendee.getPassword();
-		} else if (user instanceof Admin admin){
+		} else if (user instanceof Admin admin) {
 			this.username = admin.getAdminAuthCode();
 			this.password = null;
 		} else if (user instanceof Recruiter recruiter) {
 			this.username = recruiter.getRecruiterAuthCode();
 			this.password = null;
 		} else {
-			throw new IllegalArgumentException("Unknown user type");
+			throw new UnKnownUserTypeException();
 		}
 	}
 

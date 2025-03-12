@@ -1,23 +1,21 @@
 package com.synergy.backend.domain.member.service;
 
-import java.util.Optional;
-
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.synergy.backend.domain.member.api.dto.request.LoginAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
-import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
-import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.User;
-import com.synergy.backend.domain.member.exception.NotFoundMember;
+import com.synergy.backend.domain.member.exception.DuplicateEmailException;
+import com.synergy.backend.domain.member.exception.InvalidAuthCodeException;
+import com.synergy.backend.domain.member.exception.InvalidPasswordException;
+import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -39,25 +37,35 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
-	private final AuthenticationManager authenticationManager;
 
 	@Transactional
 	public SignupAttendeeResponseDto registerAttendee(SignupAttendeeRequestDto request) {
-		Attendee attendee = Attendee.of(request.email(), encodePassword(request.password()), request.name(),
+
+		if (attendeeRepository.findByEmail(request.email()).isPresent()) {
+			throw new DuplicateEmailException();
+		}
+
+		Attendee attendee = Attendee.of(
+			request.email(),
+			encodePassword(request.password()),
+			request.name(),
 			request.phone());
 
-		attendeeRepository.save(attendee);
+		try {
+			attendeeRepository.save(attendee);
+		} catch (DataIntegrityViolationException e) {
+			throw new RuntimeException("Database error: Failed to save attendee.");
+		}
+
 		return SignupAttendeeResponseDto.from(attendee);
 	}
 
-	// 이메일+비밀번호 검증 후 jwt 발급
 	@Transactional
 	public TokenResponseDto loginAsAttendee(String email, String rawPassword) {
-		Attendee attendee = attendeeRepository.findByEmail(email)
-			.orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+		Attendee attendee = findAttendeeWithEmail(email);
 
 		if (!passwordEncoder.matches(rawPassword, attendee.getPassword())) {
-			throw new IllegalArgumentException("Invalid password");
+			throw new InvalidPasswordException();
 		}
 
 		return jwtProvider.generateToken(new CustomUserDetails(attendee));
@@ -65,51 +73,49 @@ public class AuthService {
 
 	@Transactional
 	public TokenResponseDto loginAsAdminOrRecruiter(String authCode) {
-		// 먼저 관리자(Admin) 조회
-		Optional<Admin> adminOpt = adminRepository.findByAdminAuthCode(authCode);
-		if (adminOpt.isPresent()) {
-			Admin admin = adminOpt.get();
-			return jwtProvider.generateToken(new CustomUserDetails(admin));
-		}
-
-		// 관리자 정보가 없으면 채용 담당자(Recruiter) 조회
-		Optional<Recruiter> recruiterOpt = recruiterRepository.findByRecruiterAuthCode(authCode);
-		if (recruiterOpt.isPresent()) {
-			Recruiter recruiter = recruiterOpt.get();
-			return jwtProvider.generateToken(new CustomUserDetails(recruiter));
-		}
-
-		// 두 곳에서 모두 찾지 못하면 예외 발생
-		throw new IllegalArgumentException("Invalid authCode");
+		return adminRepository.findByAdminAuthCode(authCode)
+			.map(admin -> jwtProvider.generateToken(new CustomUserDetails(admin)))
+			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode)
+				.map(recruiter -> jwtProvider.generateToken(new CustomUserDetails(recruiter))))
+			.orElseThrow(InvalidAuthCodeException::new);
 	}
 
 	@Transactional(readOnly = true)
-	private Attendee findAttendee(LoginAttendeeRequestDto request) {
-		return attendeeRepository.findByEmail(request.email()).orElseThrow(NotFoundMember::new);
+	private Attendee findAttendeeWithEmail(String email) {
+		return attendeeRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
 	}
 
 	@Transactional
-	public void logout(String email) {
-		refreshTokenRepository.delete(email);
+	public void logout(String token) {
+		if (token == null || token.isBlank()) {
+			throw new IllegalArgumentException("Token must be provided for logout.");
+		}
+		refreshTokenRepository.delete(token);
 	}
 
 	// 로그인된 유저객체 가져오기
 	@Transactional(readOnly = true)
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
-			throw new IllegalStateException("인증된 사용자가 없습니다.");
+		if (authentication == null || !authentication.isAuthenticated()) {
+			throw new IllegalStateException("No authenticated user found.");
 		}
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		String identifier = userDetails.getUsername(); // username 혹은 필요한 식별자
+
+		Object principal = authentication.getPrincipal();
+		if (!(principal instanceof CustomUserDetails)) {
+			throw new IllegalStateException("Invalid authentication principal.");
+		}
+
+		CustomUserDetails userDetails = (CustomUserDetails)principal;
+		String identifier = userDetails.getUsername();
 
 		return attendeeRepository.findByEmail(identifier)
-			.map(attendee -> (User) attendee)
+			.map(attendee -> (User)attendee)
 			.or(() -> adminRepository.findByAdminAuthCode(identifier)
-				.map(admin -> (User) admin))
+				.map(admin -> (User)admin))
 			.or(() -> recruiterRepository.findByRecruiterAuthCode(identifier)
-				.map(recruiter -> (User) recruiter))
-			.orElseThrow(() -> new IllegalArgumentException("User not found with identifier: " + identifier));
+				.map(recruiter -> (User)recruiter))
+			.orElseThrow(NotFoundUserException::new);
 	}
 
 	private String encodePassword(String rawPassword) {
