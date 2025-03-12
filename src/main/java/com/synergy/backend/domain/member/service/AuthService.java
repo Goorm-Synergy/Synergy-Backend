@@ -1,124 +1,15 @@
 package com.synergy.backend.domain.member.service;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
-import com.synergy.backend.domain.member.entity.Attendee;
-import com.synergy.backend.domain.member.entity.User;
-import com.synergy.backend.domain.member.exception.DuplicateEmailException;
-import com.synergy.backend.domain.member.exception.InvalidAuthCodeException;
-import com.synergy.backend.domain.member.exception.InvalidPasswordException;
-import com.synergy.backend.domain.member.exception.NotFoundUserException;
-import com.synergy.backend.domain.member.repository.AdminRepository;
-import com.synergy.backend.domain.member.repository.AttendeeRepository;
-import com.synergy.backend.domain.member.repository.RecruiterRepository;
-import com.synergy.backend.global.redis.RefreshTokenRepository;
-import com.synergy.backend.global.security.CustomUserDetails;
-import com.synergy.backend.global.security.JwtProvider;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class AuthService {
+public interface AuthService {
+	SignupAttendeeResponseDto registerAttendee(@Valid SignupAttendeeRequestDto request);
 
-	private final AttendeeRepository attendeeRepository;
-	private final AdminRepository adminRepository;
-	private final RecruiterRepository recruiterRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtProvider jwtProvider;
-	private final RefreshTokenRepository refreshTokenRepository;
+	TokenResponseDto loginAsAttendee(String email, String password);
 
-	@Transactional
-	public SignupAttendeeResponseDto registerAttendee(SignupAttendeeRequestDto request) {
-
-		if (attendeeRepository.findByEmail(request.email()).isPresent()) {
-			throw new DuplicateEmailException();
-		}
-
-		Attendee attendee = Attendee.of(
-			request.email(),
-			encodePassword(request.password()),
-			request.name(),
-			request.phone());
-
-		try {
-			attendeeRepository.save(attendee);
-		} catch (DataIntegrityViolationException e) {
-			throw new RuntimeException("Database error: Failed to save attendee.");
-		}
-
-		return SignupAttendeeResponseDto.from(attendee);
-	}
-
-	@Transactional
-	public TokenResponseDto loginAsAttendee(String email, String rawPassword) {
-		Attendee attendee = findAttendeeWithEmail(email);
-
-		if (!passwordEncoder.matches(rawPassword, attendee.getPassword())) {
-			throw new InvalidPasswordException();
-		}
-
-		return jwtProvider.generateToken(new CustomUserDetails(attendee));
-	}
-
-	@Transactional
-	public TokenResponseDto loginAsAdminOrRecruiter(String authCode) {
-		return adminRepository.findByAdminAuthCode(authCode)
-			.map(admin -> jwtProvider.generateToken(new CustomUserDetails(admin)))
-			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode)
-				.map(recruiter -> jwtProvider.generateToken(new CustomUserDetails(recruiter))))
-			.orElseThrow(InvalidAuthCodeException::new);
-	}
-
-	@Transactional(readOnly = true)
-	private Attendee findAttendeeWithEmail(String email) {
-		return attendeeRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
-	}
-
-	@Transactional
-	public void logout(String token) {
-		if (token == null || token.isBlank()) {
-			throw new IllegalArgumentException("Token must be provided for logout.");
-		}
-		refreshTokenRepository.delete(token);
-	}
-
-	// 로그인된 유저객체 가져오기
-	@Transactional(readOnly = true)
-	public User getCurrentUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null || !authentication.isAuthenticated()) {
-			throw new IllegalStateException("No authenticated user found.");
-		}
-
-		Object principal = authentication.getPrincipal();
-		if (!(principal instanceof CustomUserDetails)) {
-			throw new IllegalStateException("Invalid authentication principal.");
-		}
-
-		CustomUserDetails userDetails = (CustomUserDetails)principal;
-		String identifier = userDetails.getUsername();
-
-		return attendeeRepository.findByEmail(identifier)
-			.map(attendee -> (User)attendee)
-			.or(() -> adminRepository.findByAdminAuthCode(identifier)
-				.map(admin -> (User)admin))
-			.or(() -> recruiterRepository.findByRecruiterAuthCode(identifier)
-				.map(recruiter -> (User)recruiter))
-			.orElseThrow(NotFoundUserException::new);
-	}
-
-	private String encodePassword(String rawPassword) {
-		return passwordEncoder.encode(rawPassword);
-	}
+	TokenResponseDto loginAsAdminOrRecruiter(String authCode);
 }

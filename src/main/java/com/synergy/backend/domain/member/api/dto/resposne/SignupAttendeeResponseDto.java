@@ -4,9 +4,9 @@ import com.synergy.backend.domain.member.entity.Attendee;
 
 public record SignupAttendeeResponseDto(
 	String name,
-	String phone
+	String email
 ) {
 	public static SignupAttendeeResponseDto from(Attendee attendee) {
-		return new SignupAttendeeResponseDto(attendee.getName(), attendee.getPhone());
+		return new SignupAttendeeResponseDto(attendee.getName(), attendee.getEmail());
 	}
 }
