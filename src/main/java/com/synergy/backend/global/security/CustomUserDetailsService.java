@@ -19,9 +19,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private final AttendeeRepository attendeeRepository;
 	private final RecruiterRepository recruiterRepository;
 
-	/**
-	 * Spring Security 기본 인증 방식 (JWT 없이 사용 가능)
-	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// Attendee의 경우 email로 조회

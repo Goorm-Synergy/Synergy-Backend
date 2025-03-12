@@ -60,7 +60,7 @@ public class Admin extends BaseEntity implements User {
 	private Set<Session> sessions = new HashSet<>();
 
 	@Builder
-	public Admin(String adminAuthCode) {
+	private Admin(String adminAuthCode) {
 		this.adminAuthCode = adminAuthCode;
 	}
 

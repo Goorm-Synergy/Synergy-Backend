@@ -101,7 +101,7 @@ public class Attendee extends BaseEntity implements User {
 	private Conference conference;
 
 	@Builder
-	public Attendee(String password, String name, String phone, String email) {
+	private Attendee(String password, String name, String phone, String email) {
 		this.password = password;
 		this.name = name;
 		this.phone = phone;

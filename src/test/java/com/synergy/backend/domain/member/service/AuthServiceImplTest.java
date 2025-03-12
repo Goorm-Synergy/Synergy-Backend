@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.member.service;
 
+import static com.synergy.backend.domain.member.entity.RoleType.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -105,8 +106,7 @@ class AuthServiceImplTest {
 		// Given
 		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
 		when(passwordEncoder.matches(requestDto.password(), mockAttendee.getPassword())).thenReturn(true);
-		when(jwtProvider.generateToken(any(CustomUserDetails.class))).thenReturn(
-			new TokenResponseDto("token", "UserA", "ATTENDEE"));
+		when(jwtProvider.generateToken(any(CustomUserDetails.class))).thenReturn(("token"));
 
 		// When
 		TokenResponseDto response = authService.loginAsAttendee(requestDto.email(), requestDto.password());
@@ -114,8 +114,8 @@ class AuthServiceImplTest {
 		// Then
 		assertNotNull(response);
 		assertEquals("token", response.accessToken());
-		assertEquals("UserA", response.username());
-		assertEquals("ATTENDEE", response.role());
+		assertEquals("UserA@example.com", response.identifier());
+		assertEquals(ATTENDEE.toString(), response.role());
 	}
 
 	@DisplayName("참가자 로그인 시 이메일이 존재하지 않으면 예외가 발생한다.")
@@ -147,7 +147,7 @@ class AuthServiceImplTest {
 		// Given
 		String authCode = "validAdminAuthCode";
 		Admin mockAdmin = Admin.of(authCode);
-		TokenResponseDto expectedToken = new TokenResponseDto("mocked-admin-token", authCode, "ADMIN");
+		String expectedToken = "mocked-admin-token";
 
 		when(adminRepository.findByAdminAuthCode(authCode)).thenReturn(Optional.of(mockAdmin));
 		when(jwtProvider.generateToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
@@ -158,7 +158,7 @@ class AuthServiceImplTest {
 		// Then
 		assertNotNull(response);
 		assertEquals("mocked-admin-token", response.accessToken());
-		assertEquals("ADMIN", response.role());
+		assertEquals(ADMIN.toString(), response.role());
 
 		verify(adminRepository).findByAdminAuthCode(authCode);
 		verify(jwtProvider).generateToken(any(CustomUserDetails.class));
@@ -173,7 +173,7 @@ class AuthServiceImplTest {
 		String authCode = "validRecruiterAuthCode";
 		Recruiter mockRecruiter = Recruiter.of(authCode);
 
-		TokenResponseDto expectedToken = new TokenResponseDto("mocked-recruiter-token", authCode, "RECRUITER");
+		String expectedToken = "mocked-recruiter-token";
 
 		when(adminRepository.findByAdminAuthCode(authCode)).thenReturn(Optional.empty()); // 관리자로 찾으면 없음
 		when(recruiterRepository.findByRecruiterAuthCode(authCode)).thenReturn(Optional.of(mockRecruiter));
@@ -185,7 +185,7 @@ class AuthServiceImplTest {
 		// Then
 		assertNotNull(response);
 		assertEquals("mocked-recruiter-token", response.accessToken());
-		assertEquals("RECRUITER", response.role());
+		assertEquals(RECRUITER.toString(), response.role());
 
 		verify(adminRepository).findByAdminAuthCode(authCode);
 		verify(recruiterRepository).findByRecruiterAuthCode(authCode);

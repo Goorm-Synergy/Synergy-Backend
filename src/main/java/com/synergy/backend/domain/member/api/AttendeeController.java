@@ -33,7 +33,7 @@ public class AttendeeController {
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody InterestRequestDto request) {
 
-		String username = userDetails.getUsername();
+		String username = userDetails.getIdentifier();
 		RoleType role = userDetails.getRole();
 
 		if (role != RoleType.ATTENDEE) {

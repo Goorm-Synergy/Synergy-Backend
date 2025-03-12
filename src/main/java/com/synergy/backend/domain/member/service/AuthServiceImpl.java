@@ -65,17 +65,24 @@ public class AuthServiceImpl implements AuthService {
 			throw new UnauthorizedException();
 		}
 
-		return jwtProvider.generateToken(new CustomUserDetails(attendee));
+		String token = jwtProvider.generateToken(new CustomUserDetails(attendee));
+
+		return new TokenResponseDto(token, attendee.getEmail(), attendee.getRole().toString());
 	}
 
 	@Transactional
 	@Override
 	public TokenResponseDto loginAsAdminOrRecruiter(String authCode) {
-		return adminRepository.findByAdminAuthCode(authCode)
-			.map(admin -> jwtProvider.generateToken(new CustomUserDetails(admin)))
-			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode)
-				.map(recruiter -> jwtProvider.generateToken(new CustomUserDetails(recruiter))))
+		User user = adminRepository.findByAdminAuthCode(authCode)
+			.map(User.class::cast)
+			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode).map(User.class::cast))
 			.orElseThrow(InvalidAuthCodeException::new);
+
+		CustomUserDetails userDetails = new CustomUserDetails(user);
+
+		String token = jwtProvider.generateToken(userDetails);
+
+		return new TokenResponseDto(token, authCode, user.getRole().toString());
 	}
 
 	@Transactional(readOnly = true)
@@ -104,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
 			throw new NotFoundUserException();
 		}
 
-		String identifier = userDetails.getUsername();
+		String identifier = userDetails.getIdentifier();
 
 		return attendeeRepository.findByEmail(identifier)
 			.map(User.class::cast)

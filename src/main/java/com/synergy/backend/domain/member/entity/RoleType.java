@@ -13,7 +13,8 @@ public enum RoleType implements GrantedAuthority {
 	ADMIN,
 	RECRUITER;
 
-	public String getRole() {
+	@Override
+	public String toString() {
 		return this.name();
 	}
 

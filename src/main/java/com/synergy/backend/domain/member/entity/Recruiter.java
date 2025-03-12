@@ -43,7 +43,7 @@ public class Recruiter extends BaseEntity implements User {
 	private Conference conference;
 
 	@Builder
-	public Recruiter(String recruiterAuthCode) {
+	private Recruiter(String recruiterAuthCode) {
 		this.recruiterAuthCode = recruiterAuthCode;
 	}
 

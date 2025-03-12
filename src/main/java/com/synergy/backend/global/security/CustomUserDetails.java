@@ -20,7 +20,7 @@ public class CustomUserDetails implements UserDetails {
 
 	private final Long id;
 	private final RoleType role;
-	private final String username;
+	private final String identifier;
 	private final String password;
 
 	public CustomUserDetails(User user) {
@@ -28,13 +28,13 @@ public class CustomUserDetails implements UserDetails {
 		this.role = user.getRole();
 
 		if (user instanceof Attendee attendee) {
-			this.username = attendee.getEmail();
+			this.identifier = attendee.getEmail();
 			this.password = attendee.getPassword();
 		} else if (user instanceof Admin admin) {
-			this.username = admin.getAdminAuthCode();
+			this.identifier = admin.getAdminAuthCode();
 			this.password = null;
 		} else if (user instanceof Recruiter recruiter) {
-			this.username = recruiter.getRecruiterAuthCode();
+			this.identifier = recruiter.getRecruiterAuthCode();
 			this.password = null;
 		} else {
 			throw new UnKnownUserTypeException();
@@ -47,13 +47,13 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	@Override
-	public String getUsername() {
-		return username;
+	public String getPassword() {
+		return password;
 	}
 
 	@Override
-	public String getPassword() {
-		return password;
+	public String getUsername() {
+		return identifier;
 	}
 
 	@Override
