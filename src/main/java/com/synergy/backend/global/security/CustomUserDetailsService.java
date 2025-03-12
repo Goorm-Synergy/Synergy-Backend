@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.synergy.backend.domain.member.entity.User;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -20,21 +21,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private final RecruiterRepository recruiterRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// Attendee의 경우 email로 조회
-		return attendeeRepository.findByEmail(username)
-			.map(CustomUserDetails::new)
-			.orElseGet(() ->
-				adminRepository.findByAdminAuthCode(username)
-					.map(CustomUserDetails::new)
-					.orElseGet(() ->
-						recruiterRepository.findByRecruiterAuthCode(username)
-							.map(CustomUserDetails::new)
-							.orElseThrow(() ->
-								new UsernameNotFoundException("User not found with identifier: " + username)
-							)
-					)
-			);
+	public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+		return attendeeRepository.findByEmail(identifier)
+			.map(this::createUserDetails)
+			.or(() -> adminRepository.findByAdminAuthCode(identifier).map(this::createUserDetails))
+			.or(() -> recruiterRepository.findByRecruiterAuthCode(identifier).map(this::createUserDetails))
+			.orElseThrow(() -> new UsernameNotFoundException("User not found with identifier: " + identifier));
+	}
+
+	private CustomUserDetails createUserDetails(User user) {
+		return new CustomUserDetails(user);
 	}
 
 }
