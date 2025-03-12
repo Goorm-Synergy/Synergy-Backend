@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.member.api.dto;
+package com.synergy.backend.domain.member.api.dto.resposne;
 
 import java.util.List;
 

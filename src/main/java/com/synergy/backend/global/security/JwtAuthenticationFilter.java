@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -44,15 +43,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String token = resolveToken(request);
 
 		if (token != null && jwtProvider.validateToken(token)) {
-			String email = jwtProvider.getEmailFromToken(token);
+			String username = jwtProvider.getEmailOrAuthCodeFromToken(token);
 			RoleType role = jwtProvider.getRoleFromToken(token);
 
-			log.info("email: {}", email);
+			log.info("email: {}", username);
 			log.info("role: {}", role);
 
-			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-			Authentication authentication =
+			UsernamePasswordAuthenticationToken authentication =
 				new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);

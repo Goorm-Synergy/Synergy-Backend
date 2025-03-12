@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,14 +42,14 @@ public class Recruiter extends BaseEntity implements User {
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
 
-	public static Recruiter of(String name, String email, String encodedPassword, String company,
-		String responsibility) {
+	@Builder
+	public Recruiter(String recruiterAuthCode) {
+		this.recruiterAuthCode = recruiterAuthCode;
+	}
+
+	public static Recruiter of(String recruiterAuthCode) {
 		return Recruiter.builder()
-			.email(email)
-			.password(encodedPassword)
-			.name(name)
-			.company(company)
-			.responsibility(responsibility)
+			.recruiterAuthCode(recruiterAuthCode)
 			.build();
 	}
 

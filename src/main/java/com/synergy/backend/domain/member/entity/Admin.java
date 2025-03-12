@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -58,6 +59,17 @@ public class Admin extends BaseEntity implements User {
 	)
 	private Set<Session> sessions = new HashSet<>();
 
+	@Builder
+	public Admin(String adminAuthCode) {
+		this.adminAuthCode = adminAuthCode;
+	}
+
+	public static Admin of(String adminAuthCode) {
+		return Admin.builder()
+			.adminAuthCode(adminAuthCode)
+			.build();
+	}
+
 	@Override
 	public RoleType getRole() {
 		return RoleType.ADMIN;
@@ -76,19 +88,5 @@ public class Admin extends BaseEntity implements User {
 	public void addConference(Conference conference) {
 		this.conferences.add(conference);
 		conference.getAdmins().add(this);
-	}
-
-	public Admin(String email, String password, String name) {
-		super(email, password, name, RoleType.ADMIN);
-	}
-
-	public static Admin of(String email, String encodedPassword, String name, String assignedAdminId) {
-		return Admin.builder()
-			.email(email)
-			.password(encodedPassword)
-			.name(name)
-			.assignedAdminId(assignedAdminId)
-			.roleType(RoleType.ADMIN)
-			.build();
 	}
 }

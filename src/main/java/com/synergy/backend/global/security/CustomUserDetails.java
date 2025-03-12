@@ -1,43 +1,57 @@
 package com.synergy.backend.global.security;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.synergy.backend.domain.member.entity.Member;
+import com.synergy.backend.domain.member.entity.Admin;
+import com.synergy.backend.domain.member.entity.Attendee;
+import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.domain.member.entity.User;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
-public class CustomUserDetails<T extends Member> implements UserDetails {
-
-	private final Member member;
+public class CustomUserDetails implements UserDetails {
+	private final Long id;
 	private final RoleType role;
+	private final String username;
+	private final String password;
 
-	public CustomUserDetails(Member member) {
-		this.member = member;
-		this.role = RoleType.valueOf(member.getClass().getSimpleName().toUpperCase());
-	}
+	public CustomUserDetails(User user) {
+		this.id = user.getId();
+		this.role = user.getRole();
 
-
-	@Override
-	public String getUsername() {
-		return member.getEmail();
-	}
-
-	@Override
-	public String getPassword() {
-		return member.getPassword();
+		if (user instanceof Attendee attendee) {
+			this.username = attendee.getEmail();
+			this.password = attendee.getPassword();
+		} else if (user instanceof Admin admin){
+			this.username = admin.getAdminAuthCode();
+			this.password = null;
+		} else if (user instanceof Recruiter recruiter) {
+			this.username = recruiter.getRecruiterAuthCode();
+			this.password = null;
+		} else {
+			throw new IllegalArgumentException("Unknown user type");
+		}
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(() -> "ROLE_" + role.getRole());
+		return Collections.singleton(role);
+	}
+
+	@Override
+	public String getUsername() {
+		return username;
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
 	}
 
 	@Override

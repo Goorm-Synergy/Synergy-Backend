@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.member.api.dto;
+package com.synergy.backend.domain.member.api.dto.request;
 
 public record SignupAttendeeRequestDto(
 	String name,

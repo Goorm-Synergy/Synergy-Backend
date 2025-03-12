@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -98,6 +99,14 @@ public class Attendee extends BaseEntity implements User {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
+
+	@Builder
+	public Attendee(String password, String name, String phone, String email) {
+		this.password = password;
+		this.name = name;
+		this.phone = phone;
+		this.email = email;
+	}
 
 	public static Attendee of(String email, String encodedPassword, String name, String phone) {
 		return Attendee.builder()

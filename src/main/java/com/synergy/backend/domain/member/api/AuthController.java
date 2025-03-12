@@ -5,12 +5,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.synergy.backend.domain.member.api.dto.LoginAdminRequestDto;
-import com.synergy.backend.domain.member.api.dto.LoginRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupAttendeeRequestDto;
-import com.synergy.backend.domain.member.api.dto.SignupAttendeeResponseDto;
-import com.synergy.backend.domain.member.api.dto.TokenResponseDto;
-import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.domain.member.api.dto.request.LoginAdminRequestDto;
+import com.synergy.backend.domain.member.api.dto.request.LoginAttendeeRequestDto;
+import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
+import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
 import com.synergy.backend.domain.member.service.AuthService;
 import com.synergy.backend.global.common.ApiResponse;
 
@@ -25,18 +23,17 @@ public class AuthController {
 
 	@PostMapping("/attendee/signup")
 	public ApiResponse<?> registerAttendee(@RequestBody SignupAttendeeRequestDto request) {
-		SignupAttendeeResponseDto response = authService.registerAttendee(request);
-		return ApiResponse.ok(response, 201);
+		return ApiResponse.ok(authService.registerAttendee(request), 201);
 	}
 
 	@PostMapping("/attendee/login")
-	public ApiResponse<TokenResponseDto> loginAttendee(@RequestBody LoginRequestDto request) {
-		return ApiResponse.ok(authService.loginAttendee(request, RoleType.ATTENDEE), 200);
+	public ApiResponse<TokenResponseDto> loginAttendee(@RequestBody LoginAttendeeRequestDto request) {
+		return ApiResponse.ok(authService.loginAsAttendee(request.email(), request.password()), 200);
 	}
 
 	@PostMapping("/admin/login")
 	public ApiResponse<TokenResponseDto> loginAdmin(@RequestBody LoginAdminRequestDto request) {
-		return ApiResponse.ok(authService.loginAdminOrRecruiter(request), 200);
+		return ApiResponse.ok(authService.loginAsAdminOrRecruiter(request.adminAuthCode()), 200);
 	}
 
 }
