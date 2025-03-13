@@ -9,6 +9,7 @@ import com.synergy.backend.domain.member.entity.User;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
+import com.synergy.backend.global.security.exception.UnKnownUserTypeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			.map(this::createUserDetails)
 			.or(() -> adminRepository.findByAdminAuthCode(identifier).map(this::createUserDetails))
 			.or(() -> recruiterRepository.findByRecruiterAuthCode(identifier).map(this::createUserDetails))
-			.orElseThrow(() -> new UsernameNotFoundException("User not found with identifier: " + identifier));
+			.orElseThrow(UnKnownUserTypeException::new);
 	}
 
 	private CustomUserDetails createUserDetails(User user) {
