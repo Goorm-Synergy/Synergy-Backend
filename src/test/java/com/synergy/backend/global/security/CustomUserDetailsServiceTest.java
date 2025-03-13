@@ -16,9 +16,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
+import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
+import com.synergy.backend.global.security.exception.UnKnownUserTypeException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -106,7 +108,7 @@ class CustomUserDetailsServiceTest {
 		when(recruiterRepository.findByRecruiterAuthCode(unknownIdentifier)).thenReturn(Optional.empty());
 
 		// When & Then
-		assertThrows(UsernameNotFoundException.class, () -> userDetailsService.loadUserByUsername(unknownIdentifier));
+		assertThrows(UnKnownUserTypeException.class, () -> userDetailsService.loadUserByUsername(unknownIdentifier));
 
 		verify(attendeeRepository).findByEmail(unknownIdentifier);
 		verify(adminRepository).findByAdminAuthCode(unknownIdentifier);

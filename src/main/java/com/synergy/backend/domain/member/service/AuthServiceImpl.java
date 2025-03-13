@@ -18,7 +18,6 @@ import com.synergy.backend.domain.member.exception.UnauthorizedException;
 import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
-import com.synergy.backend.global.redis.RefreshTokenRepository;
 import com.synergy.backend.global.security.CustomUserDetails;
 import com.synergy.backend.global.security.JwtProvider;
 
@@ -35,7 +34,6 @@ public class AuthServiceImpl implements AuthService {
 	private final RecruiterRepository recruiterRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
-	private final RefreshTokenRepository refreshTokenRepository;
 
 	@Transactional
 	@Override
@@ -95,7 +93,6 @@ public class AuthServiceImpl implements AuthService {
 		if (token == null || token.isBlank()) {
 			throw new IllegalArgumentException("Token must be provided for logout.");
 		}
-		refreshTokenRepository.delete(token);
 	}
 
 	// 로그인된 유저객체 가져오기
