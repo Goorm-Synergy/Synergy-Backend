@@ -33,7 +33,7 @@ public class Point extends BaseEntity {
 
 	private Long boothId;  // 부스 방문 시 부스 ID 저장
 	private Long sessionId; // 세션 참여 시 세션 ID 저장
-	private Long sessionQnAId; // 세션 Q&A 참여 시 세션 Q&A ID 저장
+	// private Long sessionQnAId; // 세션 Q&A 참여 시 세션 Q&A ID 저장
 	private Long recruiterId; // 채용 담당자 미팅 시 담당자 ID 저장
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -45,7 +45,9 @@ public class Point extends BaseEntity {
 		this.pointType = pointType;
 		this.boothId = boothId;
 		this.sessionId = sessionId;
-		this.sessionQnAId = sessionQnAId;
+		// this.sessionQnAId = sessionQnAId;
 		this.recruiterId = recruiterId;
 	}
+
+
 }
