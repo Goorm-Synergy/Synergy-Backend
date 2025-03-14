@@ -49,5 +49,18 @@ public class Point extends BaseEntity {
 		this.recruiterId = recruiterId;
 	}
 
+	public void assignAttendee(Attendee attendee) {
+		this.attendee = attendee;
+	}
+
+	public void updateBoothId(Long boothId) {
+		this.boothId = boothId;
+	}
+	public void updateSessionId(Long sessionId) {
+		this.sessionId = sessionId;
+	}
+	public void updateRecruiterId(Long recruiterId) {
+		this.recruiterId = recruiterId;
+	}
 
 }
