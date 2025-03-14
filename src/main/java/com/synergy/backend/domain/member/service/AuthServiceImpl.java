@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
 		attendeeRepository.save(attendee);
 
 		// 회원가입 시 포인트 적립
-		pointService.addPoint(attendee.getId(), PointType.SIGN_UP, null);
+		pointService.addSignupPoint(attendee.getId());
 
 		return SignupAttendeeResponseDto.from(attendee);
 	}

@@ -4,11 +4,20 @@ import java.util.List;
 
 import com.synergy.backend.domain.point.api.dto.PointResponseDto;
 import com.synergy.backend.domain.point.entity.Point;
-import com.synergy.backend.domain.point.entity.PointType;
 
 public interface PointService {
 
 	List<Point> getPointHistory(Long attendeeId);
+
 	PointResponseDto getPointResponse(Long pointId);
-	void addPoint(Long attendeeId, PointType pointType, Long id);
+
+	void addBoothPoint(Long attendeeId, Long boothId);
+
+	void addSessionAttendPoint(Long attendeeId, Long sessionId);
+
+	void addSessionQnaPoint(Long attendeeId, Long sessionId);
+
+	void addRecruiterMeetingPoint(Long attendeeId, Long recruiterId);
+
+	void addSignupPoint(Long attendeeId);
 }

@@ -32,8 +32,8 @@ public class PointServiceImpl implements PointService {
 	private final SessionRepository sessionRepository;
 	private final RecruiterRepository recruiterRepository;
 
-	@Override
 	@Transactional(readOnly = true)
+	@Override
 	public List<Point> getPointHistory(Long attendeeId) {
 		return pointRepository.findByAttendeeIdOrderByCreatedTimeDesc(attendeeId);
 	}
@@ -82,7 +82,36 @@ public class PointServiceImpl implements PointService {
 		return PointResponseDto.from(point, details);
 	}
 
+	@Transactional
 	@Override
+	public void addBoothPoint(Long attendeeId, Long boothId) {
+		addPoint(attendeeId, PointType.BOOTH_VISIT, boothId);
+	}
+
+	@Transactional
+	@Override
+	public void addSessionAttendPoint(Long attendeeId, Long sessionId) {
+		addPoint(attendeeId, PointType.SESSION_ATTEND, sessionId);
+	}
+
+	@Transactional
+	@Override
+	public void addSessionQnaPoint(Long attendeeId, Long sessionId) {
+		addPoint(attendeeId, PointType.SESSION_QNA, sessionId);
+	}
+
+	@Transactional
+	@Override
+	public void addRecruiterMeetingPoint(Long attendeeId, Long recruiterId) {
+		addPoint(attendeeId, PointType.RECRUITER_MEETING, recruiterId);
+	}
+
+	@Transactional
+	@Override
+	public void addSignupPoint(Long attendeeId) {
+		addPoint(attendeeId, PointType.SIGN_UP, null);
+	}
+
 	public void addPoint(Long attendeeId, PointType pointType, Long detailId) {
 		Attendee attendee = attendeeRepository.findById(attendeeId).orElseThrow(UnKnownUserTypeException::new);
 
@@ -112,7 +141,7 @@ public class PointServiceImpl implements PointService {
 		// Attendee의 총 포인트 업데이트
 		attendee.addPoints(pointValue);
 
-		// Attendee 업데이트 (트랜잭션 내에서 변경 감지가 이루어지므로 save() 생략 가능)
+		// Attendee 업데이트
 		attendeeRepository.save(attendee);
 
 	}
