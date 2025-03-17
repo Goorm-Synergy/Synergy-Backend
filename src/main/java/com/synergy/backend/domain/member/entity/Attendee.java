@@ -74,7 +74,8 @@ public class Attendee extends BaseEntity implements User {
 	private PositionType desiredPosition;
 
 	// 경력
-	private String yearsOfExperience;
+	@Enumerated(EnumType.STRING)
+	private ExperienceLevelType experienceLevel;
 
 	// 참가자-보유기술
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
