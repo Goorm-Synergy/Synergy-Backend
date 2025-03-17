@@ -34,7 +34,7 @@ public class AttendeeController {
 			throw new AccessDeniedException();
 		}
 
-		return ApiResponse.ok(InterestResponseDto.from(attendeeService.addInterests(identifier, request.interestIds())),
+		return ApiResponse.ok(InterestResponseDto.from(attendeeService.addInterests(identifier, request.interests())),
 			200);
 	}
 }

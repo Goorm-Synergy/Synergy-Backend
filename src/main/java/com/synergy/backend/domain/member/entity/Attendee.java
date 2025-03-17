@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.synergy.backend.domain.conference.entity.Conference;
-import com.synergy.backend.domain.interest.entity.MemberInterest;
+import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 import com.synergy.backend.domain.member.Job;
 import com.synergy.backend.domain.member.Occupation;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
@@ -23,6 +23,7 @@ import com.synergy.backend.global.common.BaseEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -107,12 +108,15 @@ public class Attendee extends BaseEntity implements User {
 	private ExperienceLevelType experienceLevel;
 
 	// 희망 근무 지역
+	@ElementCollection(targetClass = RegionType.class)
+	@Enumerated(EnumType.STRING)
 	private Set<RegionType> desiredWorkRegion = new HashSet<>();
 
 	// 자기소개서
 	private String selfIntroduction;
 
 	// 증명사진
+	private String profilePhotoUrl;
 
 	// 경험 및 기타 정보
 	private String information;
@@ -131,7 +135,7 @@ public class Attendee extends BaseEntity implements User {
 
 	// 참가자-관심분야
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<MemberInterest> memberInterests;
+	private Set<AttendeeInterest> attendeeInterests;
 
 	// 컨퍼런스
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -147,7 +151,12 @@ public class Attendee extends BaseEntity implements User {
 	}
 
 	public static Attendee of(String email, String encodedPassword, String name, String phone) {
-		return Attendee.builder().email(email).password(encodedPassword).name(name).phone(phone).build();
+		return Attendee.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.phone(phone)
+			.build();
 	}
 
 	@Override

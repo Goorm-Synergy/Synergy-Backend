@@ -1,13 +1,15 @@
 package com.synergy.backend.domain.member.service;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 import com.synergy.backend.domain.interest.entity.Interest;
-import com.synergy.backend.domain.interest.entity.MemberInterest;
+import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
 import com.synergy.backend.domain.interest.repository.MemberInterestRepository;
 import com.synergy.backend.domain.member.entity.Attendee;
@@ -26,22 +28,18 @@ public class AttendeeServiceImpl implements AttendeeService {
 
 	@Transactional
 	@Override
-	public Set<Interest> addInterests(String email, Set<Long> interestIds) {
-		Attendee managedAttendee = findAttendeeByEmail(email);
+	public Set<Interest> addInterests(String email, Set<String> interestNames) {
+		Attendee attendee = findAttendeeByEmail(email);
+		Set<Interest> interestsToAdd = getValidInterests(interestNames, attendee);
 
-		Set<Long> existingInterestIds = getExistingInterestIds(managedAttendee);
-		Set<Interest> newInterests = getNewInterests(interestIds, existingInterestIds);
-
-		if (newInterests.isEmpty()) {
-			return managedAttendee.getMemberInterests()
-				.stream()
-				.map(MemberInterest::getInterest)
-				.collect(Collectors.toSet());
+		// 추가할 관심 분야가 없으면 현재 등록된 관심 분야 반환
+		if (interestsToAdd.isEmpty()) {
+			return getCurrentInterests(attendee);
 		}
 
-		saveNewMemberInterests(managedAttendee, newInterests);
-
-		return newInterests;
+		// 신규 관심 분야를 회원에 연결
+		saveNewMemberInterests(attendee, interestsToAdd);
+		return interestsToAdd;
 	}
 
 	private Attendee findAttendeeByEmail(String email) {
@@ -49,26 +47,53 @@ public class AttendeeServiceImpl implements AttendeeService {
 			.orElseThrow(NotFoundUserException::new);
 	}
 
-	private Set<Long> getExistingInterestIds(Attendee attendee) {
-		return attendee.getMemberInterests()
-			.stream()
-			.map(memberInterest -> memberInterest.getInterest().getId())
+	private Set<Interest> getValidInterests(Set<String> interestNames, Attendee attendee) {
+		Set<Interest> interestsFound = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
+
+		// 존재하지 않는 관심사 검증
+		validateInterestNames(interestNames, interestsFound);
+
+		// 기존 등록된 관심사 필터링
+		Set<String> existingInterestNames = getCurrentInterestNames(attendee);
+		return interestsFound.stream()
+			.filter(interest -> !existingInterestNames.contains(interest.getName()))
 			.collect(Collectors.toSet());
 	}
 
-	private Set<Interest> getNewInterests(Set<Long> interestIds, Set<Long> existingInterestIds) {
-		return interestRepository.findAllById(interestIds)
+	private void validateInterestNames(Set<String> requestedNames, Set<Interest> foundInterests) {
+		if (requestedNames.size() != foundInterests.size()) {
+			Set<String> foundNames = foundInterests.stream()
+				.map(Interest::getName)
+				.collect(Collectors.toSet());
+
+			Set<String> notFoundNames = requestedNames.stream()
+				.filter(name -> !foundNames.contains(name))
+				.collect(Collectors.toSet());
+
+			throw new NotFoundInterestException(String.join(", ", notFoundNames));
+		}
+	}
+
+	private Set<Interest> getCurrentInterests(Attendee attendee) {
+		return attendee.getAttendeeInterests()
 			.stream()
-			.filter(interest -> !existingInterestIds.contains(interest.getId()))
+			.map(AttendeeInterest::getInterest)
+			.collect(Collectors.toSet());
+	}
+
+	private Set<String> getCurrentInterestNames(Attendee attendee) {
+		return attendee.getAttendeeInterests()
+			.stream()
+			.map(attendeeInterest -> attendeeInterest.getInterest().getName())
 			.collect(Collectors.toSet());
 	}
 
 	private void saveNewMemberInterests(Attendee attendee, Set<Interest> newInterests) {
-		Set<MemberInterest> memberInterestList = newInterests.stream()
-			.map(interest -> new MemberInterest(attendee, interest))
+		Set<AttendeeInterest> attendeeInterestSet = newInterests.stream()
+			.map(interest -> new AttendeeInterest(attendee, interest))
 			.collect(Collectors.toSet());
 
-		memberInterestRepository.saveAll(memberInterestList);
-		attendee.getMemberInterests().addAll(memberInterestList);
+		memberInterestRepository.saveAll(attendeeInterestSet);
+		attendee.getAttendeeInterests().addAll(attendeeInterestSet);
 	}
 }

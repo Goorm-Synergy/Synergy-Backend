@@ -1,10 +1,11 @@
 package com.synergy.backend.domain.member.entity.details;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum EducationLevelType {
 	HIGH_SCHOOL("고등학교 졸업"),
 	ASSOCIATE("2~3년제 졸업"),
