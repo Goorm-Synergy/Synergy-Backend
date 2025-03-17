@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RecruiterServiceImpl implements RecruiterService {
 
-    private final RecruiterRepository recruiterRepository;
     private final AttendeeRepository attendeeRepository;
 
 
@@ -26,8 +28,12 @@ public class RecruiterServiceImpl implements RecruiterService {
         if (!attendee.isHiringInterested()) {
             throw new ForbiddenHiringUserException();
         }
+        // 해당 사용자의 기술 스택 가져오기
+        Set<String> techStacks = attendee.getMemberTechStacks().stream()
+                .map(mts -> mts.getTechStack().getName())
+                .collect(Collectors.toSet());
 
-        return AttendeeDetailResponseDto.of(attendee);
+        return AttendeeDetailResponseDto.of(attendee, techStacks);
     }
 
     @Override
