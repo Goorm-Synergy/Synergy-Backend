@@ -77,6 +77,10 @@ public class Attendee extends BaseEntity implements User {
 	@Enumerated(EnumType.STRING)
 	private EducationLevelType educationLevel;
 
+	// 연령대
+	@Enumerated(EnumType.STRING)
+	private AgeGroup ageGroup;
+
 	// 경력
 	@Enumerated(EnumType.STRING)
 	private ExperienceLevelType experienceLevel;
@@ -115,12 +119,7 @@ public class Attendee extends BaseEntity implements User {
 	}
 
 	public static Attendee of(String email, String encodedPassword, String name, String phone) {
-		return Attendee.builder()
-			.email(email)
-			.password(encodedPassword)
-			.name(name)
-			.phone(phone)
-			.build();
+		return Attendee.builder().email(email).password(encodedPassword).name(name).phone(phone).build();
 	}
 
 	@Override
