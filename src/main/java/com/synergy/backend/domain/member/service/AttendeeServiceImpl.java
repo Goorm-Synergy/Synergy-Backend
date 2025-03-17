@@ -1,7 +1,9 @@
 package com.synergy.backend.domain.member.service;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -10,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 import com.synergy.backend.domain.interest.entity.Interest;
 import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
+import com.synergy.backend.domain.interest.repository.AttendeeInterestRepository;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
-import com.synergy.backend.domain.interest.repository.MemberInterestRepository;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -24,22 +26,31 @@ public class AttendeeServiceImpl implements AttendeeService {
 
 	private final AttendeeRepository attendeeRepository;
 	private final InterestRepository interestRepository;
-	private final MemberInterestRepository memberInterestRepository;
+	private final AttendeeInterestRepository attendeeInterestRepository;
 
 	@Transactional
 	@Override
-	public Set<Interest> addInterests(String email, Set<String> interestNames) {
+	public Set<Interest> addInterests(String email, Set<Integer> interestCodes) {
 		Attendee attendee = findAttendeeByEmail(email);
-		Set<Interest> interestsToAdd = getValidInterests(interestNames, attendee);
 
-		// 추가할 관심 분야가 없으면 현재 등록된 관심 분야 반환
-		if (interestsToAdd.isEmpty()) {
-			return getCurrentInterests(attendee);
+		// 요청된 숫자 코드에 해당하는 Interest 엔티티 조회
+		Set<Interest> interestsToAdd = getValidInterests(interestCodes);
+
+		// 현재 등록된 관심사 가져오기
+		Set<Interest> currentInterests = getCurrentInterests(attendee);
+
+		// 현재 등록된 관심사를 제외한 새로운 관심사 필터링
+		Set<Interest> newInterests = interestsToAdd.stream()
+			.filter(interest -> !currentInterests.contains(interest))
+			.collect(Collectors.toSet());
+
+		// 새로운 관심사가 있다면 저장
+		if (!newInterests.isEmpty()) {
+			saveNewMemberInterests(attendee, newInterests);
 		}
 
-		// 신규 관심 분야를 회원에 연결
-		saveNewMemberInterests(attendee, interestsToAdd);
-		return interestsToAdd;
+		// 최종 등록된 관심사 반환
+		return getCurrentInterests(attendee);
 	}
 
 	private Attendee findAttendeeByEmail(String email) {
@@ -47,31 +58,21 @@ public class AttendeeServiceImpl implements AttendeeService {
 			.orElseThrow(NotFoundUserException::new);
 	}
 
-	private Set<Interest> getValidInterests(Set<String> interestNames, Attendee attendee) {
-		Set<Interest> interestsFound = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
+	private Set<Interest> getValidInterests(Set<Integer> interestCodes) {
+		Map<Integer, Interest> interestMap = interestRepository.findAllByCodeIn(interestCodes)
+			.stream()
+			.collect(Collectors.toMap(Interest::getCode, Function.identity()));
 
-		// 존재하지 않는 관심사 검증
-		validateInterestNames(interestNames, interestsFound);
-
-		// 기존 등록된 관심사 필터링
-		Set<String> existingInterestNames = getCurrentInterestNames(attendee);
-		return interestsFound.stream()
-			.filter(interest -> !existingInterestNames.contains(interest.getName()))
-			.collect(Collectors.toSet());
-	}
-
-	private void validateInterestNames(Set<String> requestedNames, Set<Interest> foundInterests) {
-		if (requestedNames.size() != foundInterests.size()) {
-			Set<String> foundNames = foundInterests.stream()
-				.map(Interest::getName)
+		// 요청된 코드 중 존재하지 않는 값 찾기
+		if (interestMap.size() != interestCodes.size()) {
+			Set<Integer> notFoundCodes = interestCodes.stream()
+				.filter(code -> !interestMap.containsKey(code))
 				.collect(Collectors.toSet());
 
-			Set<String> notFoundNames = requestedNames.stream()
-				.filter(name -> !foundNames.contains(name))
-				.collect(Collectors.toSet());
-
-			throw new NotFoundInterestException(String.join(", ", notFoundNames));
+			throw new NotFoundInterestException("Not found interests: " + notFoundCodes);
 		}
+
+		return new HashSet<>(interestMap.values());
 	}
 
 	private Set<Interest> getCurrentInterests(Attendee attendee) {
@@ -81,19 +82,12 @@ public class AttendeeServiceImpl implements AttendeeService {
 			.collect(Collectors.toSet());
 	}
 
-	private Set<String> getCurrentInterestNames(Attendee attendee) {
-		return attendee.getAttendeeInterests()
-			.stream()
-			.map(attendeeInterest -> attendeeInterest.getInterest().getName())
-			.collect(Collectors.toSet());
-	}
-
 	private void saveNewMemberInterests(Attendee attendee, Set<Interest> newInterests) {
-		Set<AttendeeInterest> attendeeInterestSet = newInterests.stream()
+		Set<AttendeeInterest> newAttendeeInterests = newInterests.stream()
 			.map(interest -> new AttendeeInterest(attendee, interest))
 			.collect(Collectors.toSet());
 
-		memberInterestRepository.saveAll(attendeeInterestSet);
-		attendee.getAttendeeInterests().addAll(attendeeInterestSet);
+		attendeeInterestRepository.saveAll(newAttendeeInterests);
+		attendee.getAttendeeInterests().addAll(newAttendeeInterests);
 	}
 }

@@ -7,5 +7,5 @@ import com.synergy.backend.domain.member.entity.Attendee;
 
 public interface AttendeeService {
 
-	Set<Interest> addInterests(String email, Set<String> interests);
+	Set<Interest> addInterests(String email, Set<Integer> interestCodes);
 }

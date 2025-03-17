@@ -20,4 +20,7 @@ public class Interest {
 
 	@Column(nullable = false, unique = true)
 	private String name;
+
+	@Column(nullable = false, unique = true)
+	private Integer code;
 }

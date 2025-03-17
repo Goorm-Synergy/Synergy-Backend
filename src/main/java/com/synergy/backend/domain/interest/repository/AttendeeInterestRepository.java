@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 
-public interface MemberInterestRepository extends JpaRepository<AttendeeInterest, Long> {
+public interface AttendeeInterestRepository extends JpaRepository<AttendeeInterest, Long> {
 }

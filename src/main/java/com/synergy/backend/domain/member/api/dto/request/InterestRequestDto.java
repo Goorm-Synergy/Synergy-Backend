@@ -4,5 +4,5 @@ import java.util.Set;
 
 import com.synergy.backend.domain.interest.entity.Interest;
 
-public record InterestRequestDto(Set<String> interests) {
+public record InterestRequestDto(Set<Integer> interestCodes) {
 }
