@@ -73,6 +73,10 @@ public class Attendee extends BaseEntity implements User {
 	@Enumerated(EnumType.STRING)
 	private PositionType desiredPosition;
 
+	// 학력
+	@Enumerated(EnumType.STRING)
+	private EducationLevelType educationLevel;
+
 	// 경력
 	@Enumerated(EnumType.STRING)
 	private ExperienceLevelType experienceLevel;
