@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.synergy.backend.domain.member.api.dto.request.InterestRequestDto;
+import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.InterestResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.JobInfoResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.exception.AccessDeniedException;
 import com.synergy.backend.domain.member.service.AttendeeServiceImpl;
@@ -24,7 +26,8 @@ public class AttendeeController {
 	private final AttendeeServiceImpl attendeeService;
 
 	@PatchMapping(path = "/interest")
-	public ApiResponse<InterestResponseDto> addUserInterest(@AuthenticationPrincipal CustomUserDetails userDetails,
+	public ApiResponse<InterestResponseDto> addUserInterest(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody InterestRequestDto request) {
 
 		String identifier = userDetails.getIdentifier();
@@ -37,4 +40,20 @@ public class AttendeeController {
 		return ApiResponse.ok(InterestResponseDto.from(attendeeService.addInterests(identifier, request.interestCodes())),
 			200);
 	}
+
+	@PatchMapping(path = "/job-info")
+	public ApiResponse<JobInfoResponseDto> addUserInterest(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestBody JobInfoRequestDto request) {
+
+		String identifier = userDetails.getIdentifier();
+		RoleType role = userDetails.getRole();
+
+		if (role != RoleType.ATTENDEE) {
+			throw new AccessDeniedException();
+		}
+		attendeeService.addJobInfo(identifier, request);
+		return ApiResponse.ok(null, 200);
+	}
+
 }

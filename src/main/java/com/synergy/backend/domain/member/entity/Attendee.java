@@ -7,8 +7,8 @@ import java.util.Set;
 
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
-import com.synergy.backend.domain.job.Job;
-import com.synergy.backend.domain.job.Occupation;
+import com.synergy.backend.domain.job.JobCategory;
+import com.synergy.backend.domain.job.OccupationCategory;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
 import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
 import com.synergy.backend.domain.member.entity.details.EducationLevelType;
@@ -76,12 +76,12 @@ public class Attendee extends BaseEntity implements User {
 	// 현재 직업
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "current_job_id")
-	private Job currentJob;
+	private JobCategory currentJobCategory;
 
 	// 현재 직무
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "current_occupation_id")
-	private Occupation currentOccupation;
+	private OccupationCategory currentOccupationCategory;
 
 	// 채용 희망여부
 	private boolean isHiringInterested;
@@ -89,7 +89,7 @@ public class Attendee extends BaseEntity implements User {
 	// 희망 직무
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "desired_occupation_id")
-	private Occupation desiredOccupation;
+	private OccupationCategory desiredOccupationCategory;
 
 	// 학력
 	@Enumerated(EnumType.STRING)
