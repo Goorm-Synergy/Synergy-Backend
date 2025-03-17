@@ -14,15 +14,15 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class MemberTechStack {
+public class AttendeeTechStack {
 
 	@Id
-	@Column(name = "member_tech_stack_id")
+	@Column(name = "attendee_tech_stack_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "attendee_id", nullable = false)
 	private Attendee attendee;
 
 	@ManyToOne(fetch = FetchType.LAZY)

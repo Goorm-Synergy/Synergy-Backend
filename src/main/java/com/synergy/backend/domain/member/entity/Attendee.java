@@ -18,7 +18,7 @@ import com.synergy.backend.domain.member.entity.details.PreferredCorporateCultur
 import com.synergy.backend.domain.member.entity.details.RegionType;
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.point.entity.Point;
-import com.synergy.backend.domain.techstack.entity.MemberTechStack;
+import com.synergy.backend.domain.techstack.entity.AttendeeTechStack;
 import com.synergy.backend.global.common.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -101,7 +101,7 @@ public class Attendee extends BaseEntity implements User {
 
 	// 참가자-보유기술
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<MemberTechStack> memberTechStacks;
+	private Set<AttendeeTechStack> attendeeTechStacks;
 
 	// 경력
 	@Enumerated(EnumType.STRING)
