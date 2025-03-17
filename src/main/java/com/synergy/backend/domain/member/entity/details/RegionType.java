@@ -8,24 +8,19 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RegionType {
-	SEOUL(11, "서울"),
-	GYEONGGI(41, "경기"),
-	INCHEON(28, "인천"),
-	GANGWON(51, "강원"),
-	DAEJEON(30, "대전"),
-	SAEJONG(36, "세종"),
-	CHUNGNAM(44, "충남"),
-	CHUNGBUK(43, "충북"),
-	BUSAN(26, "부산"),
-	ULSAN(31, "울산"),
-	GYEONG_NAM(48, "경남"),
-	GYEONG_BUK(47, "경북"),
-	DAEGU(27, "대구"),
-	GWANGJU(29, "광주"),
-	JEONAM(46, "전남"),
-	JEONBUK(52, "전북"),
-	JEJU(50, "제주"),
-	ETC(99, "기타"); // 기타 지역
+	CAPITAL_AREA(11, "수도권 (서울특별시, 인천광역시, 경기도)"),
+	BUSAN(12, "부산광역시"),
+	DAEGU(13, "대구광역시"),
+	DAEJEON(14, "대전광역시"),
+	GWANGJU(15, "광주광역시"),
+	ULSAN(16, "울산광역시"),
+	SEJONG(17, "세종특별자치시"),
+	GANGWON(18, "강원권 (강원특별자치도)"),
+	CHUNGCHEONG(19, "충청권 (충청북도, 충청남도)"),
+	JEOLLA(20, "전라권 (전라북도, 전라남도)"),
+	GYEONGSANG(21, "경상권 (경상북도, 경상남도)"),
+	JEJU(22, "제주특별자치도"),
+	;
 
 	private final int code;
 	private final String description;
