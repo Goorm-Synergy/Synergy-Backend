@@ -17,13 +17,13 @@ import com.synergy.backend.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/interest")
+@RequestMapping("/api/v1/attendee/onboarding")
 @RequiredArgsConstructor
 public class AttendeeController {
 
 	private final AttendeeServiceImpl attendeeService;
 
-	@PatchMapping
+	@PatchMapping(path = "/interest")
 	public ApiResponse<InterestResponseDto> addUserInterest(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody InterestRequestDto request) {
 

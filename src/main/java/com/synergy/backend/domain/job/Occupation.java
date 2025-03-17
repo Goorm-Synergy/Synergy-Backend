@@ -1,9 +1,9 @@
-package com.synergy.backend.domain.member;
-
-import com.synergy.backend.domain.member.entity.details.OccupationType;
+package com.synergy.backend.domain.job;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -17,12 +17,13 @@ import lombok.NoArgsConstructor;
 public class Occupation {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@Column(nullable = false, unique = true)
 	private String name;
 
-	public OccupationType toEnum() {
-		return OccupationType.fromId(this.id);
-	}
+	@Column(nullable = false, unique = true)
+	private Integer code;
+
 }

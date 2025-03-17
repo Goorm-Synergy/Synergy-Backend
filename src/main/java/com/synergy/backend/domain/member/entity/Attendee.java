@@ -7,8 +7,8 @@ import java.util.Set;
 
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
-import com.synergy.backend.domain.member.Job;
-import com.synergy.backend.domain.member.Occupation;
+import com.synergy.backend.domain.job.Job;
+import com.synergy.backend.domain.job.Occupation;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
 import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
 import com.synergy.backend.domain.member.entity.details.EducationLevelType;

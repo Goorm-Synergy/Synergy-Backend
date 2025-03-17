@@ -1,9 +1,9 @@
-package com.synergy.backend.domain.member;
-
-import com.synergy.backend.domain.member.entity.details.JobType;
+package com.synergy.backend.domain.job;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,17 +17,19 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Job {
+
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@Column(nullable = false, unique = true)
 	private String name;
 
+	@Column(nullable = false, unique = true)
+	private Integer code;
+
 	@ManyToOne
 	@JoinColumn(name = "occupation_id", nullable = false)
-	private Occupation occupation; // 직무 테이블 참조
+	private Occupation occupation;
 
-	public JobType toEnum() {
-		return JobType.fromId(this.id);
-	}
 }
