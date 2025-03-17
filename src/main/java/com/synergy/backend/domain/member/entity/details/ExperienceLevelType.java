@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.member.entity;
+package com.synergy.backend.domain.member.entity.details;
 
 import lombok.Getter;
 

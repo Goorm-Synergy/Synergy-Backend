@@ -1,4 +1,4 @@
-package com.synergy.backend.domain.member.entity;
+package com.synergy.backend.domain.member.entity.details;
 
 public enum PositionType {
 	BACKEND_DEVELOPER,
