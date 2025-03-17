@@ -26,7 +26,7 @@ public class RecruiterController {
         if(role == RoleType.ATTENDEE) {
             throw new AccessDeniedException();
         }
-        return ApiResponse.ok(recruiterService.findAttendeeFrom(attendeeId), 200);
+        return ApiResponse.ok(recruiterService.findAttendeeFrom(identifier, attendeeId), 200);
     }
 
     @GetMapping
