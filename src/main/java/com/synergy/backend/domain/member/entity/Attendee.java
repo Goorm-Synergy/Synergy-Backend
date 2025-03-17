@@ -6,12 +6,14 @@ import java.util.Set;
 
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.interest.entity.MemberInterest;
+import com.synergy.backend.domain.member.Job;
+import com.synergy.backend.domain.member.Occupation;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
 import com.synergy.backend.domain.member.entity.details.EducationLevelType;
 import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
+import com.synergy.backend.domain.member.entity.details.JobType;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
 import com.synergy.backend.domain.member.entity.details.OccupationType;
-import com.synergy.backend.domain.member.entity.details.PositionType;
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.techstack.entity.MemberTechStack;
 import com.synergy.backend.global.common.BaseEntity;
@@ -68,16 +70,22 @@ public class Attendee extends BaseEntity implements User {
 	private List<Point> points = new ArrayList<>();
 
 	// 현재 직업
-	@Enumerated(EnumType.STRING)
-	private OccupationType occupationType;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "current_job_id")
+	private Job currentJob;
 
 	// 현재 직무
-	@Enumerated(EnumType.STRING)
-	private PositionType position;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "current_occupation_id")
+	private Occupation currentOccupation;
+
+	// 채용 희망여부
+	private boolean isHiringInterested;
 
 	// 희망 직무
-	@Enumerated(EnumType.STRING)
-	private PositionType desiredPosition;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "desired_occupation_id")
+	private Occupation desiredOccupation;
 
 	// 학력
 	@Enumerated(EnumType.STRING)
@@ -87,25 +95,27 @@ public class Attendee extends BaseEntity implements User {
 	@Enumerated(EnumType.STRING)
 	private AgeGroup ageGroup;
 
-	// 경력
-	@Enumerated(EnumType.STRING)
-	private ExperienceLevelType experienceLevel;
-
 	// 참가자-보유기술
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<MemberTechStack> memberTechStacks;
 
+	// 경력
+	@Enumerated(EnumType.STRING)
+	private ExperienceLevelType experienceLevel;
+
+	// 희망 근무 지역
+
 	// 자기소개서
 	private String selfIntroduction;
 
-	// 채용 희망여부
-	private boolean isHiringInterested;
-
-	// 경력 정보
-	private String personalHistory;
+	// 증명사진
 
 	// 경험 및 기타 정보
 	private String information;
+
+	// 직장 선택 요소
+	// 선호하는 기업 문화
+	// 컨퍼런스 참여 목적
 
 	// 참가자-관심분야
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
