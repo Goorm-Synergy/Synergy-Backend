@@ -2,12 +2,12 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 // 직무
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum OccupationType {
 	DEVELOPMENT(1, "Development"),
 	DESIGN(2, "Design"),

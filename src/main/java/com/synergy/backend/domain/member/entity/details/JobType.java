@@ -4,10 +4,11 @@ import java.util.Arrays;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 // 직업
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum JobType {
 	FRONTEND_DEVELOPER(101, "Frontend Developer", OccupationType.DEVELOPMENT),
 	BACKEND_DEVELOPER(102, "Backend Developer", OccupationType.DEVELOPMENT),

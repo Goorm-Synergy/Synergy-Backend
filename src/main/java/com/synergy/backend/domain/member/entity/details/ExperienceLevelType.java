@@ -1,8 +1,10 @@
 package com.synergy.backend.domain.member.entity.details;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public enum ExperienceLevelType {
 	NEWCOMER("신입"),
 	JUNIOR("1~2년 이하"),
@@ -11,7 +13,4 @@ public enum ExperienceLevelType {
 
 	private final String description;
 
-	ExperienceLevelType(String description) {
-		this.description = description;
-	}
 }

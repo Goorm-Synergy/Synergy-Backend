@@ -1,6 +1,7 @@
 package com.synergy.backend.domain.member.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -9,11 +10,13 @@ import com.synergy.backend.domain.interest.entity.MemberInterest;
 import com.synergy.backend.domain.member.Job;
 import com.synergy.backend.domain.member.Occupation;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
+import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
 import com.synergy.backend.domain.member.entity.details.EducationLevelType;
 import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
-import com.synergy.backend.domain.member.entity.details.JobType;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
-import com.synergy.backend.domain.member.entity.details.OccupationType;
+import com.synergy.backend.domain.member.entity.details.PreferredCorporateCulture;
+import com.synergy.backend.domain.member.entity.details.RegionType;
+import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.techstack.entity.MemberTechStack;
 import com.synergy.backend.global.common.BaseEntity;
@@ -104,6 +107,7 @@ public class Attendee extends BaseEntity implements User {
 	private ExperienceLevelType experienceLevel;
 
 	// 희망 근무 지역
+	private Set<RegionType> desiredWorkRegion = new HashSet<>();
 
 	// 자기소개서
 	private String selfIntroduction;
@@ -114,8 +118,16 @@ public class Attendee extends BaseEntity implements User {
 	private String information;
 
 	// 직장 선택 요소
+	@Enumerated(EnumType.STRING)
+	private WorkplaceSelectionFactor workplaceSelectionFactor;
+
 	// 선호하는 기업 문화
+	@Enumerated(EnumType.STRING)
+	private PreferredCorporateCulture preferredCorporateCulture;
+
 	// 컨퍼런스 참여 목적
+	@Enumerated(EnumType.STRING)
+	private ConferenceParticipationPurpose conferenceParticipationPurpose;
 
 	// 참가자-관심분야
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
