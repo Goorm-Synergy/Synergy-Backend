@@ -14,7 +14,6 @@ public class RecruiterServiceImpl implements RecruiterService {
 
     private final RecruiterRepository recruiterRepository;
 
-
     @Override
     public AttendeeDetailResponseDto findAttendeeFrom(String identifier, Long id) {
         return null;
