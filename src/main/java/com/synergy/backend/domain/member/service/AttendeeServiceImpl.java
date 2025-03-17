@@ -14,6 +14,7 @@ import com.synergy.backend.domain.interest.entity.Interest;
 import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
 import com.synergy.backend.domain.interest.repository.AttendeeInterestRepository;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
+import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
@@ -56,6 +57,11 @@ public class AttendeeServiceImpl implements AttendeeService {
 
 	@Override
 	public void addJobInfo(String email, JobInfoRequestDto request) {
+
+	}
+
+	@Override
+	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request) {
 
 	}
 
