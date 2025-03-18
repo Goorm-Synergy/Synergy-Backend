@@ -23,6 +23,12 @@ import com.synergy.backend.domain.job.exception.NotFoundOccupationCategoryExcept
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.entity.Attendee;
+import com.synergy.backend.domain.member.entity.details.AgeGroup;
+import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
+import com.synergy.backend.domain.member.entity.details.EducationLevelType;
+import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
+import com.synergy.backend.domain.member.entity.details.PreferredCorporateCulture;
+import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 
@@ -73,9 +79,33 @@ public class AttendeeServiceImpl implements AttendeeService {
 		attendee.updateJobInfo(jobCategory, occupationCategory, request.hiringInterested());
 	}
 
+	@Transactional
 	@Override
 	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request) {
+		Attendee attendee = findAttendeeByEmail(email);
+		OccupationCategory occupationCategory = findOccupationCategoryByCode(request.desiredOccupationCode());
+		EducationLevelType educationLevelType = EducationLevelType.fromCode(request.educationLevelCode());
+		AgeGroup ageGroup = AgeGroup.fromCode(request.ageGroupCode());
+		ExperienceLevelType experienceLevelType = ExperienceLevelType.fromCode(request.experienceLevelCode());
+		WorkplaceSelectionFactor workplaceSelectionFactor = WorkplaceSelectionFactor.fromCode(
+			request.workplaceSelectionFactorCode());
+		PreferredCorporateCulture preferredCorporateCulture = PreferredCorporateCulture.fromCode(
+			request.preferredCorporateCultureCode());
+		ConferenceParticipationPurpose conferenceParticipationPurpose = ConferenceParticipationPurpose.fromCode(
+			request.conferencePurposeCode());
 
+		attendee.updateJobInfoDetails(
+			occupationCategory,
+			educationLevelType,
+			ageGroup,
+			experienceLevelType,
+			request.selfIntroduction(),
+			request.profileImageUrl(),
+			request.additionalInfo(),
+			workplaceSelectionFactor,
+			preferredCorporateCulture,
+			conferenceParticipationPurpose
+		);
 	}
 
 	private Set<Interest> getValidInterests(Set<Integer> interestCodes) {

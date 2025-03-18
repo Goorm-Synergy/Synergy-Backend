@@ -178,6 +178,30 @@ public class Attendee extends BaseEntity implements User {
 		this.isHiringInterested = isHiringInterested;
 	}
 
+	public void updateJobInfoDetails(
+		OccupationCategory desiredOccupationCategory,
+		EducationLevelType educationLevel,
+		AgeGroup ageGroup,
+		ExperienceLevelType experienceLevel,
+		String selfIntroduction,
+		String profilePhotoUrl,
+		String information,
+		WorkplaceSelectionFactor workplaceSelectionFactor,
+		PreferredCorporateCulture preferredCorporateCulture,
+		ConferenceParticipationPurpose conferenceParticipationPurpose
+	) {
+		this.desiredOccupationCategory = desiredOccupationCategory;
+		this.educationLevel = educationLevel;
+		this.ageGroup = ageGroup;
+		this.experienceLevel = experienceLevel;
+		this.selfIntroduction = selfIntroduction;
+		this.profilePhotoUrl = profilePhotoUrl;
+		this.information = information;
+		this.workplaceSelectionFactor = workplaceSelectionFactor;
+		this.preferredCorporateCulture = preferredCorporateCulture;
+		this.conferenceParticipationPurpose = conferenceParticipationPurpose;
+	}
+
 	public void addPoint(Point point) {
 		points.add(point);
 		point.assignAttendee(this);
