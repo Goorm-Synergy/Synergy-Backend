@@ -1,12 +1,11 @@
 ---- 관심 분야
-INSERT INTO interest (name, code)
-VALUES ('데이터 분석 / AI', 101),
-('클라우드 / DevOps', 102),
-('소프트웨어 개발', 103),
-('UX/UI 디자인', 104),
-('정보 보안', 105),
-('신기술 연구', 106),
-('커리어 개발', 107);
+INSERT INTO interest (name, code) VALUES ('데이터 분석 / AI', 101);
+INSERT INTO interest (name, code) VALUES ('클라우드 / DevOps', 102);
+INSERT INTO interest (name, code) VALUES ('소프트웨어 개발', 103);
+INSERT INTO interest (name, code) VALUES ('UX/UI 디자인', 104);
+INSERT INTO interest (name, code) VALUES ('정보 보안', 105);
+INSERT INTO interest (name, code) VALUES ('신기술 연구', 106);
+INSERT INTO interest (name, code) VALUES ('커리어 개발', 107);
 
 -- 직무 (Occupation Categories)
 INSERT INTO occupation_category (code, name) VALUES (1, '개발');

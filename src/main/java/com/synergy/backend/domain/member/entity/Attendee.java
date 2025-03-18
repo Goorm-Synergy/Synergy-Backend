@@ -18,7 +18,6 @@ import com.synergy.backend.domain.member.entity.details.PreferredCorporateCultur
 import com.synergy.backend.domain.member.entity.details.RegionType;
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.point.entity.Point;
-import com.synergy.backend.domain.techstack.entity.AttendeeTechStack;
 import com.synergy.backend.global.common.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -101,9 +100,8 @@ public class Attendee extends BaseEntity implements User {
 	@Enumerated(EnumType.STRING)
 	private AgeGroup ageGroup;
 
-	// 참가자-보유기술
-	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<AttendeeTechStack> attendeeTechStacks;
+	// 보유기술
+	private String techStacks;
 
 	// 경력
 	@Enumerated(EnumType.STRING)
@@ -185,7 +183,7 @@ public class Attendee extends BaseEntity implements User {
 		OccupationCategory desiredOccupationCategory,
 		EducationLevelType educationLevel,
 		AgeGroup ageGroup,
-		Set<AttendeeTechStack> attendeeTechStacks,
+		String techStacks,
 		ExperienceLevelType experienceLevel,
 		String selfIntroduction,
 		String profilePhotoUrl,
@@ -197,6 +195,7 @@ public class Attendee extends BaseEntity implements User {
 		this.desiredOccupationCategory = desiredOccupationCategory;
 		this.educationLevel = educationLevel;
 		this.ageGroup = ageGroup;
+		this.techStacks = techStacks;
 		this.experienceLevel = experienceLevel;
 		this.selfIntroduction = selfIntroduction;
 		this.profilePhotoUrl = profilePhotoUrl;
