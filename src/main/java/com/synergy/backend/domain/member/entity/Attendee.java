@@ -73,6 +73,7 @@ public class Attendee extends BaseEntity implements User {
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Point> points = new ArrayList<>();
 
+	/*------Job Info------*/
 	// 현재 직업
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "current_job_id")
@@ -86,6 +87,7 @@ public class Attendee extends BaseEntity implements User {
 	// 채용 희망여부
 	private boolean isHiringInterested;
 
+	/*------Job Info Details------*/
 	// 희망 직무
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "desired_occupation_id")
@@ -167,6 +169,13 @@ public class Attendee extends BaseEntity implements User {
 	@Override
 	public RoleType getRole() {
 		return RoleType.ATTENDEE;
+	}
+
+	public void updateJobInfo(JobCategory jobCategory, OccupationCategory occupationCategory,
+		Boolean isHiringInterested) {
+		this.currentJobCategory = jobCategory;
+		this.currentOccupationCategory = occupationCategory;
+		this.isHiringInterested = isHiringInterested;
 	}
 
 	public void addPoint(Point point) {

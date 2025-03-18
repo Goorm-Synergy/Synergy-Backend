@@ -18,6 +18,7 @@ public class JobCategory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "job_id")
 	private Long id;
 
 	@Column(nullable = false, unique = true)

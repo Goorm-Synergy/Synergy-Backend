@@ -14,6 +14,12 @@ import com.synergy.backend.domain.interest.entity.Interest;
 import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
 import com.synergy.backend.domain.interest.repository.AttendeeInterestRepository;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
+import com.synergy.backend.domain.job.JobCategory;
+import com.synergy.backend.domain.job.JobCategoryRepository;
+import com.synergy.backend.domain.job.OccupationCategory;
+import com.synergy.backend.domain.job.OccupationCategoryRepository;
+import com.synergy.backend.domain.job.exception.NotFoundJobCategoryException;
+import com.synergy.backend.domain.job.exception.NotFoundOccupationCategoryException;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.entity.Attendee;
@@ -29,6 +35,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final AttendeeRepository attendeeRepository;
 	private final InterestRepository interestRepository;
 	private final AttendeeInterestRepository attendeeInterestRepository;
+	private final JobCategoryRepository jobCategoryRepository;
+	private final OccupationCategoryRepository occupationCategoryRepository;
 
 	@Transactional
 	@Override
@@ -55,19 +63,19 @@ public class AttendeeServiceImpl implements AttendeeService {
 		return getCurrentInterests(attendee);
 	}
 
+	@Transactional
 	@Override
 	public void addJobInfo(String email, JobInfoRequestDto request) {
+		Attendee attendee = findAttendeeByEmail(email);
+		JobCategory jobCategory = findJobCategoryByCode(request.jobCode());
+		OccupationCategory occupationCategory = findOccupationCategoryByCode(request.occupationCode());
 
+		attendee.updateJobInfo(jobCategory, occupationCategory, request.hiringInterested());
 	}
 
 	@Override
 	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request) {
 
-	}
-
-	private Attendee findAttendeeByEmail(String email) {
-		return attendeeRepository.findByEmail(email)
-			.orElseThrow(NotFoundUserException::new);
 	}
 
 	private Set<Interest> getValidInterests(Set<Integer> interestCodes) {
@@ -101,5 +109,20 @@ public class AttendeeServiceImpl implements AttendeeService {
 
 		attendeeInterestRepository.saveAll(newAttendeeInterests);
 		attendee.getAttendeeInterests().addAll(newAttendeeInterests);
+	}
+
+	private OccupationCategory findOccupationCategoryByCode(Integer occupationCode) {
+		return occupationCategoryRepository.findByCode(occupationCode)
+			.orElseThrow(NotFoundOccupationCategoryException::new);
+	}
+
+	private JobCategory findJobCategoryByCode(Integer jobCode) {
+		return jobCategoryRepository.findByCode(jobCode)
+			.orElseThrow(NotFoundJobCategoryException::new);
+	}
+
+	private Attendee findAttendeeByEmail(String email) {
+		return attendeeRepository.findByEmail(email)
+			.orElseThrow(NotFoundUserException::new);
 	}
 }

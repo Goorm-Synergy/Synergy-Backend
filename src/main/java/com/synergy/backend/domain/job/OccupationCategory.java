@@ -16,6 +16,7 @@ public class OccupationCategory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "occupation_id")
 	private Long id;
 
 	@Column(nullable = false, unique = true)
