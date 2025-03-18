@@ -185,6 +185,7 @@ public class Attendee extends BaseEntity implements User {
 		OccupationCategory desiredOccupationCategory,
 		EducationLevelType educationLevel,
 		AgeGroup ageGroup,
+		Set<AttendeeTechStack> attendeeTechStacks,
 		ExperienceLevelType experienceLevel,
 		String selfIntroduction,
 		String profilePhotoUrl,
@@ -200,6 +201,8 @@ public class Attendee extends BaseEntity implements User {
 		this.selfIntroduction = selfIntroduction;
 		this.profilePhotoUrl = profilePhotoUrl;
 		this.information = information;
+		this.attendeeInterests =
+			attendeeInterests != null ? attendeeInterests : new HashSet<>();
 		this.workplaceSelectionFactors =
 			workplaceSelectionFactors != null ? workplaceSelectionFactors : new HashSet<>();
 		this.preferredCorporateCultures =

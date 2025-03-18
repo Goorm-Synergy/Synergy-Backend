@@ -30,7 +30,7 @@ public class AttendeeController {
 	@PatchMapping(path = "/interest")
 	public ApiResponse<InterestResponseDto> addUserInterest(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestBody InterestRequestDto request) {
+		@Valid @RequestBody InterestRequestDto request) {
 
 		String identifier = userDetails.getIdentifier();
 		RoleType role = userDetails.getRole();
@@ -39,7 +39,8 @@ public class AttendeeController {
 			throw new AccessDeniedException();
 		}
 
-		return ApiResponse.ok(InterestResponseDto.from(attendeeService.addInterests(identifier, request.interestCodes())),
+		return ApiResponse.ok(
+			InterestResponseDto.from(attendeeService.addInterests(identifier, request.interestCodes())),
 			200);
 	}
 

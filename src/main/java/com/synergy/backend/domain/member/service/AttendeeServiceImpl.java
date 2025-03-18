@@ -32,6 +32,9 @@ import com.synergy.backend.domain.member.entity.details.PreferredCorporateCultur
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
+import com.synergy.backend.domain.techstack.entity.AttendeeTechStack;
+import com.synergy.backend.domain.techstack.repository.AttendeeTechStackRepository;
+import com.synergy.backend.domain.techstack.repository.TechStackRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +47,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final AttendeeInterestRepository attendeeInterestRepository;
 	private final JobCategoryRepository jobCategoryRepository;
 	private final OccupationCategoryRepository occupationCategoryRepository;
+	private final TechStackRepository techStackRepository;
+	private final AttendeeTechStackRepository attendeeTechStackRepository;
 
 	/** 관심사 추가 */
 	@Transactional
@@ -89,6 +94,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 		Attendee attendee = findAttendeeByEmail(email);
 		OccupationCategory occupationCategory = findOccupationCategoryByCode(request.desiredOccupationCode());
 
+		Set<AttendeeTechStack> attendeeTechStacks = convertToTechStackSet(attendee, request.techStackCodes());
+
 		EducationLevelType educationLevelType = convertToEnum(request.educationLevelCode(), EducationLevelType.class);
 		AgeGroup ageGroup = convertToEnum(request.ageGroupCode(), AgeGroup.class);
 		ExperienceLevelType experienceLevelType = convertToEnum(request.experienceLevelCode(),
@@ -107,6 +114,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 			occupationCategory,
 			educationLevelType,
 			ageGroup,
+			attendeeTechStacks,
 			experienceLevelType,
 			request.selfIntroduction(),
 			request.profileImageUrl(),
@@ -115,6 +123,12 @@ public class AttendeeServiceImpl implements AttendeeService {
 			preferredCorporateCultures,
 			conferenceParticipationPurposes
 		);
+	}
+
+	private Set<AttendeeTechStack> convertToTechStackSet(Attendee attendee, Set<Integer> techStackCodes) {
+		return techStackRepository.findAllByCode(techStackCodes).stream()
+			.map(techStack -> new AttendeeTechStack(attendee, techStack))
+			.collect(Collectors.toSet());
 	}
 
 	// 관심사 코드 검증

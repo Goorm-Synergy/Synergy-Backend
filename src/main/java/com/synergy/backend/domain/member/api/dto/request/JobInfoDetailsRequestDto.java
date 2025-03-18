@@ -2,6 +2,7 @@ package com.synergy.backend.domain.member.api.dto.request;
 
 import java.util.Set;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -15,8 +16,8 @@ public record JobInfoDetailsRequestDto(
 	@NotNull
 	Integer ageGroupCode, // 연령대 (코드값)
 
-	@NotNull
-	Set<Integer> skillCodes, // 보유 기술 (코드값 리스트)
+	@NotBlank(message = "보유 기술 값은 비어 있을 수 없습니다.")
+	String techStacks, // 보유 기술 (스트링 리스트)
 
 	@NotNull
 	Integer experienceLevelCode, // 경력 (코드값)
