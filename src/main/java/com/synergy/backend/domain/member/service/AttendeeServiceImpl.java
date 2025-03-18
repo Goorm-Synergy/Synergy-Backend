@@ -24,6 +24,7 @@ import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDt
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
+import com.synergy.backend.domain.member.entity.details.BaseAttendeeDetailEnum;
 import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
 import com.synergy.backend.domain.member.entity.details.EducationLevelType;
 import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
@@ -44,6 +45,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final JobCategoryRepository jobCategoryRepository;
 	private final OccupationCategoryRepository occupationCategoryRepository;
 
+	/** 관심사 추가 */
 	@Transactional
 	@Override
 	public Set<Interest> addInterests(String email, Set<Integer> interestCodes) {
@@ -69,6 +71,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 		return getCurrentInterests(attendee);
 	}
 
+	/** 직무 정보 추가 */
 	@Transactional
 	@Override
 	public void addJobInfo(String email, JobInfoRequestDto request) {
@@ -79,20 +82,26 @@ public class AttendeeServiceImpl implements AttendeeService {
 		attendee.updateJobInfo(jobCategory, occupationCategory, request.hiringInterested());
 	}
 
+	/** 직무 상세 정보 추가 */
 	@Transactional
 	@Override
 	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request) {
 		Attendee attendee = findAttendeeByEmail(email);
 		OccupationCategory occupationCategory = findOccupationCategoryByCode(request.desiredOccupationCode());
-		EducationLevelType educationLevelType = EducationLevelType.fromCode(request.educationLevelCode());
-		AgeGroup ageGroup = AgeGroup.fromCode(request.ageGroupCode());
-		ExperienceLevelType experienceLevelType = ExperienceLevelType.fromCode(request.experienceLevelCode());
-		WorkplaceSelectionFactor workplaceSelectionFactor = WorkplaceSelectionFactor.fromCode(
-			request.workplaceSelectionFactorCode());
-		PreferredCorporateCulture preferredCorporateCulture = PreferredCorporateCulture.fromCode(
-			request.preferredCorporateCultureCode());
-		ConferenceParticipationPurpose conferenceParticipationPurpose = ConferenceParticipationPurpose.fromCode(
-			request.conferencePurposeCode());
+
+		EducationLevelType educationLevelType = convertToEnum(request.educationLevelCode(), EducationLevelType.class);
+		AgeGroup ageGroup = convertToEnum(request.ageGroupCode(), AgeGroup.class);
+		ExperienceLevelType experienceLevelType = convertToEnum(request.experienceLevelCode(),
+			ExperienceLevelType.class);
+
+		Set<WorkplaceSelectionFactor> workplaceSelectionFactors = convertToEnumSet(
+			request.workplaceSelectionFactorCodes(), WorkplaceSelectionFactor.class);
+
+		Set<PreferredCorporateCulture> preferredCorporateCultures = convertToEnumSet(
+			request.preferredRegionCodes(), PreferredCorporateCulture.class);
+
+		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes = convertToEnumSet(
+			request.conferencePurposeCodes(), ConferenceParticipationPurpose.class);
 
 		attendee.updateJobInfoDetails(
 			occupationCategory,
@@ -102,18 +111,18 @@ public class AttendeeServiceImpl implements AttendeeService {
 			request.selfIntroduction(),
 			request.profileImageUrl(),
 			request.additionalInfo(),
-			workplaceSelectionFactor,
-			preferredCorporateCulture,
-			conferenceParticipationPurpose
+			workplaceSelectionFactors,
+			preferredCorporateCultures,
+			conferenceParticipationPurposes
 		);
 	}
 
+	// 관심사 코드 검증
 	private Set<Interest> getValidInterests(Set<Integer> interestCodes) {
 		Map<Integer, Interest> interestMap = interestRepository.findAllByCodeIn(interestCodes)
 			.stream()
 			.collect(Collectors.toMap(Interest::getCode, Function.identity()));
 
-		// 요청된 코드 중 존재하지 않는 값 찾기
 		if (interestMap.size() != interestCodes.size()) {
 			Set<Integer> notFoundCodes = interestCodes.stream()
 				.filter(code -> !interestMap.containsKey(code))
@@ -125,6 +134,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 		return new HashSet<>(interestMap.values());
 	}
 
+	// 현재 등록된 관심사 가져오기
 	private Set<Interest> getCurrentInterests(Attendee attendee) {
 		return attendee.getAttendeeInterests()
 			.stream()
@@ -132,6 +142,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 			.collect(Collectors.toSet());
 	}
 
+	// 새로운 관심사 저장
 	private void saveNewMemberInterests(Attendee attendee, Set<Interest> newInterests) {
 		Set<AttendeeInterest> newAttendeeInterests = newInterests.stream()
 			.map(interest -> new AttendeeInterest(attendee, interest))
@@ -154,5 +165,16 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private Attendee findAttendeeByEmail(String email) {
 		return attendeeRepository.findByEmail(email)
 			.orElseThrow(NotFoundUserException::new);
+	}
+
+	private <E extends Enum<E> & BaseAttendeeDetailEnum> E convertToEnum(Integer code, Class<E> enumClass) {
+		return BaseAttendeeDetailEnum.fromCode(enumClass, code);
+	}
+
+	private <E extends Enum<E> & BaseAttendeeDetailEnum> Set<E> convertToEnumSet(Set<Integer> codes,
+		Class<E> enumClass) {
+		return codes.stream()
+			.map(code -> BaseAttendeeDetailEnum.fromCode(enumClass, code))
+			.collect(Collectors.toSet());
 	}
 }

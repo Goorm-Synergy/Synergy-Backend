@@ -1,6 +1,6 @@
 package com.synergy.backend.domain.member.entity.details;
 
-import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidAgeGroupCodeException;
 
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum AgeGroup {
+public enum AgeGroup implements BaseAttendeeDetailEnum {
 	AGE_20_24(20, "20~24세 이하"),
 	AGE_25_29(25, "25~29세 이하"),
 	AGE_30_34(30, "30~34세 이하"),
@@ -17,11 +17,9 @@ public enum AgeGroup {
 
 	private final Integer code;
 	private final String description;
+	private final Supplier<? extends RuntimeException> exceptionSupplier = InvalidAgeGroupCodeException::new;
 
 	public static AgeGroup fromCode(int code) {
-		return Arrays.stream(AgeGroup.values())
-			.filter(group -> group.code == code)
-			.findFirst()
-			.orElseThrow(InvalidAgeGroupCodeException::new);
+		return BaseAttendeeDetailEnum.fromCode(AgeGroup.class, code);
 	}
 }

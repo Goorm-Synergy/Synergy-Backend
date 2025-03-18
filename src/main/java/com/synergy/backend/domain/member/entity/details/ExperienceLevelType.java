@@ -1,6 +1,6 @@
 package com.synergy.backend.domain.member.entity.details;
 
-import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidExperienceLevelTypeException;
 
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ExperienceLevelType {
+public enum ExperienceLevelType implements BaseAttendeeDetailEnum {
 	NEWCOMER(1, "신입"),
 	JUNIOR(2, "1~2년 이하"),
 	MID_LEVEL(3, "3~4년 이하"),
@@ -17,11 +17,9 @@ public enum ExperienceLevelType {
 
 	private final Integer code;
 	private final String description;
+	private final Supplier<? extends RuntimeException> exceptionSupplier = InvalidExperienceLevelTypeException::new;
 
 	public static ExperienceLevelType fromCode(int code) {
-		return Arrays.stream(ExperienceLevelType.values())
-			.filter(level -> level.code == code)
-			.findFirst()
-			.orElseThrow(InvalidExperienceLevelTypeException::new);
+		return BaseAttendeeDetailEnum.fromCode(ExperienceLevelType.class, code);
 	}
 }

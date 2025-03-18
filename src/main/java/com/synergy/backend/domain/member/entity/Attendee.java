@@ -110,7 +110,7 @@ public class Attendee extends BaseEntity implements User {
 	private ExperienceLevelType experienceLevel;
 
 	// 희망 근무 지역
-	@ElementCollection(targetClass = RegionType.class)
+	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	private Set<RegionType> desiredWorkRegion = new HashSet<>();
 
@@ -124,16 +124,19 @@ public class Attendee extends BaseEntity implements User {
 	private String information;
 
 	// 직장 선택 요소
-	@Enumerated(EnumType.STRING)
-	private WorkplaceSelectionFactor workplaceSelectionFactor;
+	@ElementCollection
+	@Enumerated(EnumType.ORDINAL)
+	private Set<WorkplaceSelectionFactor> workplaceSelectionFactors = new HashSet<>();
 
 	// 선호하는 기업 문화
-	@Enumerated(EnumType.STRING)
-	private PreferredCorporateCulture preferredCorporateCulture;
+	@ElementCollection
+	@Enumerated(EnumType.ORDINAL)
+	private Set<PreferredCorporateCulture> preferredCorporateCultures = new HashSet<>();
 
 	// 컨퍼런스 참여 목적
-	@Enumerated(EnumType.STRING)
-	private ConferenceParticipationPurpose conferenceParticipationPurpose;
+	@ElementCollection
+	@Enumerated(EnumType.ORDINAL)
+	private Set<ConferenceParticipationPurpose> conferenceParticipationPurposes = new HashSet<>();
 
 	// 참가자-관심분야
 	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -186,9 +189,9 @@ public class Attendee extends BaseEntity implements User {
 		String selfIntroduction,
 		String profilePhotoUrl,
 		String information,
-		WorkplaceSelectionFactor workplaceSelectionFactor,
-		PreferredCorporateCulture preferredCorporateCulture,
-		ConferenceParticipationPurpose conferenceParticipationPurpose
+		Set<WorkplaceSelectionFactor> workplaceSelectionFactors,
+		Set<PreferredCorporateCulture> preferredCorporateCultures,
+		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes
 	) {
 		this.desiredOccupationCategory = desiredOccupationCategory;
 		this.educationLevel = educationLevel;
@@ -197,9 +200,12 @@ public class Attendee extends BaseEntity implements User {
 		this.selfIntroduction = selfIntroduction;
 		this.profilePhotoUrl = profilePhotoUrl;
 		this.information = information;
-		this.workplaceSelectionFactor = workplaceSelectionFactor;
-		this.preferredCorporateCulture = preferredCorporateCulture;
-		this.conferenceParticipationPurpose = conferenceParticipationPurpose;
+		this.workplaceSelectionFactors =
+			workplaceSelectionFactors != null ? workplaceSelectionFactors : new HashSet<>();
+		this.preferredCorporateCultures =
+			preferredCorporateCultures != null ? preferredCorporateCultures : new HashSet<>();
+		this.conferenceParticipationPurposes =
+			conferenceParticipationPurposes != null ? conferenceParticipationPurposes : new HashSet<>();
 	}
 
 	public void addPoint(Point point) {

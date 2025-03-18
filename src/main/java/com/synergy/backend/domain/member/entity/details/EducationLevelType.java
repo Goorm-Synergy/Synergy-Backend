@@ -1,6 +1,6 @@
 package com.synergy.backend.domain.member.entity.details;
 
-import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidEducationLevelTypeException;
 
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum EducationLevelType {
+public enum EducationLevelType implements BaseAttendeeDetailEnum {
 	HIGH_SCHOOL(1, "고등학교 졸업"),
 	ASSOCIATE(2, "2~3년제 졸업"),
 	BACHELOR(3, "4년제 졸업"),
@@ -17,11 +17,9 @@ public enum EducationLevelType {
 
 	private final Integer code;
 	private final String description;
+	private final Supplier<? extends RuntimeException> exceptionSupplier = InvalidEducationLevelTypeException::new;
 
 	public static EducationLevelType fromCode(int code) {
-		return Arrays.stream(EducationLevelType.values())
-			.filter(level -> level.code == code)
-			.findFirst()
-			.orElseThrow(InvalidEducationLevelTypeException::new);
+		return BaseAttendeeDetailEnum.fromCode(EducationLevelType.class, code);
 	}
 }

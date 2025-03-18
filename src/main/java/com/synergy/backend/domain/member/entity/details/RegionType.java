@@ -1,6 +1,6 @@
 package com.synergy.backend.domain.member.entity.details;
 
-import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidRegionTypeCodeException;
 
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RegionType {
+public enum RegionType implements BaseAttendeeDetailEnum {
 	CAPITAL_AREA(11, "수도권 (서울특별시, 인천광역시, 경기도)"),
 	BUSAN(12, "부산광역시"),
 	DAEGU(13, "대구광역시"),
@@ -24,14 +24,11 @@ public enum RegionType {
 	JEJU(22, "제주특별자치도"),
 	;
 
-	private final int code;
+	private final Integer code;
 	private final String description;
+	private final Supplier<? extends RuntimeException> exceptionSupplier = InvalidRegionTypeCodeException::new;
 
-	// 숫자로 Enum 찾기
 	public static RegionType fromCode(int code) {
-		return Arrays.stream(RegionType.values())
-			.filter(region -> region.code == code)
-			.findFirst()
-			.orElseThrow(InvalidRegionTypeCodeException::new);
+		return BaseAttendeeDetailEnum.fromCode(RegionType.class, code);
 	}
 }

@@ -1,6 +1,6 @@
 package com.synergy.backend.domain.member.entity.details;
 
-import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidWorkplaceSelectionFactorCodeException;
 
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum WorkplaceSelectionFactor {
+public enum WorkplaceSelectionFactor implements BaseAttendeeDetailEnum {
 	GROWTH_AND_LEARNING_SUPPORT(1, "성장 기회 및 학습 지원"),
 	SALARY_AND_BENEFITS(2, "연봉 및 복리후생"),
 	WORK_LIFE_BALANCE(3, "워라밸 (Work-Life Balance)"),
@@ -19,11 +19,9 @@ public enum WorkplaceSelectionFactor {
 
 	private final Integer code;
 	private final String description;
+	private final Supplier<? extends RuntimeException> exceptionSupplier = InvalidWorkplaceSelectionFactorCodeException::new;
 
 	public static WorkplaceSelectionFactor fromCode(int code) {
-		return Arrays.stream(WorkplaceSelectionFactor.values())
-			.filter(factor -> factor.code == code)
-			.findFirst()
-			.orElseThrow(InvalidWorkplaceSelectionFactorCodeException::new);
+		return BaseAttendeeDetailEnum.fromCode(WorkplaceSelectionFactor.class, code);
 	}
 }
