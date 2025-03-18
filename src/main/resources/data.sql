@@ -6,6 +6,7 @@ INSERT INTO interest (name, code) VALUES ('UX/UI 디자인', 104);
 INSERT INTO interest (name, code) VALUES ('정보 보안', 105);
 INSERT INTO interest (name, code) VALUES ('신기술 연구', 106);
 INSERT INTO interest (name, code) VALUES ('커리어 개발', 107);
+INSERT INTO interest (name, code) VALUES ('기획/운영', 108);
 
 -- 직무 (Occupation Categories)
 INSERT INTO occupation_category (code, name) VALUES (1, '개발');
