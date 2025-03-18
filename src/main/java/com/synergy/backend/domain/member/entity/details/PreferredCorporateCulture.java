@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidPreferredCorporateCultureCodeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,6 @@ public enum PreferredCorporateCulture {
 		return Arrays.stream(PreferredCorporateCulture.values())
 			.filter(culture -> culture.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid Preferred Corporate Culture code: " + code));
+			.orElseThrow(InvalidPreferredCorporateCultureCodeException::new);
 	}
 }

@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidAgeGroupCodeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,6 @@ public enum AgeGroup {
 		return Arrays.stream(AgeGroup.values())
 			.filter(group -> group.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid age group code: " + code));
+			.orElseThrow(InvalidAgeGroupCodeException::new);
 	}
 }

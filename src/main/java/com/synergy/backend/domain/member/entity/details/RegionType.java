@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidRegionTypeCodeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,6 @@ public enum RegionType {
 		return Arrays.stream(RegionType.values())
 			.filter(region -> region.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Unknown region code: " + code));
+			.orElseThrow(InvalidRegionTypeCodeException::new);
 	}
 }

@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidWorkplaceSelectionFactorCodeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,6 @@ public enum WorkplaceSelectionFactor {
 		return Arrays.stream(WorkplaceSelectionFactor.values())
 			.filter(factor -> factor.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid Workplace Selection Factor code: " + code));
+			.orElseThrow(InvalidWorkplaceSelectionFactorCodeException::new);
 	}
 }

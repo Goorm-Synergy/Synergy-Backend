@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidEducationLevelTypeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,6 @@ public enum EducationLevelType {
 		return Arrays.stream(EducationLevelType.values())
 			.filter(level -> level.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid education level code: " + code));
+			.orElseThrow(InvalidEducationLevelTypeException::new);
 	}
 }

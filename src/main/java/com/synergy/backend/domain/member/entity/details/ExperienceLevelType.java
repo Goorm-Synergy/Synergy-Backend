@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidExperienceLevelTypeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,6 @@ public enum ExperienceLevelType {
 		return Arrays.stream(ExperienceLevelType.values())
 			.filter(level -> level.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid experience level code: " + code));
+			.orElseThrow(InvalidExperienceLevelTypeException::new);
 	}
 }

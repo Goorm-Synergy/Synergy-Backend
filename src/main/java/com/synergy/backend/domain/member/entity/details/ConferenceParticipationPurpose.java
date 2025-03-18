@@ -2,6 +2,8 @@ package com.synergy.backend.domain.member.entity.details;
 
 import java.util.Arrays;
 
+import com.synergy.backend.domain.member.exception.InvalidConferenceParticipationPurposeCodeException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,6 @@ public enum ConferenceParticipationPurpose {
 		return Arrays.stream(ConferenceParticipationPurpose.values())
 			.filter(purpose -> purpose.code == code)
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid conference participation purpose code: " + code));
+			.orElseThrow(InvalidConferenceParticipationPurposeCodeException::new);
 	}
 }
