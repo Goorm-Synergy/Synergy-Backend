@@ -76,10 +76,12 @@ public class AttendeeServiceImpl implements AttendeeService {
 	@Override
 	public void addJobInfo(String email, JobInfoRequestDto request) {
 		Attendee attendee = findAttendeeByEmail(email);
-		JobCategory jobCategory = findJobCategoryByCode(request.jobCode());
-		OccupationCategory occupationCategory = findOccupationCategoryByCode(request.occupationCode());
 
-		attendee.updateJobInfo(jobCategory, occupationCategory, request.hiringInterested());
+		attendee.updateJobInfo(
+			findJobCategoryByCode(request.jobCode()),
+			findOccupationCategoryByCode(request.occupationCode()),
+			request.hiringInterested()
+		);
 	}
 
 	/** 직무 상세 정보 추가 */
@@ -87,33 +89,23 @@ public class AttendeeServiceImpl implements AttendeeService {
 	@Override
 	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request) {
 		Attendee attendee = findAttendeeByEmail(email);
-		OccupationCategory occupationCategory = findOccupationCategoryByCode(request.desiredOccupationCode());
-		EducationLevelType educationLevelType = convertToEnum(request.educationLevelCode(), EducationLevelType.class);
-		AgeGroup ageGroup = convertToEnum(request.ageGroupCode(), AgeGroup.class);
-		ExperienceLevelType experienceLevelType = convertToEnum(request.experienceLevelCode(),
-			ExperienceLevelType.class);
-
-		Set<WorkplaceSelectionFactor> workplaceSelectionFactors = convertToEnumSet(
-			request.workplaceSelectionFactorCodes(), WorkplaceSelectionFactor.class);
-
-		Set<PreferredCorporateCulture> preferredCorporateCultures = convertToEnumSet(
-			request.preferredRegionCodes(), PreferredCorporateCulture.class);
-
-		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes = convertToEnumSet(
-			request.conferencePurposeCodes(), ConferenceParticipationPurpose.class);
 
 		attendee.updateJobInfoDetails(
-			occupationCategory,
-			educationLevelType,
-			ageGroup,
+			findOccupationCategoryByCode(request.desiredOccupationCode()),
+			convertToEnum(request.educationLevelCode(), EducationLevelType.class),
+			convertToEnum(request.ageGroupCode(), AgeGroup.class),
 			request.techStacks(),
-			experienceLevelType,
+			convertToEnum(request.experienceLevelCode(),
+				ExperienceLevelType.class),
 			request.selfIntroduction(),
 			request.profileImageUrl(),
 			request.additionalInfo(),
-			workplaceSelectionFactors,
-			preferredCorporateCultures,
-			conferenceParticipationPurposes
+			convertToEnumSet(
+				request.workplaceSelectionFactorCodes(), WorkplaceSelectionFactor.class),
+			convertToEnumSet(
+				request.preferredRegionCodes(), PreferredCorporateCulture.class),
+			convertToEnumSet(
+				request.conferencePurposeCodes(), ConferenceParticipationPurpose.class)
 		);
 	}
 
