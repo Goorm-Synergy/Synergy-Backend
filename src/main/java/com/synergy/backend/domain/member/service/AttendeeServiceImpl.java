@@ -2,9 +2,7 @@ package com.synergy.backend.domain.member.service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -41,7 +39,6 @@ import com.synergy.backend.domain.point.api.dto.PointResponseDto;
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.point.repository.PointRepository;
 import com.synergy.backend.domain.point.service.PointService;
-import com.synergy.backend.global.exception.BaseErrorException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -128,16 +125,13 @@ public class AttendeeServiceImpl implements AttendeeService {
 	public MyInfoResponseDto getMyInformation(String identifier) {
 		Attendee attendee = findAttendeeByEmail(identifier);
 
-		try {
-			List<Point> points = pointRepository.findRecentPointsByAttendeeId(attendee.getId());
-			List<PointResponseDto> recentPoints = points.stream()
-				.map(point -> PointResponseDto.from(point, pointService.getDetailsForPoint(point)))
-				.toList();
+		List<Point> points = pointRepository.findRecentPointsByAttendeeId(attendee.getId());
+		List<PointResponseDto> recentPoints = points.stream()
+			.map(point -> PointResponseDto.from(point, pointService.getDetailsForPoint(point)))
+			.toList();
 
-			return MyInfoResponseDto.from(attendee, recentPoints);
-		} catch (Exception e) {
-			throw new BaseErrorException(500, "db 접근 에러");
-		}
+		return MyInfoResponseDto.from(attendee, recentPoints);
+
 	}
 
 	/** 참가자 상세 정보 */
@@ -158,26 +152,22 @@ public class AttendeeServiceImpl implements AttendeeService {
 		return AttendeeInfoDetailResponseDto.from(attendee);
 	}
 
-	private Attendee findAttendeeById(Long attendeeId) {
-		return attendeeRepository.findById(attendeeId)
-			.orElseThrow(NotFoundUserException::new);
-	}
-
 	// 관심사 코드 검증
 	private Set<Interest> getValidInterests(Set<Integer> interestCodes) {
-		Map<Integer, Interest> interestMap = interestRepository.findAllByCodeIn(interestCodes)
-			.stream()
-			.collect(Collectors.toMap(Interest::getCode, Function.identity()));
+		List<Interest> interests = interestRepository.findAllByCodeIn(interestCodes);
 
-		if (interestMap.size() != interestCodes.size()) {
-			Set<Integer> notFoundCodes = interestCodes.stream()
-				.filter(code -> !interestMap.containsKey(code))
+		if (interests.size() != interestCodes.size()) {
+			Set<Integer> foundCodes = interests.stream()
+				.map(Interest::getCode)
 				.collect(Collectors.toSet());
+
+			Set<Integer> notFoundCodes = new HashSet<>(interestCodes);
+			notFoundCodes.removeAll(foundCodes);
 
 			throw new NotFoundInterestException("Not found interests: " + notFoundCodes);
 		}
 
-		return new HashSet<>(interestMap.values());
+		return new HashSet<>(interests);
 	}
 
 	// 현재 등록된 관심사 가져오기
@@ -206,6 +196,11 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private JobCategory findJobCategoryByCode(Integer jobCode) {
 		return jobCategoryRepository.findByCode(jobCode)
 			.orElseThrow(NotFoundJobCategoryException::new);
+	}
+
+	private Attendee findAttendeeById(Long attendeeId) {
+		return attendeeRepository.findById(attendeeId)
+			.orElseThrow(NotFoundUserException::new);
 	}
 
 	private Attendee findAttendeeByEmail(String email) {
