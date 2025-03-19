@@ -145,6 +145,9 @@ public class Attendee extends BaseEntity implements User {
 	@JoinColumn(name = "conference_id")
 	private Conference conference;
 
+	@OneToMany(mappedBy = "attendee", cascade = CascadeType.ALL)
+	private List<AttendeeSession> attendeeSessions = new ArrayList<>();
+
 	@Builder
 	private Attendee(String password, String name, String phone, String email) {
 		this.password = password;
