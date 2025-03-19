@@ -17,7 +17,6 @@ import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RecruiterAttendeeLike;
 import com.synergy.backend.domain.member.exception.DuplicateLikeException;
-import com.synergy.backend.domain.member.exception.NotFoundLikeException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterAttendeeLikeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -82,28 +81,12 @@ class RecruiterLikeServiceImplTest {
 		// given
 		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter));
 		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee));
-		when(recruiterAttendeeLikeRepository.findByRecruiterAndAttendee(recruiter, attendee)).thenReturn(
-			Optional.of(like));
 
 		// when
 		recruiterLikeService.unlikeAttendee(1L, 1L);
 
 		// then
-		verify(recruiterAttendeeLikeRepository, times(1)).delete(like);
-	}
-
-	@DisplayName("좋아요한 기록이 없는 참가자를 취소하면 예외가 발생한다.")
-	@Test
-	void unlikeAttendee_NotLiked_ThrowsException() {
-		// given
-		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter));
-		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee));
-		when(recruiterAttendeeLikeRepository.findByRecruiterAndAttendee(recruiter, attendee)).thenReturn(
-			Optional.empty());
-
-		// when & then
-		assertThatThrownBy(() -> recruiterLikeService.unlikeAttendee(1L, 1L))
-			.isInstanceOf(NotFoundLikeException.class);
+		verify(recruiterAttendeeLikeRepository, times(1)).deleteByRecruiterAndAttendee(recruiter, attendee);
 	}
 
 }

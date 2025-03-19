@@ -7,7 +7,6 @@ import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RecruiterAttendeeLike;
 import com.synergy.backend.domain.member.exception.DuplicateLikeException;
-import com.synergy.backend.domain.member.exception.NotFoundLikeException;
 import com.synergy.backend.domain.member.exception.NotFoundRecruiterException;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -42,16 +41,16 @@ public class RecruiterLikeServiceImpl implements RecruiterLikeService {
 	public void unlikeAttendee(Long recruiterId, Long attendeeId) {
 		Recruiter recruiter = findRecruiterById(recruiterId);
 		Attendee attendee = findAttendeeById(attendeeId);
-		RecruiterAttendeeLike like = recruiterAttendeeLikeRepository.findByRecruiterAndAttendee(
-				recruiter, attendee)
-			.orElseThrow(NotFoundLikeException::new);
-		recruiterAttendeeLikeRepository.delete(like);
+
+		recruiterAttendeeLikeRepository.deleteByRecruiterAndAttendee(recruiter, attendee);
 	}
 
+	@Transactional(readOnly = true)
 	private Recruiter findRecruiterById(Long recruiterId) {
 		return recruiterRepository.findById(recruiterId).orElseThrow(NotFoundRecruiterException::new);
 	}
 
+	@Transactional(readOnly = true)
 	private Attendee findAttendeeById(Long attendeeId) {
 		return attendeeRepository.findById(attendeeId).orElseThrow(NotFoundUserException::new);
 	}

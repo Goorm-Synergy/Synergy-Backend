@@ -12,4 +12,6 @@ public interface RecruiterAttendeeLikeRepository extends JpaRepository<Recruiter
 	Optional<RecruiterAttendeeLike> findByRecruiterAndAttendee(Recruiter recruiter, Attendee attendee);
 
 	boolean existsByRecruiterAndAttendee(Recruiter recruiter, Attendee attendee);
+
+	void deleteByRecruiterAndAttendee(Recruiter recruiter, Attendee attendee);
 }
