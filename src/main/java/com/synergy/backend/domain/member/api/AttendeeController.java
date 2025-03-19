@@ -1,6 +1,7 @@
 package com.synergy.backend.domain.member.api;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +14,7 @@ import com.synergy.backend.domain.member.api.dto.resposne.InterestResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.JobInfoResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.exception.AccessDeniedException;
-import com.synergy.backend.domain.member.service.AttendeeServiceImpl;
+import com.synergy.backend.domain.member.service.AttendeeService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
 
@@ -21,13 +22,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/attendee/onboarding")
+@RequestMapping("/api/v1/attendee")
 @RequiredArgsConstructor
 public class AttendeeController {
 
-	private final AttendeeServiceImpl attendeeService;
+	private final AttendeeService attendeeService;
 
-	@PatchMapping(path = "/interest")
+	@PatchMapping(path = "/onboarding/interest")
 	public ApiResponse<InterestResponseDto> addUserInterest(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody InterestRequestDto request) {
@@ -44,7 +45,7 @@ public class AttendeeController {
 			200);
 	}
 
-	@PatchMapping(path = "/job-info")
+	@PatchMapping(path = "/onboarding/job-info")
 	public ApiResponse<JobInfoResponseDto> addJobInfo(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody JobInfoRequestDto request) {
@@ -59,7 +60,7 @@ public class AttendeeController {
 		return ApiResponse.ok(null, 200);
 	}
 
-	@PatchMapping(path = "/job-info-details")
+	@PatchMapping(path = "/onboarding/job-info-details")
 	public ApiResponse<JobInfoResponseDto> addJobInfoDetails(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody JobInfoDetailsRequestDto request) {
@@ -71,6 +72,19 @@ public class AttendeeController {
 			throw new AccessDeniedException();
 		}
 		attendeeService.addJobInfoDetails(identifier, request);
+		return ApiResponse.ok(null, 200);
+	}
+
+	@GetMapping(path = "/my")
+	public ApiResponse<?> getMyInformation(
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		String identifier = userDetails.getIdentifier();
+		return ApiResponse.ok(attendeeService.getMyInformation(identifier), 200);
+	}
+
+	@GetMapping(path = "/{attendeeId}")
+	public ApiResponse<?> getAttendeeInfoDetail() {
 		return ApiResponse.ok(null, 200);
 	}
 

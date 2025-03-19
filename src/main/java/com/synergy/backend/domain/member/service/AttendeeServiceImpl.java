@@ -1,6 +1,7 @@
 package com.synergy.backend.domain.member.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -22,6 +23,7 @@ import com.synergy.backend.domain.job.exception.NotFoundJobCategoryException;
 import com.synergy.backend.domain.job.exception.NotFoundOccupationCategoryException;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
+import com.synergy.backend.domain.member.api.dto.resposne.MyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
 import com.synergy.backend.domain.member.entity.details.BaseAttendeeDetailEnum;
@@ -32,6 +34,9 @@ import com.synergy.backend.domain.member.entity.details.PreferredCorporateCultur
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
+import com.synergy.backend.domain.point.entity.Point;
+import com.synergy.backend.domain.point.repository.PointRepository;
+import com.synergy.backend.global.exception.BaseErrorException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +49,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final AttendeeInterestRepository attendeeInterestRepository;
 	private final JobCategoryRepository jobCategoryRepository;
 	private final OccupationCategoryRepository occupationCategoryRepository;
+	private final PointRepository pointRepository;
 
 	/** 관심사 추가 */
 	@Transactional
@@ -107,6 +113,20 @@ public class AttendeeServiceImpl implements AttendeeService {
 			convertToEnumSet(
 				request.conferencePurposeCodes(), ConferenceParticipationPurpose.class)
 		);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public MyInfoResponseDto getMyInformation(String identifier) {
+		Attendee attendee = findAttendeeByEmail(identifier);
+
+		try {
+			List<Point> recentPoints = pointRepository.findRecentPointsByAttendeeId(attendee.getId());
+			return MyInfoResponseDto.from(attendee, recentPoints);
+		} catch (Exception e) {
+			throw new BaseErrorException(500, "db 접근 에러");
+		}
+
 	}
 
 	// 관심사 코드 검증
