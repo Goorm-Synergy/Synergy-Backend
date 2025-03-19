@@ -34,8 +34,15 @@ public class AttendeeInterest {
 	private Interest interest;
 
 	@Builder
-	public AttendeeInterest(Attendee attendee, Interest interest) {
+	private AttendeeInterest(Attendee attendee, Interest interest) {
 		this.attendee = attendee;
 		this.interest = interest;
+	}
+
+	public static AttendeeInterest of(Attendee attendee, Interest interest) {
+		return AttendeeInterest.builder()
+			.attendee(attendee)
+			.interest(interest)
+			.build();
 	}
 }
