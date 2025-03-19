@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "recruiter_attendee_like",
+	uniqueConstraints = @UniqueConstraint(
+		name = "unique_recruiter_attendee",
+		columnNames = {"recruiter_id", "attendee_id"}
+	))
 public class RecruiterAttendeeLike extends BaseEntity {
 
 	@Id
