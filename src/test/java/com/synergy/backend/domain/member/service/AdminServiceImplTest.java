@@ -53,7 +53,7 @@ class AdminServiceImplTest {
 
 	@DisplayName("등급이 GOLD인 참가자 랭킹을 조회한다.")
 	@Test
-	void getAttendeeLevelRankings() {
+	void getAttendeeLevelRankingsWithMembershipLevel() {
 		// given
 		List<Attendee> attendees = List.of(attendee1);
 		Page<Attendee> attendeePage = new PageImpl<>(attendees, pageable, attendees.size());
@@ -71,14 +71,21 @@ class AdminServiceImplTest {
 		assertThat(response.getContent().get(0).attendeeName()).isEqualTo("user1");
 	}
 
-	@DisplayName("참가자 누적 포인트 랭킹을 조회한다.")
+	@DisplayName("등급별 참가자 랭킹을 필터 없이 조회한다.")
 	@Test
-	void getAttendeePointRankings() {
+	void getAttendeeLevelRankings() {
 		// given
+		List<Attendee> attendees = List.of(attendee1, attendee2);
+		Page<Attendee> attendeePage = new PageImpl<>(attendees, pageable, attendees.size());
+
+		when(attendeeRepository.findAllByOrderByTotalPointsDesc(any(Pageable.class))).thenReturn(attendeePage);
 
 		// when
+		Page<AttendeeLevelRankingResponseDto> response = adminService.getAttendeeLevelRankings(null,
+			pageable);
 
 		// then
+		assertThat(response).hasSize(2);
 
 	}
 }
