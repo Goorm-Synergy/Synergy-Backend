@@ -1,7 +1,9 @@
 package com.synergy.backend.domain.member.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +25,29 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(MembershipLevelType membershipLevel,
 		Pageable pageable) {
-		Page<Attendee> attendees = (membershipLevel != null)
-			? attendeeRepository.findByMembershipLevelTypeOrderByTotalPointsDesc(membershipLevel, pageable)
-			: attendeeRepository.findAllByOrderByTotalPointsDesc(pageable);
 
-		return attendees.map(AttendeeLevelRankingResponseDto::from);
+		if (membershipLevel != null) {
+			return attendeeRepository
+				.findByMembershipLevelTypeOrderByTotalPointsDesc(membershipLevel, pageable)
+				.map(AttendeeLevelRankingResponseDto::from);
+		}
+
+		return getSortedAttendeePage(pageable)
+			.map(AttendeeLevelRankingResponseDto::from);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Pageable pageable) {
-		Page<Attendee> attendees = attendeeRepository.findAllByOrderByTotalPointsDesc(pageable);
-		return attendees.map(AttendeePointRankingResponseDto::from);
+		return getSortedAttendeePage(pageable).map(AttendeePointRankingResponseDto::from);
+	}
+
+	private Page<Attendee> getSortedAttendeePage(Pageable pageable) {
+		Pageable sortedPageable = PageRequest.of(
+			pageable.getPageNumber(),
+			pageable.getPageSize(),
+			Sort.by(Sort.Direction.DESC, "totalPoints")
+		);
+		return attendeeRepository.findAllByOrderByTotalPointsDesc(sortedPageable);
 	}
 }

@@ -219,7 +219,7 @@ public class Attendee extends BaseEntity implements User {
 		point.assignAttendee(this);
 	}
 
-	public void addPoints(int point) {
+	public void addTotalPoints(int point) {
 		this.totalPoints += point;
 		updateMembershipLevel();
 	}
