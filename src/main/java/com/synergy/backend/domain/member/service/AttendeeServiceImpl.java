@@ -137,7 +137,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 	// 새로운 관심사 저장
 	private void saveNewMemberInterests(Attendee attendee, Set<Interest> newInterests) {
 		Set<AttendeeInterest> newAttendeeInterests = newInterests.stream()
-			.map(interest -> new AttendeeInterest(attendee, interest))
+			.map(interest -> AttendeeInterest.of(attendee, interest))
 			.collect(Collectors.toSet());
 
 		attendeeInterestRepository.saveAll(newAttendeeInterests);
