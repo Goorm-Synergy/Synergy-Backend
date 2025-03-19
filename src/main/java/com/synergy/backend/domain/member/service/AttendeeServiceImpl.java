@@ -34,8 +34,10 @@ import com.synergy.backend.domain.member.entity.details.PreferredCorporateCultur
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
+import com.synergy.backend.domain.point.api.dto.PointResponseDto;
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.point.repository.PointRepository;
+import com.synergy.backend.domain.point.service.PointService;
 import com.synergy.backend.global.exception.BaseErrorException;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +52,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final JobCategoryRepository jobCategoryRepository;
 	private final OccupationCategoryRepository occupationCategoryRepository;
 	private final PointRepository pointRepository;
+
+	private final PointService pointService;
 
 	/** 관심사 추가 */
 	@Transactional
@@ -121,7 +125,11 @@ public class AttendeeServiceImpl implements AttendeeService {
 		Attendee attendee = findAttendeeByEmail(identifier);
 
 		try {
-			List<Point> recentPoints = pointRepository.findRecentPointsByAttendeeId(attendee.getId());
+			List<Point> points = pointRepository.findRecentPointsByAttendeeId(attendee.getId());
+			List<PointResponseDto> recentPoints = points.stream()
+				.map(point -> PointResponseDto.from(point, pointService.getDetailsForPoint(point)))
+				.toList();
+
 			return MyInfoResponseDto.from(attendee, recentPoints);
 		} catch (Exception e) {
 			throw new BaseErrorException(500, "db 접근 에러");
