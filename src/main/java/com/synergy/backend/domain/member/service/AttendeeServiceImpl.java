@@ -1,7 +1,10 @@
 package com.synergy.backend.domain.member.service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -125,13 +128,12 @@ public class AttendeeServiceImpl implements AttendeeService {
 	public MyInfoResponseDto getMyInformation(String identifier) {
 		Attendee attendee = findAttendeeByEmail(identifier);
 
-		List<Point> points = pointRepository.findRecentPointsByAttendeeId(attendee.getId());
-		List<PointResponseDto> recentPoints = points.stream()
-			.map(point -> PointResponseDto.from(point, pointService.getDetailsForPoint(point)))
-			.toList();
+		List<PointResponseDto> recentPoints = mapToPointResponseDto(
+			Optional.ofNullable(pointRepository.findRecentPointsByAttendeeId(attendee.getId()))
+				.orElse(Collections.emptyList())
+		);
 
 		return MyInfoResponseDto.from(attendee, recentPoints);
-
 	}
 
 	/** 참가자 상세 정보 */
@@ -150,6 +152,14 @@ public class AttendeeServiceImpl implements AttendeeService {
 		Attendee attendee = findAttendeeById(attendeeId);
 
 		return AttendeeInfoDetailResponseDto.from(attendee);
+	}
+
+	private List<PointResponseDto> mapToPointResponseDto(List<Point> points) {
+		return points.stream()
+			.map(point -> PointResponseDto.from(point,
+				Objects.requireNonNullElse(pointService.getDetailsForPoint(point), "기본 포인트 설명")
+			))
+			.toList();
 	}
 
 	// 관심사 코드 검증

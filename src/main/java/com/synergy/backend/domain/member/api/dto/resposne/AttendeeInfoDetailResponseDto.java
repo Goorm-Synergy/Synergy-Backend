@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.member.api.dto.resposne;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,23 +22,23 @@ public record AttendeeInfoDetailResponseDto(
 ) {
 	public static AttendeeInfoDetailResponseDto from(Attendee attendee) {
 		return new AttendeeInfoDetailResponseDto(
-			attendee.getName(),
-			attendee.getCurrentJobCategory().getName(),
-			attendee.getExperienceLevel().getDescription(),
-			attendee.getEducationLevel().getDescription(),
-			attendee.getAgeGroup().getDescription(),
-			attendee.getTechStacks(),
-			attendee.getDesiredWorkRegion()
-				.stream().map(BaseAttendeeDetailEnum::getDescription)
-				.collect(Collectors.toSet()),
-			attendee.getSelfIntroduction(),
-			attendee.getInformation(),
-			attendee.getWorkplaceSelectionFactors()
-				.stream().map(BaseAttendeeDetailEnum::getDescription)
-				.collect(Collectors.toSet()),
-			attendee.getPreferredCorporateCultures()
-				.stream().map(BaseAttendeeDetailEnum::getDescription)
-				.collect(Collectors.toSet())
+			attendee.getName() != null ? attendee.getName() : "Unknown",
+			attendee.getCurrentJobCategory() != null ? attendee.getCurrentJobCategory().getName() : "Unknown",
+			attendee.getExperienceLevel() != null ? attendee.getExperienceLevel().getDescription() : "Unknown",
+			attendee.getEducationLevel() != null ? attendee.getEducationLevel().getDescription() : "Unknown",
+			attendee.getAgeGroup() != null ? attendee.getAgeGroup().getDescription() : "Unknown",
+			attendee.getTechStacks() != null ? attendee.getTechStacks() : "No tech stack specified",
+			convertEnumSetToDescriptions(attendee.getDesiredWorkRegion()),
+			attendee.getSelfIntroduction() != null ? attendee.getSelfIntroduction() : "No self introduction",
+			attendee.getInformation() != null ? attendee.getInformation() : "No additional information",
+			convertEnumSetToDescriptions(attendee.getWorkplaceSelectionFactors()),
+			convertEnumSetToDescriptions(attendee.getPreferredCorporateCultures())
 		);
+	}
+
+	private static Set<String> convertEnumSetToDescriptions(Set<? extends BaseAttendeeDetailEnum> enums) {
+		return (enums != null) ?
+			enums.stream().map(BaseAttendeeDetailEnum::getDescription).collect(Collectors.toSet()) :
+			Collections.emptySet();
 	}
 }
