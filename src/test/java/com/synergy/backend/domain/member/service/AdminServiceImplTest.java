@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -86,6 +87,23 @@ class AdminServiceImplTest {
 
 		// then
 		assertThat(response).hasSize(2);
+	}
 
+	@DisplayName("참가자 누적 포인트 랭킹을 조회한다.")
+	@Test
+	void getAttendeePointRankings() {
+		// given
+		List<Attendee> attendees = List.of(attendee1, attendee2);
+		Page<Attendee> attendeePage = new PageImpl<>(attendees, pageable, attendees.size());
+
+		when(attendeeRepository.findAllByOrderByTotalPointsDesc(any(Pageable.class))).thenReturn(attendeePage);
+
+		// when
+		Page<AttendeePointRankingResponseDto> response = adminService.getAttendeePointRankings(pageable);
+
+		// then
+		assertThat(response).hasSize(2);
+		assertThat(response.getContent().get(0).totalPoints())
+			.isGreaterThanOrEqualTo(response.getContent().get(1).totalPoints());
 	}
 }
