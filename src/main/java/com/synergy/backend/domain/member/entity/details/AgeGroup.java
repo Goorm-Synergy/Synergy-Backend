@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidAgeGroupCodeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum AgeGroup implements BaseAttendeeDetailEnum {
 	AGE_20_24(20, "20~24세 이하"),
 	AGE_25_29(25, "25~29세 이하"),

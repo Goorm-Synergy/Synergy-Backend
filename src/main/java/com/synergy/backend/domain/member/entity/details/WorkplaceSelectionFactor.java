@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidWorkplaceSelectionFactorCodeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum WorkplaceSelectionFactor implements BaseAttendeeDetailEnum {
 	GROWTH_AND_LEARNING_SUPPORT(1, "성장 기회 및 학습 지원"),
 	SALARY_AND_BENEFITS(2, "연봉 및 복리후생"),

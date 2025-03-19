@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidExperienceLevelTypeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum ExperienceLevelType implements BaseAttendeeDetailEnum {
 	NEWCOMER(1, "신입"),
 	JUNIOR(2, "1~2년 이하"),

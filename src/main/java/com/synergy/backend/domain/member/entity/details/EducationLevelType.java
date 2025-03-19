@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidEducationLevelTypeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum EducationLevelType implements BaseAttendeeDetailEnum {
 	HIGH_SCHOOL(1, "고등학교 졸업"),
 	ASSOCIATE(2, "2~3년제 졸업"),

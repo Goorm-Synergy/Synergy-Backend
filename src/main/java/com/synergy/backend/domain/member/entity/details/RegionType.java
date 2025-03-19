@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidRegionTypeCodeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum RegionType implements BaseAttendeeDetailEnum {
 	CAPITAL_AREA(11, "수도권 (서울특별시, 인천광역시, 경기도)"),
 	BUSAN(12, "부산광역시"),

@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidPreferredCorporateCultureCodeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum PreferredCorporateCulture implements BaseAttendeeDetailEnum {
 	HORIZONTAL_COMMUNICATION(1, "수평적 소통 문화"),
 	CONTINUOUS_TECH_INNOVATION(2, "지속적인 기술 혁신 추구"),

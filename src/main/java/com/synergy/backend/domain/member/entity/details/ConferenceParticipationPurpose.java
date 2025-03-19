@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.synergy.backend.domain.member.exception.InvalidConferenceParticipationPurposeCodeException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum ConferenceParticipationPurpose implements BaseAttendeeDetailEnum {
 	EMPLOYMENT_AND_NETWORK_EXPANSION(1, "취업 및 인맥 확장"),
 	LEARNING_LATEST_TECH_AND_TRENDS(2, "최신 기술 및 트렌드 학습"),
