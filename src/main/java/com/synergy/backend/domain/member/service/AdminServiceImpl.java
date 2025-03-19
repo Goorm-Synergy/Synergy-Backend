@@ -21,10 +21,10 @@ public class AdminServiceImpl implements AdminService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(String membershipLevel, Pageable pageable) {
+	public Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(MembershipLevelType membershipLevel,
+		Pageable pageable) {
 		Page<Attendee> attendees = (membershipLevel != null)
-			? attendeeRepository.findByMembershipLevelTypeOrderByTotalPointsDesc(
-			MembershipLevelType.valueOf(membershipLevel), pageable)
+			? attendeeRepository.findByMembershipLevelTypeOrderByTotalPointsDesc(membershipLevel, pageable)
 			: attendeeRepository.findAllByOrderByTotalPointsDesc(pageable);
 
 		return attendees.map(AttendeeLevelRankingResponseDto::from);
