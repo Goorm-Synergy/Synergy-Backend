@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.synergy.backend.domain.member.api.dto.AttendeeRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.service.AdminService;
 import com.synergy.backend.global.common.ApiResponse;
 
@@ -24,11 +25,19 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/attendee-rankings")
-	public ApiResponse<Page<AttendeeRankingResponseDto>> getAttendeeRankings(
-		@RequestParam(required = false) String grade, // 등급 필터링 (선택)
+	@GetMapping("/attendees/level-rankings")
+	public ApiResponse<Page<AttendeeLevelRankingResponseDto>> getAttendeeLevelRankings(
+		@RequestParam(required = false) String membershipLevel,
 		@PageableDefault(size = 10, sort = "totalPoints", direction = Sort.Direction.DESC) Pageable pageable
 	) {
-		return ApiResponse.ok(adminService.getAttendeeRankings(grade, pageable), 200);
+		return ApiResponse.ok(adminService.getAttendeeLevelRankings(membershipLevel, pageable), 200);
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/attendees/point-rankings")
+	public ApiResponse<Page<AttendeePointRankingResponseDto>> getAttendeePointRankings(
+		@PageableDefault(size = 10, sort = "totalPoints", direction = Sort.Direction.DESC) Pageable pageable
+	) {
+		return ApiResponse.ok(adminService.getAttendeePointRankings(pageable), 200);
 	}
 }

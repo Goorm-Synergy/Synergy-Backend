@@ -1,15 +1,15 @@
-package com.synergy.backend.domain.member.api.dto;
+package com.synergy.backend.domain.member.api.dto.resposne;
 
 import com.synergy.backend.domain.member.entity.Attendee;
 
-public record AttendeeRankingResponseDto(
+public record AttendeeLevelRankingResponseDto(
 	String membershipLevel,
 	String attendeeName,
 	Integer totalPoints,
 	Long userId
 ) {
-	public static AttendeeRankingResponseDto from(Attendee attendee) {
-		return new AttendeeRankingResponseDto(
+	public static AttendeeLevelRankingResponseDto from(Attendee attendee) {
+		return new AttendeeLevelRankingResponseDto(
 			attendee.getMembershipLevelType().name(),
 			attendee.getName(),
 			attendee.getTotalPoints(),

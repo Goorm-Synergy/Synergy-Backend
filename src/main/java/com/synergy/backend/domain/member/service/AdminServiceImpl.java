@@ -5,7 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.synergy.backend.domain.member.api.dto.AttendeeRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -20,12 +21,19 @@ public class AdminServiceImpl implements AdminService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public Page<AttendeeRankingResponseDto> getAttendeeRankings(String membershipLevel, Pageable pageable) {
+	public Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(String membershipLevel, Pageable pageable) {
 		Page<Attendee> attendees = (membershipLevel != null)
 			? attendeeRepository.findByMembershipLevelTypeOrderByTotalPointsDesc(
 			MembershipLevelType.valueOf(membershipLevel), pageable)
 			: attendeeRepository.findAllByOrderByTotalPointsDesc(pageable);
 
-		return attendees.map(AttendeeRankingResponseDto::from);
+		return attendees.map(AttendeeLevelRankingResponseDto::from);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Pageable pageable) {
+		Page<Attendee> attendees = attendeeRepository.findAllByOrderByTotalPointsDesc(pageable);
+		return attendees.map(AttendeePointRankingResponseDto::from);
 	}
 }
