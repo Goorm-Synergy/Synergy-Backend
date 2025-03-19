@@ -3,10 +3,11 @@ package com.synergy.backend.domain.member.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.jdi.request.DuplicateRequestException;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RecruiterAttendeeLike;
+import com.synergy.backend.domain.member.exception.DuplicateLikeException;
+import com.synergy.backend.domain.member.exception.NotFoundLikeException;
 import com.synergy.backend.domain.member.exception.NotFoundRecruiterException;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -30,7 +31,7 @@ public class RecruiterLikeServiceImpl implements RecruiterLikeService {
 		Attendee attendee = findAttendeeById(attendeeId);
 
 		if (recruiterAttendeeLikeRepository.existsByRecruiterAndAttendee(recruiter, attendee)) {
-			throw new DuplicateRequestException("Already liked this attendee");
+			throw new DuplicateLikeException();
 		}
 
 		recruiterAttendeeLikeRepository.save(RecruiterAttendeeLike.of(recruiter, attendee));
@@ -43,7 +44,7 @@ public class RecruiterLikeServiceImpl implements RecruiterLikeService {
 		Attendee attendee = findAttendeeById(attendeeId);
 		RecruiterAttendeeLike like = recruiterAttendeeLikeRepository.findByRecruiterAndAttendee(
 				recruiter, attendee)
-			.orElseThrow();
+			.orElseThrow(NotFoundLikeException::new);
 		recruiterAttendeeLikeRepository.delete(like);
 	}
 
