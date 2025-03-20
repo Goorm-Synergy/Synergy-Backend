@@ -22,7 +22,7 @@ import com.synergy.backend.domain.member.repository.RecruiterAttendeeLikeReposit
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
 
 @ExtendWith(MockitoExtension.class)
-class RecruiterLikeServiceImplTest {
+class RecruiterAttendeeLikeServiceImplTest {
 
 	@Mock
 	private RecruiterAttendeeLikeRepository recruiterAttendeeLikeRepository;
@@ -34,7 +34,7 @@ class RecruiterLikeServiceImplTest {
 	private AttendeeRepository attendeeRepository;
 
 	@InjectMocks
-	private RecruiterLikeServiceImpl recruiterLikeService;
+	private RecruiterAttendeeLikeServiceImpl recruiterLikeService;
 
 	private Recruiter recruiter;
 	private Attendee attendee;

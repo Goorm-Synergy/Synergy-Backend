@@ -17,4 +17,6 @@ public interface RecruiterAttendeeLikeRepository extends JpaRepository<Recruiter
 	void deleteByRecruiterAndAttendee(Recruiter recruiter, Attendee attendee);
 
 	List<RecruiterAttendeeLike> findAllByRecruiterId(Long recruiterId);
+
+	List<RecruiterAttendeeLike> findAllByAttendeeId(Long attendeeId);
 }

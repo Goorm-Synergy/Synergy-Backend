@@ -1,5 +1,8 @@
 package com.synergy.backend.domain.member.api;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,10 +17,12 @@ import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeInfoDetailResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.InterestResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.JobInfoResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.LikedRecruiterResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.MyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.exception.AccessDeniedException;
 import com.synergy.backend.domain.member.service.AttendeeService;
+import com.synergy.backend.domain.member.service.RecruiterAttendeeLikeService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
 
@@ -30,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class AttendeeController {
 
 	private final AttendeeService attendeeService;
+	private final RecruiterAttendeeLikeService recruiterAttendeeLikeService;
 
 	@PatchMapping(path = "/onboarding/interest")
 	public ApiResponse<InterestResponseDto> addUserInterest(
@@ -100,6 +106,13 @@ public class AttendeeController {
 		String identifier = userDetails.getIdentifier();
 		RoleType role = userDetails.getRole();
 		return ApiResponse.ok(attendeeService.getAttendeeInfoDetail(attendeeId, identifier, role), 200);
+	}
+
+	@PreAuthorize("hasRole('ATTENDEE')")
+	@GetMapping("/liked-recruiters")
+	public ApiResponse<List<LikedRecruiterResponseDto>> getLikedRecruiters(
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ApiResponse.ok(recruiterAttendeeLikeService.getLikedRecruiters(userDetails.getId()), 200);
 	}
 
 }

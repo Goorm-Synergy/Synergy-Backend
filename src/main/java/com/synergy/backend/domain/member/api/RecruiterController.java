@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.synergy.backend.domain.member.api.dto.resposne.LikedAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
-import com.synergy.backend.domain.member.service.RecruiterLikeService;
+import com.synergy.backend.domain.member.service.RecruiterAttendeeLikeService;
 import com.synergy.backend.domain.member.service.RecruiterService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class RecruiterController {
 
 	private final RecruiterService recruiterService;
-	private final RecruiterLikeService recruiterLikeService;
+	private final RecruiterAttendeeLikeService recruiterAttendeeLikeService;
 
 	@PreAuthorize("hasRole('RECRUITER')")
 	@GetMapping("/my")
@@ -41,7 +41,7 @@ public class RecruiterController {
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PathVariable(value = "attendeeId") Long attendeeId
 	) {
-		recruiterLikeService.likeAttendee(userDetails.getId(), attendeeId);
+		recruiterAttendeeLikeService.likeAttendee(userDetails.getId(), attendeeId);
 		return ApiResponse.ok(null, 200);
 	}
 
@@ -51,7 +51,7 @@ public class RecruiterController {
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PathVariable(value = "attendeeId") Long attendeeId
 	) {
-		recruiterLikeService.unlikeAttendee(userDetails.getId(), attendeeId);
+		recruiterAttendeeLikeService.unlikeAttendee(userDetails.getId(), attendeeId);
 		return ApiResponse.ok(null, 200);
 	}
 
@@ -59,7 +59,7 @@ public class RecruiterController {
 	@GetMapping("/me/liked-attendees")
 	public ApiResponse<List<LikedAttendeeResponseDto>> getLikedAttendees(
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
-		return ApiResponse.ok(recruiterLikeService.getLikedAttendees(userDetails.getId()), 200);
+		return ApiResponse.ok(recruiterAttendeeLikeService.getLikedAttendees(userDetails.getId()), 200);
 	}
 
 }
