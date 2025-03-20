@@ -79,7 +79,7 @@ public class AttendeeController {
 		return ApiResponse.ok(attendeeService.getMyInformation(identifier), 200);
 	}
 
-	@PreAuthorize("hasRole('ADMIN') or hasRole('RECRUITER') or #attendeeId == principal.id")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('RECRUITER') or (hasRole('ATTENDEE') and #attendeeId == principal.id)")
 	@GetMapping(path = "/{attendeeId}")
 	public ApiResponse<AttendeeFullInfoResponseDto> getAttendeeInfoDetail(
 		@PathVariable Long attendeeId,
