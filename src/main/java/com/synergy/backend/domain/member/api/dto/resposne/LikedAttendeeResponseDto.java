@@ -10,7 +10,7 @@ public record LikedAttendeeResponseDto(
 	String experienceLevel,
 	String profilePhotoUrl
 ) {
-	public static LikedAttendeeResponseDto of(Attendee attendee) {
+	public static LikedAttendeeResponseDto from(Attendee attendee) {
 		return new LikedAttendeeResponseDto(
 			attendee.getId(),
 			attendee.getName(),

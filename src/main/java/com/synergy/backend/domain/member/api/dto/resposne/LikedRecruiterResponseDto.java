@@ -7,7 +7,7 @@ public record LikedRecruiterResponseDto(
 	String responsibility,
 	String name
 ) {
-	public static LikedRecruiterResponseDto of(Recruiter recruiter) {
+	public static LikedRecruiterResponseDto from(Recruiter recruiter) {
 		return new LikedRecruiterResponseDto(
 			recruiter.getCompany(),
 			recruiter.getResponsibility(),

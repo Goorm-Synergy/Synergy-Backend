@@ -8,7 +8,7 @@ public record RecruiterMyInfoResponseDto(
 	String company,
 	String responsibility
 ) {
-	public static RecruiterMyInfoResponseDto of(Recruiter recruiter) {
+	public static RecruiterMyInfoResponseDto from(Recruiter recruiter) {
 		return new RecruiterMyInfoResponseDto(
 			recruiter.getCompanyPhotoUrl(),
 			recruiter.getName(),

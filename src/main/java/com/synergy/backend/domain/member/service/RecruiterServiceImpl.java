@@ -20,7 +20,7 @@ public class RecruiterServiceImpl implements RecruiterService {
 	@Override
 	public RecruiterMyInfoResponseDto getMyInformation(Long id) {
 		Recruiter recruiter = findRecruiterById(id);
-		return RecruiterMyInfoResponseDto.of(recruiter);
+		return RecruiterMyInfoResponseDto.from(recruiter);
 	}
 
 	private Recruiter findRecruiterById(Long id) {

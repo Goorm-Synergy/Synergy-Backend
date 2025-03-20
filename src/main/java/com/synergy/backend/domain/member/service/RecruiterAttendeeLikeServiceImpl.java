@@ -55,7 +55,7 @@ public class RecruiterAttendeeLikeServiceImpl implements RecruiterAttendeeLikeSe
 		List<RecruiterAttendeeLike> likes = recruiterAttendeeLikeRepository.findAllByRecruiterId(recruiterId);
 
 		return likes.stream()
-			.map(like -> LikedAttendeeResponseDto.of(like.getAttendee()))
+			.map(like -> LikedAttendeeResponseDto.from(like.getAttendee()))
 			.toList();
 	}
 
@@ -65,7 +65,7 @@ public class RecruiterAttendeeLikeServiceImpl implements RecruiterAttendeeLikeSe
 		List<RecruiterAttendeeLike> likes = recruiterAttendeeLikeRepository.findAllByAttendeeId(attendeeId);
 
 		return likes.stream()
-			.map(like -> LikedRecruiterResponseDto.of(like.getRecruiter()))
+			.map(like -> LikedRecruiterResponseDto.from(like.getRecruiter()))
 			.toList();
 	}
 
