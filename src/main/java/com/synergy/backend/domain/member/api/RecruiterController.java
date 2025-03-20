@@ -1,5 +1,7 @@
 package com.synergy.backend.domain.member.api;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.synergy.backend.domain.member.api.dto.resposne.LikedAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
 import com.synergy.backend.domain.member.service.RecruiterLikeService;
 import com.synergy.backend.domain.member.service.RecruiterService;
@@ -51,4 +54,12 @@ public class RecruiterController {
 		recruiterLikeService.unlikeAttendee(userDetails.getId(), attendeeId);
 		return ApiResponse.ok(null, 200);
 	}
+
+	@PreAuthorize("hasRole('RECRUITER')")
+	@GetMapping("/me/liked-attendees")
+	public ApiResponse<List<LikedAttendeeResponseDto>> getLikedAttendees(
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ApiResponse.ok(recruiterLikeService.getLikedAttendees(userDetails.getId()), 200);
+	}
+
 }

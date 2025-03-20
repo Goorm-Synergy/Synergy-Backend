@@ -1,8 +1,11 @@
 package com.synergy.backend.domain.member.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.synergy.backend.domain.member.api.dto.resposne.LikedAttendeeResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RecruiterAttendeeLike;
@@ -43,6 +46,16 @@ public class RecruiterLikeServiceImpl implements RecruiterLikeService {
 		Attendee attendee = findAttendeeById(attendeeId);
 
 		recruiterAttendeeLikeRepository.deleteByRecruiterAndAttendee(recruiter, attendee);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<LikedAttendeeResponseDto> getLikedAttendees(Long id) {
+		List<RecruiterAttendeeLike> likes = recruiterAttendeeLikeRepository.findAllByRecruiterId(id);
+
+		return likes.stream()
+			.map(like -> LikedAttendeeResponseDto.of(like.getAttendee()))
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
