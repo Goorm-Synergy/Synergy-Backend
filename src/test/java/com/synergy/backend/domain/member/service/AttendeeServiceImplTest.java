@@ -65,7 +65,7 @@ class AttendeeServiceImplTest {
 
 		// then
 		assertThat(response).isNotNull();
-		assertEquals(attendee.getName(), response.baseDto().name());
+		assertEquals(attendee.getName(), response.baseInfo().name());
 	}
 
 	@DisplayName("참가자가 내 정보를 조회한다.")
