@@ -20,7 +20,6 @@ import com.synergy.backend.domain.member.api.dto.resposne.JobInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.LikedRecruiterResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.MyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
-import com.synergy.backend.domain.member.exception.AccessDeniedException;
 import com.synergy.backend.domain.member.service.AttendeeService;
 import com.synergy.backend.domain.member.service.RecruiterAttendeeLikeService;
 import com.synergy.backend.global.common.ApiResponse;
@@ -37,67 +36,49 @@ public class AttendeeController {
 	private final AttendeeService attendeeService;
 	private final RecruiterAttendeeLikeService recruiterAttendeeLikeService;
 
+	@PreAuthorize("hasRole('ATTENDEE')")
 	@PatchMapping(path = "/onboarding/interest")
 	public ApiResponse<InterestResponseDto> addUserInterest(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody InterestRequestDto request) {
-
 		String identifier = userDetails.getIdentifier();
-		RoleType role = userDetails.getRole();
-
-		if (role != RoleType.ATTENDEE) {
-			throw new AccessDeniedException();
-		}
-
 		return ApiResponse.ok(
 			InterestResponseDto.from(attendeeService.addInterests(identifier, request.interestCodes())),
 			200);
 	}
 
+	@PreAuthorize("hasRole('ATTENDEE')")
 	@PatchMapping(path = "/onboarding/job-info")
 	public ApiResponse<JobInfoResponseDto> addJobInfo(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody JobInfoRequestDto request) {
 
 		String identifier = userDetails.getIdentifier();
-		RoleType role = userDetails.getRole();
-
-		if (role != RoleType.ATTENDEE) {
-			throw new AccessDeniedException();
-		}
 		attendeeService.addJobInfo(identifier, request);
 		return ApiResponse.ok(null, 200);
 	}
 
+	@PreAuthorize("hasRole('ATTENDEE')")
 	@PatchMapping(path = "/onboarding/job-info-details")
 	public ApiResponse<JobInfoResponseDto> addJobInfoDetails(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody JobInfoDetailsRequestDto request) {
 
 		String identifier = userDetails.getIdentifier();
-		RoleType role = userDetails.getRole();
-
-		if (role != RoleType.ATTENDEE) {
-			throw new AccessDeniedException();
-		}
 		attendeeService.addJobInfoDetails(identifier, request);
 		return ApiResponse.ok(null, 200);
 	}
 
+	@PreAuthorize("hasRole('ATTENDEE')")
 	@GetMapping(path = "/my")
 	public ApiResponse<MyInfoResponseDto> getMyInformation(
 		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
 		String identifier = userDetails.getIdentifier();
-		RoleType role = userDetails.getRole();
-
-		if (role != RoleType.ATTENDEE) {
-			throw new AccessDeniedException();
-		}
-
 		return ApiResponse.ok(attendeeService.getMyInformation(identifier), 200);
 	}
 
+	@PreAuthorize("hasRole('ADMIN') or hasRole('RECRUITER') or #attendeeId == principal.id")
 	@GetMapping(path = "/{attendeeId}")
 	public ApiResponse<AttendeeInfoDetailResponseDto> getAttendeeInfoDetail(
 		@PathVariable Long attendeeId,
