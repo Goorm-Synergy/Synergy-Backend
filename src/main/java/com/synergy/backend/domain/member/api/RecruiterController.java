@@ -3,12 +3,15 @@ package com.synergy.backend.domain.member.api;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
 import com.synergy.backend.domain.member.service.RecruiterLikeService;
+import com.synergy.backend.domain.member.service.RecruiterService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
 
@@ -19,7 +22,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecruiterController {
 
+	private final RecruiterService recruiterService;
 	private final RecruiterLikeService recruiterLikeService;
+
+	@PreAuthorize("hasRole('RECRUITER')")
+	@GetMapping("/my")
+	public ApiResponse<RecruiterMyInfoResponseDto> getMyInformation(
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ApiResponse.ok(recruiterService.getMyInformation(userDetails.getId()), 200);
+	}
 
 	@PreAuthorize("hasRole('RECRUITER')")
 	@PostMapping("/attendees/{attendeeId}/like")
