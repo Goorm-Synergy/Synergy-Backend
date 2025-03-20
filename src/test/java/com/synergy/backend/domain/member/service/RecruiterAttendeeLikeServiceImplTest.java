@@ -3,6 +3,7 @@ package com.synergy.backend.domain.member.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.synergy.backend.domain.member.api.dto.resposne.LikedAttendeeResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.LikedRecruiterResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RecruiterAttendeeLike;
@@ -34,29 +37,35 @@ class RecruiterAttendeeLikeServiceImplTest {
 	private AttendeeRepository attendeeRepository;
 
 	@InjectMocks
-	private RecruiterAttendeeLikeServiceImpl recruiterLikeService;
+	private RecruiterAttendeeLikeServiceImpl recruiterAttendeeLikeService;
 
-	private Recruiter recruiter;
-	private Attendee attendee;
-	private RecruiterAttendeeLike like;
+	private Recruiter recruiter1;
+	private Recruiter recruiter2;
+	private Attendee attendee1;
+	private Attendee attendee2;
+	private RecruiterAttendeeLike like1;
+	private RecruiterAttendeeLike like2;
 
 	@BeforeEach
 	void setUp() {
-		recruiter = Recruiter.of("RECRUITER12345");
-		attendee = Attendee.of("user@email.com", "pass", "user1", "01012345678");
-		like = RecruiterAttendeeLike.of(recruiter, attendee);
+		recruiter1 = Recruiter.of("RECRUITER12345");
+		recruiter2 = Recruiter.of("RECRUITER67890");
+		attendee1 = Attendee.of("user1@email.com", "pass", "user1", "01012345678");
+		attendee2 = Attendee.of("user2@email.com", "pass", "user2", "01012345678");
+		like1 = RecruiterAttendeeLike.of(recruiter1, attendee1);
+		like2 = RecruiterAttendeeLike.of(recruiter2 ,attendee2);
 	}
 
 	@DisplayName("채용담당자가 참가자 좋아요를 한다.")
 	@Test
 	void likeAttendee() {
 		// given
-		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter));
-		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee));
-		when(recruiterAttendeeLikeRepository.existsByRecruiterAndAttendee(recruiter, attendee)).thenReturn(false);
+		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter1));
+		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee1));
+		when(recruiterAttendeeLikeRepository.existsByRecruiterAndAttendee(recruiter1, attendee1)).thenReturn(false);
 
 		// when
-		recruiterLikeService.likeAttendee(1L, 1L);
+		recruiterAttendeeLikeService.likeAttendee(1L, 1L);
 
 		// then
 		verify(recruiterAttendeeLikeRepository, times(1)).save(any(RecruiterAttendeeLike.class));
@@ -66,12 +75,12 @@ class RecruiterAttendeeLikeServiceImplTest {
 	@Test
 	void likeAttendee_DuplicateLike() {
 		// given
-		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter));
-		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee));
-		when(recruiterAttendeeLikeRepository.existsByRecruiterAndAttendee(recruiter, attendee)).thenReturn(true);
+		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter1));
+		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee1));
+		when(recruiterAttendeeLikeRepository.existsByRecruiterAndAttendee(recruiter1, attendee1)).thenReturn(true);
 
 		// when & then
-		assertThatThrownBy(() -> recruiterLikeService.likeAttendee(1L, 1L))
+		assertThatThrownBy(() -> recruiterAttendeeLikeService.likeAttendee(1L, 1L))
 			.isInstanceOf(DuplicateLikeException.class);
 	}
 
@@ -79,14 +88,46 @@ class RecruiterAttendeeLikeServiceImplTest {
 	@Test
 	void unlikeAttendee() {
 		// given
-		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter));
-		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee));
+		when(recruiterRepository.findById(anyLong())).thenReturn(Optional.of(recruiter1));
+		when(attendeeRepository.findById(anyLong())).thenReturn(Optional.of(attendee1));
 
 		// when
-		recruiterLikeService.unlikeAttendee(1L, 1L);
+		recruiterAttendeeLikeService.unlikeAttendee(1L, 1L);
 
 		// then
-		verify(recruiterAttendeeLikeRepository, times(1)).deleteByRecruiterAndAttendee(recruiter, attendee);
+		verify(recruiterAttendeeLikeRepository, times(1)).deleteByRecruiterAndAttendee(recruiter1, attendee1);
 	}
 
+	@DisplayName("채용 담당자가 좋아요한 참가자 목록을 조회한다.")
+	@Test
+	void getLikedAttendees() {
+		// given
+		Long recruiterId = 1L;
+		when(recruiterAttendeeLikeRepository.findAllByRecruiterId(recruiterId))
+			.thenReturn(List.of(like1));
+
+		// when
+		List<LikedAttendeeResponseDto> response = recruiterAttendeeLikeService.getLikedAttendees(recruiterId);
+
+		// then
+		assertThat(response).hasSize(1);
+		assertThat(response.get(0).name()).isEqualTo(attendee1.getName());
+	}
+
+	@DisplayName("참가자가 좋아요한 채용 담당자 목록을 조회한다.")
+	@Test
+	void getLikedRecruiters() {
+		// given
+		Long attendeeId = 10L;
+		when(recruiterAttendeeLikeRepository.findAllByAttendeeId(attendeeId))
+			.thenReturn(List.of(like1, like2));
+
+		// when
+		List<LikedRecruiterResponseDto> response = recruiterAttendeeLikeService.getLikedRecruiters(attendeeId);
+
+		// then
+		assertThat(response).hasSize(2);
+		assertThat(response.get(0).name()).isEqualTo(recruiter1.getName());
+		assertThat(response.get(1).name()).isEqualTo(recruiter2.getName());
+	}
 }

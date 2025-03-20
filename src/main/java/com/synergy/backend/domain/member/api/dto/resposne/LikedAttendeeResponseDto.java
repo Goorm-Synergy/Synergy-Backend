@@ -14,9 +14,9 @@ public record LikedAttendeeResponseDto(
 		return new LikedAttendeeResponseDto(
 			attendee.getId(),
 			attendee.getName(),
-			attendee.getDesiredOccupationCategory().getName(),
+			attendee.getDesiredOccupationCategory() != null ? attendee.getDesiredOccupationCategory().getName() : "",
 			attendee.getTechStacks(),
-			attendee.getExperienceLevel().getDescription(),
+			attendee.getExperienceLevel() != null ? attendee.getExperienceLevel().getDescription() : "",
 			attendee.getProfilePhotoUrl()
 		);
 	}
