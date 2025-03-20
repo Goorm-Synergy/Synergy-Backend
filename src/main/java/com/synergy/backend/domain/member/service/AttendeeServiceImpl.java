@@ -21,7 +21,9 @@ import com.synergy.backend.domain.job.exception.NotFoundJobCategoryException;
 import com.synergy.backend.domain.job.exception.NotFoundOccupationCategoryException;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeInfoDetailResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeBaseInfoResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeDetailInfoResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeFullInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.MyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.RoleType;
@@ -123,7 +125,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 	/** 참가자 상세 정보 */
 	@Transactional(readOnly = true)
 	@Override
-	public AttendeeInfoDetailResponseDto getAttendeeInfoDetail(Long attendeeId, String identifier, RoleType role) {
+	public AttendeeFullInfoResponseDto getAttendeeInfoDetail(Long attendeeId, String identifier, RoleType role) {
 
 		if (role == RoleType.ATTENDEE) {
 			Attendee loginUser = findAttendeeByEmail(identifier);
@@ -135,7 +137,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 
 		Attendee attendee = findAttendeeById(attendeeId);
 
-		return AttendeeInfoDetailResponseDto.from(attendee);
+		return AttendeeFullInfoResponseDto.from(attendee);
 	}
 
 	// 관심사 코드 검증

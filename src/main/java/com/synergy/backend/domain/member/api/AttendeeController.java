@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.synergy.backend.domain.member.api.dto.request.InterestRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeInfoDetailResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeDetailInfoResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeFullInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.InterestResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.JobInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.LikedRecruiterResponseDto;
@@ -80,7 +81,7 @@ public class AttendeeController {
 
 	@PreAuthorize("hasRole('ADMIN') or hasRole('RECRUITER') or #attendeeId == principal.id")
 	@GetMapping(path = "/{attendeeId}")
-	public ApiResponse<AttendeeInfoDetailResponseDto> getAttendeeInfoDetail(
+	public ApiResponse<AttendeeFullInfoResponseDto> getAttendeeInfoDetail(
 		@PathVariable Long attendeeId,
 		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
