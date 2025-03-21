@@ -13,16 +13,14 @@ import com.synergy.backend.domain.interest.entity.Interest;
 import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
 import com.synergy.backend.domain.interest.repository.AttendeeInterestRepository;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
-import com.synergy.backend.domain.job.JobCategory;
-import com.synergy.backend.domain.job.JobCategoryRepository;
-import com.synergy.backend.domain.job.OccupationCategory;
-import com.synergy.backend.domain.job.OccupationCategoryRepository;
-import com.synergy.backend.domain.job.exception.NotFoundJobCategoryException;
-import com.synergy.backend.domain.job.exception.NotFoundOccupationCategoryException;
+import com.synergy.backend.domain.job.JobPosition;
+import com.synergy.backend.domain.job.JobPositionRepository;
+import com.synergy.backend.domain.job.JobGroup;
+import com.synergy.backend.domain.job.JobGroupRepository;
+import com.synergy.backend.domain.job.exception.NotFoundJobPositionException;
+import com.synergy.backend.domain.job.exception.NotFoundJobGroupException;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeBaseInfoResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeDetailInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeFullInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.MyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
@@ -47,8 +45,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final AttendeeRepository attendeeRepository;
 	private final InterestRepository interestRepository;
 	private final AttendeeInterestRepository attendeeInterestRepository;
-	private final JobCategoryRepository jobCategoryRepository;
-	private final OccupationCategoryRepository occupationCategoryRepository;
+	private final JobPositionRepository jobPositionRepository;
+	private final JobGroupRepository jobGroupRepository;
 
 	/** 관심사 추가 */
 	@Transactional
@@ -83,8 +81,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 		Attendee attendee = findAttendeeByEmail(email);
 
 		attendee.updateJobInfo(
-			findJobCategoryByCode(request.jobCode()),
-			findOccupationCategoryByCode(request.occupationCode()),
+			findJobPositionByCode(request.jobPositionCode()),
+			findJobGroupByCode(request.jobGroupCode()),
 			request.hiringInterested()
 		);
 	}
@@ -96,7 +94,8 @@ public class AttendeeServiceImpl implements AttendeeService {
 		Attendee attendee = findAttendeeByEmail(email);
 
 		attendee.updateJobInfoDetails(
-			findOccupationCategoryByCode(request.desiredOccupationCode()),
+			findJobGroupByCode(request.desiredJobGroupCode()),
+			findJobPositionByCode(request.desiredJobPositionCode()),
 			convertToEnum(request.educationLevelCode(), EducationLevelType.class),
 			convertToEnum(request.ageGroupCode(), AgeGroup.class),
 			request.techStacks(),
@@ -176,14 +175,14 @@ public class AttendeeServiceImpl implements AttendeeService {
 		attendee.getAttendeeInterests().addAll(newAttendeeInterests);
 	}
 
-	private OccupationCategory findOccupationCategoryByCode(Integer occupationCode) {
-		return occupationCategoryRepository.findByCode(occupationCode)
-			.orElseThrow(NotFoundOccupationCategoryException::new);
+	private JobGroup findJobGroupByCode(Integer jobGroupCode) {
+		return jobGroupRepository.findByCode(jobGroupCode)
+			.orElseThrow(NotFoundJobGroupException::new);
 	}
 
-	private JobCategory findJobCategoryByCode(Integer jobCode) {
-		return jobCategoryRepository.findByCode(jobCode)
-			.orElseThrow(NotFoundJobCategoryException::new);
+	private JobPosition findJobPositionByCode(Integer jobPositionCode) {
+		return jobPositionRepository.findByCode(jobPositionCode)
+			.orElseThrow(NotFoundJobPositionException::new);
 	}
 
 	private Attendee findAttendeeById(Long attendeeId) {

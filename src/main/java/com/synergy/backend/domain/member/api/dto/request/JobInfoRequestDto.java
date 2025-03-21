@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record JobInfoRequestDto(
 	@NotNull
-	Integer jobCode,
+	Integer jobPositionCode,
 
 	@NotNull
-	Integer occupationCode,
+	Integer jobGroupCode,
 
 	@NotNull
 	Boolean hiringInterested
