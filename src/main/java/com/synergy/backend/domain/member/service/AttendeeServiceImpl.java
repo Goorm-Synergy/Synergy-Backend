@@ -48,37 +48,13 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final JobPositionRepository jobPositionRepository;
 	private final JobGroupRepository jobGroupRepository;
 
-	/** 관심사 추가 */
-	@Transactional
-	@Override
-	public Set<Interest> addInterests(String email, Set<Integer> interestCodes) {
-		Attendee attendee = findAttendeeByEmail(email);
-
-		// 요청된 숫자 코드에 해당하는 Interest 엔티티 조회
-		Set<Interest> interestsToAdd = getValidInterests(interestCodes);
-
-		// 현재 등록된 관심사 가져오기
-		Set<Interest> currentInterests = getCurrentInterests(attendee);
-
-		// 현재 등록된 관심사를 제외한 새로운 관심사 필터링
-		Set<Interest> newInterests = interestsToAdd.stream()
-			.filter(interest -> !currentInterests.contains(interest))
-			.collect(Collectors.toSet());
-
-		// 새로운 관심사가 있다면 저장
-		if (!newInterests.isEmpty()) {
-			saveNewMemberInterests(attendee, newInterests);
-		}
-
-		// 최종 등록된 관심사 반환
-		return getCurrentInterests(attendee);
-	}
-
 	/** 직무 정보 추가 */
 	@Transactional
 	@Override
 	public void addJobInfo(String email, JobInfoRequestDto request) {
 		Attendee attendee = findAttendeeByEmail(email);
+
+		addInterests(attendee, request.interestCodes());
 
 		attendee.updateJobInfo(
 			findJobPositionByCode(request.jobPositionCode()),
@@ -137,6 +113,29 @@ public class AttendeeServiceImpl implements AttendeeService {
 		Attendee attendee = findAttendeeById(attendeeId);
 
 		return AttendeeFullInfoResponseDto.from(attendee);
+	}
+
+	// 관심사 추가
+	@Transactional
+	private Set<Interest> addInterests(Attendee attendee, Set<Integer> interestCodes) {
+		// 요청된 숫자 코드에 해당하는 Interest 엔티티 조회
+		Set<Interest> interestsToAdd = getValidInterests(interestCodes);
+
+		// 현재 등록된 관심사 가져오기
+		Set<Interest> currentInterests = getCurrentInterests(attendee);
+
+		// 현재 등록된 관심사를 제외한 새로운 관심사 필터링
+		Set<Interest> newInterests = interestsToAdd.stream()
+			.filter(interest -> !currentInterests.contains(interest))
+			.collect(Collectors.toSet());
+
+		// 새로운 관심사가 있다면 저장
+		if (!newInterests.isEmpty()) {
+			saveNewMemberInterests(attendee, newInterests);
+		}
+
+		// 최종 등록된 관심사 반환
+		return getCurrentInterests(attendee);
 	}
 
 	// 관심사 코드 검증
