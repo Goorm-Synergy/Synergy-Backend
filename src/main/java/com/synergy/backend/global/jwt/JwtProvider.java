@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import com.synergy.backend.domain.member.entity.RoleType;
@@ -16,19 +15,15 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 
 @Component
-@EnableConfigurationProperties(JwtProperties.class)
-@RequiredArgsConstructor
 public class JwtProvider {
 
 	private final JwtProperties jwtProperties;
-	private SecretKey key;
+	private final SecretKey key;
 
-	@PostConstruct
-	public void init() {
+	public JwtProvider(JwtProperties jwtProperties) {
+		this.jwtProperties = jwtProperties;
 		this.key = Keys.hmacShaKeyFor(jwtProperties.secret().getBytes(StandardCharsets.UTF_8));
 	}
 
@@ -49,7 +44,7 @@ public class JwtProvider {
 		}
 	}
 
-	public String getEmailOrAuthCodeFromToken(String token) {
+	public String getIdentifierFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 	}
 
@@ -61,11 +56,19 @@ public class JwtProvider {
 			.getBody()
 			.get("role", String.class);
 
-		if (role != null && role.startsWith("ROLE_")) {
+		if (role == null) {
+			throw new JwtException("Role claim is missing in the token");
+		}
+
+		if (role.startsWith("ROLE_")) {
 			role = role.substring(5);
 		}
 
-		return RoleType.valueOf(role);
+		try {
+			return RoleType.valueOf(role);
+		} catch (IllegalArgumentException e) {
+			throw new JwtException("Invalid role in token: " + role);
+		}
 	}
 
 	private String generateToken(CustomUserDetails userDetails, Duration expiration) {

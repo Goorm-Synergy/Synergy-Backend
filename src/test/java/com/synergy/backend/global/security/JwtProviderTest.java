@@ -40,7 +40,7 @@ class JwtProviderTest {
 
 		// Then
 		assertNotNull(token);
-		assertEquals(attendee.getEmail(), jwtProvider.getEmailOrAuthCodeFromToken(token));
+		assertEquals(attendee.getEmail(), jwtProvider.getIdentifierFromToken(token));
 		assertEquals(RoleType.ATTENDEE, jwtProvider.getRoleTypeFromToken(token));
 	}
 
@@ -56,7 +56,7 @@ class JwtProviderTest {
 
 		// Then
 		assertNotNull(token);
-		assertEquals(admin.getAdminAuthCode(), jwtProvider.getEmailOrAuthCodeFromToken(token));
+		assertEquals(admin.getAdminAuthCode(), jwtProvider.getIdentifierFromToken(token));
 		assertEquals(RoleType.ADMIN, jwtProvider.getRoleTypeFromToken(token));
 	}
 
@@ -72,7 +72,7 @@ class JwtProviderTest {
 
 		// Then
 		assertNotNull(token);
-		assertEquals(recruiter.getRecruiterAuthCode(), jwtProvider.getEmailOrAuthCodeFromToken(token));
+		assertEquals(recruiter.getRecruiterAuthCode(), jwtProvider.getIdentifierFromToken(token));
 		assertEquals(RoleType.RECRUITER, jwtProvider.getRoleTypeFromToken(token));
 	}
 
