@@ -1,4 +1,4 @@
-package com.synergy.backend.global.security;
+package com.synergy.backend.global.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component;
 
 import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.global.security.CustomUserDetails;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

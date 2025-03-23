@@ -12,6 +12,8 @@ import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.global.jwt.JwtProperties;
+import com.synergy.backend.global.jwt.JwtProvider;
 
 class JwtProviderTest {
 

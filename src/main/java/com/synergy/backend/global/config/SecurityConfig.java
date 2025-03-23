@@ -22,7 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.synergy.backend.global.security.JwtAuthenticationFilter;
+import com.synergy.backend.global.jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 

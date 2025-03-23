@@ -22,7 +22,7 @@ import com.synergy.backend.domain.point.service.PointService;
 import com.synergy.backend.global.mail.MailService;
 import com.synergy.backend.global.mail.exception.EmailNotVerifiedException;
 import com.synergy.backend.global.security.CustomUserDetails;
-import com.synergy.backend.global.security.JwtProvider;
+import com.synergy.backend.global.jwt.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

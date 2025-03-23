@@ -1,4 +1,4 @@
-package com.synergy.backend.global.security;
+package com.synergy.backend.global.jwt;
 
 import java.time.Duration;
 

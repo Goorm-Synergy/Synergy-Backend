@@ -9,7 +9,7 @@ import com.synergy.backend.domain.conference.dto.response.ConferenceUpdateRespon
 import com.synergy.backend.domain.conference.service.ConferenceService;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.global.security.CustomUserDetailsService;
-import com.synergy.backend.global.security.JwtProvider;
+import com.synergy.backend.global.jwt.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
