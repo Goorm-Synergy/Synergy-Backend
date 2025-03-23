@@ -65,8 +65,8 @@ public class AuthServiceImpl implements AuthService {
 			throw new UnauthorizedException();
 		}
 
-		String token = jwtProvider.generateToken(new CustomUserDetails(attendee));
-		return new TokenResponseDto(token, attendee.getEmail(), attendee.getRole().toString());
+		String token = jwtProvider.generateAccessToken(new CustomUserDetails(attendee));
+		return new TokenResponseDto(token, attendee.getEmail(), attendee.getRole());
 	}
 
 	@Transactional(readOnly = true)
@@ -77,8 +77,8 @@ public class AuthServiceImpl implements AuthService {
 			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode).map(User.class::cast))
 			.orElseThrow(InvalidAuthCodeException::new);
 
-		String token = jwtProvider.generateToken(new CustomUserDetails(user));
-		return new TokenResponseDto(token, authCode, user.getRole().toString());
+		String token = jwtProvider.generateAccessToken(new CustomUserDetails(user));
+		return new TokenResponseDto(token, authCode, user.getRole());
 	}
 
 	@Transactional

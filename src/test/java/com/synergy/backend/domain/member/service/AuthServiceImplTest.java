@@ -125,7 +125,7 @@ class AuthServiceImplTest {
 		// Given
 		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
 		when(passwordEncoder.matches(requestDto.password(), mockAttendee.getPassword())).thenReturn(true);
-		when(jwtProvider.generateToken(any(CustomUserDetails.class))).thenReturn(("token"));
+		when(jwtProvider.generateAccessToken(any(CustomUserDetails.class))).thenReturn(("token"));
 
 		// When
 		TokenResponseDto response = authService.loginAsAttendee(requestDto.email(), requestDto.password());
@@ -169,7 +169,7 @@ class AuthServiceImplTest {
 		String expectedToken = "mocked-admin-token";
 
 		when(adminRepository.findByAdminAuthCode(authCode)).thenReturn(Optional.of(mockAdmin));
-		when(jwtProvider.generateToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
+		when(jwtProvider.generateAccessToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
 
 		// When
 		TokenResponseDto response = authService.loginAsAdminOrRecruiter(authCode);
@@ -180,7 +180,7 @@ class AuthServiceImplTest {
 		assertEquals(ADMIN.toString(), response.role());
 
 		verify(adminRepository).findByAdminAuthCode(authCode);
-		verify(jwtProvider).generateToken(any(CustomUserDetails.class));
+		verify(jwtProvider).generateAccessToken(any(CustomUserDetails.class));
 
 		verify(recruiterRepository, never()).findByRecruiterAuthCode(anyString());
 	}
@@ -196,7 +196,7 @@ class AuthServiceImplTest {
 
 		when(adminRepository.findByAdminAuthCode(authCode)).thenReturn(Optional.empty()); // 관리자로 찾으면 없음
 		when(recruiterRepository.findByRecruiterAuthCode(authCode)).thenReturn(Optional.of(mockRecruiter));
-		when(jwtProvider.generateToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
+		when(jwtProvider.generateAccessToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
 
 		// When
 		TokenResponseDto response = authService.loginAsAdminOrRecruiter(authCode);
@@ -208,7 +208,7 @@ class AuthServiceImplTest {
 
 		verify(adminRepository).findByAdminAuthCode(authCode);
 		verify(recruiterRepository).findByRecruiterAuthCode(authCode);
-		verify(jwtProvider).generateToken(any(CustomUserDetails.class));
+		verify(jwtProvider).generateAccessToken(any(CustomUserDetails.class));
 	}
 
 	@DisplayName("관리자나 채용담당자가 잘못된 인증 코드로 로그인하면 예외가 발생한다.")
@@ -226,7 +226,7 @@ class AuthServiceImplTest {
 		verify(adminRepository).findByAdminAuthCode(invalidAuthCode);
 		verify(recruiterRepository).findByRecruiterAuthCode(invalidAuthCode);
 
-		verify(jwtProvider, never()).generateToken(any(CustomUserDetails.class));
+		verify(jwtProvider, never()).generateAccessToken(any(CustomUserDetails.class));
 	}
 
 	@DisplayName("회원가입 성공 시 회원가입 포인트가 적립된다.")

@@ -19,21 +19,22 @@ class JwtProviderTest {
 		.encodeToString("SuperSecureKeyForJWTAuthWhichIsLongEnough123!".getBytes());
 
 	private JwtProvider jwtProvider;
+	private JwtProperties jwtProperties;
 
 	@BeforeEach
 	void setUp() {
-		jwtProvider = new JwtProvider(TEST_SECRET_KEY);
+		jwtProvider = new JwtProvider(jwtProperties);
 	}
 
 	@Test
 	@DisplayName("Attendee 사용자의 JWT 토큰이 정상적으로 생성된다.")
-	void generateToken_Attendee_Success() {
+	void generateAccessToken_Attendee_Success() {
 		// Given
 		Attendee attendee = Attendee.of("attendee@example.com", "hashedPassword", "user", "phone");
 		CustomUserDetails userDetails = new CustomUserDetails(attendee);
 
 		// When
-		String token = jwtProvider.generateToken(userDetails);
+		String token = jwtProvider.generateAccessToken(userDetails);
 
 		// Then
 		assertNotNull(token);
@@ -43,13 +44,13 @@ class JwtProviderTest {
 
 	@Test
 	@DisplayName("Admin 사용자의 JWT 토큰이 정상적으로 생성된다.")
-	void generateToken_Admin_Success() {
+	void generateAccessToken_Admin_Success() {
 		// Given
 		Admin admin = Admin.of("ADMINAUTHCODE123");
 		CustomUserDetails userDetails = new CustomUserDetails(admin);
 
 		// When
-		String token = jwtProvider.generateToken(userDetails);
+		String token = jwtProvider.generateAccessToken(userDetails);
 
 		// Then
 		assertNotNull(token);
@@ -59,13 +60,13 @@ class JwtProviderTest {
 
 	@Test
 	@DisplayName("Recruiter 사용자의 JWT 토큰이 정상적으로 생성된다.")
-	void generateToken_Recruiter_Success() {
+	void generateAccessToken_Recruiter_Success() {
 		// Given
 		Recruiter recruiter = Recruiter.of("RECRUITERAUTHCODE123");
 		CustomUserDetails userDetails = new CustomUserDetails(recruiter);
 
 		// When
-		String token = jwtProvider.generateToken(userDetails);
+		String token = jwtProvider.generateAccessToken(userDetails);
 
 		// Then
 		assertNotNull(token);

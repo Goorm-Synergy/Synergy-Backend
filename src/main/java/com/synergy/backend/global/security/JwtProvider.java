@@ -1,9 +1,12 @@
 package com.synergy.backend.global.security;
 
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Value;
+import javax.crypto.SecretKey;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import com.synergy.backend.domain.member.entity.RoleType;
@@ -12,37 +15,33 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@EnableConfigurationProperties(JwtProperties.class)
+@RequiredArgsConstructor
 public class JwtProvider {
 
-	private final Key key;
-	private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15분
-	private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일
+	private final JwtProperties jwtProperties;
+	private SecretKey key;
 
-	public JwtProvider(@Value("${jwt.secret}") String secretKey) {
-		this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+	@PostConstruct
+	public void init() {
+		this.key = Keys.hmacShaKeyFor(jwtProperties.secret().getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String generateToken(CustomUserDetails userDetails) {
-		long expiration = ACCESS_TOKEN_EXPIRATION;
+	public String generateAccessToken(CustomUserDetails userDetails) {
+		return generateToken(userDetails, jwtProperties.accessTokenExpiration());
+	}
 
-		return Jwts.builder()
-			.setSubject(userDetails.getIdentifier())
-			.claim("id", userDetails.getId())
-			.claim("role", userDetails.getRole().getAuthority())
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + expiration))
-			.signWith(key, SignatureAlgorithm.HS256)
-			.compact();
+	public String generateRefreshToken(CustomUserDetails userDetails) {
+		return generateToken(userDetails, jwtProperties.refreshTokenExpiration());
 	}
 
 	public boolean validateToken(String token) {
 		try {
-			Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (JwtException | IllegalArgumentException e) {
 			return false;
@@ -50,12 +49,7 @@ public class JwtProvider {
 	}
 
 	public String getEmailOrAuthCodeFromToken(String token) {
-		return Jwts.parserBuilder()
-			.setSigningKey(key)
-			.build()
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 	}
 
 	public RoleType getRoleTypeFromToken(String token) {
@@ -71,5 +65,17 @@ public class JwtProvider {
 		}
 
 		return RoleType.valueOf(role);
+	}
+
+	private String generateToken(CustomUserDetails userDetails, Duration expiration) {
+
+		return Jwts.builder()
+			.setSubject(userDetails.getIdentifier())
+			.claim("id", userDetails.getId())
+			.claim("role", userDetails.getRole().getAuthority())
+			.setIssuedAt(new Date())
+			.setExpiration(new Date(System.currentTimeMillis() + expiration.toMillis()))
+			.signWith(key, SignatureAlgorithm.HS256)
+			.compact();
 	}
 }
