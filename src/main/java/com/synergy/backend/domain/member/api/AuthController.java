@@ -94,7 +94,6 @@ public class AuthController {
 
 		cookieUtils.addRefreshTokenToCookie(response, tokenWithRefreshToken.refreshToken());
 
-
 		return ApiResponse.ok(tokenWithRefreshToken.tokenResponseDto(), 200);
 	}
 }

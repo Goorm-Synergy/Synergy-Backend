@@ -132,8 +132,8 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		String identifier = jwtProvider.getIdentifierFromToken(currentRefreshToken);
-		String savedRefreshToken = tokenService.getStoredRefreshToken(identifier);
 
+		String savedRefreshToken = tokenService.getStoredRefreshToken(identifier);
 		if (!currentRefreshToken.equals(savedRefreshToken)) {
 			throw new InvalidRefreshTokenException();
 		}
