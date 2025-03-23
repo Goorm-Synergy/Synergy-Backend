@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.member.api;
 
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,6 @@ import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.mail.MailService;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +72,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/refresh-token/reissue")
-	public ApiResponse<TokenResponseDto> reissueRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-		return ApiResponse.ok(authService.reissueRefreshToken(request, response), 200);
+	public ApiResponse<TokenResponseDto> reissueRefreshToken(@CookieValue("refreshToken") String refreshToken,
+		HttpServletResponse response) {
+		return ApiResponse.ok(authService.reissueRefreshToken(refreshToken, response), 200);
 	}
 }

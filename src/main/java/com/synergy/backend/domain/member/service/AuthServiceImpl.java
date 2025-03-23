@@ -19,11 +19,16 @@ import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
 import com.synergy.backend.domain.point.service.PointService;
+import com.synergy.backend.global.jwt.JwtProvider;
 import com.synergy.backend.global.mail.MailService;
 import com.synergy.backend.global.mail.exception.EmailNotVerifiedException;
 import com.synergy.backend.global.security.CustomUserDetails;
-import com.synergy.backend.global.jwt.JwtProvider;
+import com.synergy.backend.global.security.CustomUserDetailsService;
+import com.synergy.backend.global.token.CookieUtils;
+import com.synergy.backend.global.token.TokenService;
+import com.synergy.backend.global.token.exception.InvalidRefreshTokenException;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +44,9 @@ public class AuthServiceImpl implements AuthService {
 	private final JwtProvider jwtProvider;
 	private final PointService pointService;
 	private final MailService mailService;
+	private final TokenService tokenService;
+	private final CookieUtils cookieUtils;
+	private final CustomUserDetailsService userDetailsService;
 
 	@Transactional
 	@Override
@@ -66,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		String token = jwtProvider.generateAccessToken(new CustomUserDetails(attendee));
-		return new TokenResponseDto(token, attendee.getEmail(), attendee.getRole());
+		return TokenResponseDto.of(token, attendee);
 	}
 
 	@Transactional(readOnly = true)
@@ -78,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
 			.orElseThrow(InvalidAuthCodeException::new);
 
 		String token = jwtProvider.generateAccessToken(new CustomUserDetails(user));
-		return new TokenResponseDto(token, authCode, user.getRole());
+		return TokenResponseDto.of(token, user);
 	}
 
 	@Transactional
@@ -108,6 +116,31 @@ public class AuthServiceImpl implements AuthService {
 		attendee.updatePassword(encodePassword(newPassword));
 	}
 
+	@Override
+	public TokenResponseDto reissueRefreshToken(String refreshToken, HttpServletResponse response) {
+
+		if (!jwtProvider.validateToken(refreshToken)) {
+			throw new InvalidRefreshTokenException();
+		}
+
+		String identifier = jwtProvider.getIdentifierFromToken(refreshToken);
+		String savedRefreshToken = tokenService.getStoredRefreshToken(identifier);
+
+		if (!refreshToken.equals(savedRefreshToken)) {
+			throw new InvalidRefreshTokenException();
+		}
+
+		CustomUserDetails userDetails = (CustomUserDetails)userDetailsService.loadUserByUsername(identifier);
+
+		String newAccessToken = jwtProvider.generateAccessToken(userDetails);
+		String newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
+
+		tokenService.storeRefreshToken(identifier, newRefreshToken);
+		cookieUtils.addRefreshTokenToCookie(response, newRefreshToken);
+
+		return TokenResponseDto.of(newAccessToken, userDetails.getUser());
+	}
+
 	@Transactional(readOnly = true)
 	private Attendee findAttendeeByEmail(String email) {
 		return attendeeRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
@@ -115,8 +148,11 @@ public class AuthServiceImpl implements AuthService {
 
 	private void validateSignupRequest(SignupAttendeeRequestDto request) {
 		validateEmailVerification(request.email());
+		validateEmailDuplicate(request.email());
+	}
 
-		if (attendeeRepository.findByEmail(request.email()).isPresent()) {
+	private void validateEmailDuplicate(String email) {
+		if (attendeeRepository.findByEmail(email).isPresent()) {
 			throw new DuplicateEmailException();
 		}
 	}
