@@ -20,7 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.TokenWithRefreshToken;
 import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
@@ -34,10 +34,10 @@ import com.synergy.backend.domain.member.repository.AdminRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
 import com.synergy.backend.domain.point.service.PointService;
+import com.synergy.backend.global.jwt.JwtProvider;
 import com.synergy.backend.global.mail.MailService;
 import com.synergy.backend.global.mail.exception.EmailNotVerifiedException;
 import com.synergy.backend.global.security.CustomUserDetails;
-import com.synergy.backend.global.jwt.JwtProvider;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -128,13 +128,13 @@ class AuthServiceImplTest {
 		when(jwtProvider.generateAccessToken(any(CustomUserDetails.class))).thenReturn(("token"));
 
 		// When
-		TokenResponseDto response = authService.loginAsAttendee(requestDto.email(), requestDto.password());
+		TokenWithRefreshToken response = authService.loginAsAttendee(requestDto.email(), requestDto.password());
 
 		// Then
 		assertNotNull(response);
-		assertEquals("token", response.accessToken());
-		assertEquals("UserA@example.com", response.identifier());
-		assertEquals(ATTENDEE.toString(), response.role());
+		assertEquals("token", response.tokenResponseDto().accessToken());
+		assertEquals("UserA@example.com", response.tokenResponseDto().identifier());
+		assertEquals(ATTENDEE.toString(), response.tokenResponseDto().role());
 	}
 
 	@DisplayName("참가자 로그인 시 이메일이 존재하지 않으면 예외가 발생한다.")
@@ -172,12 +172,12 @@ class AuthServiceImplTest {
 		when(jwtProvider.generateAccessToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
 
 		// When
-		TokenResponseDto response = authService.loginAsAdminOrRecruiter(authCode);
+		TokenWithRefreshToken response = authService.loginAsAdminOrRecruiter(authCode);
 
 		// Then
 		assertNotNull(response);
-		assertEquals("mocked-admin-token", response.accessToken());
-		assertEquals(ADMIN.toString(), response.role());
+		assertEquals("mocked-admin-token", response.tokenResponseDto().accessToken());
+		assertEquals(ADMIN.toString(), response.tokenResponseDto().role());
 
 		verify(adminRepository).findByAdminAuthCode(authCode);
 		verify(jwtProvider).generateAccessToken(any(CustomUserDetails.class));
@@ -199,12 +199,12 @@ class AuthServiceImplTest {
 		when(jwtProvider.generateAccessToken(any(CustomUserDetails.class))).thenReturn(expectedToken);
 
 		// When
-		TokenResponseDto response = authService.loginAsAdminOrRecruiter(authCode);
+		TokenWithRefreshToken response = authService.loginAsAdminOrRecruiter(authCode);
 
 		// Then
 		assertNotNull(response);
-		assertEquals("mocked-recruiter-token", response.accessToken());
-		assertEquals(RECRUITER.toString(), response.role());
+		assertEquals("mocked-recruiter-token", response.tokenResponseDto().accessToken());
+		assertEquals(RECRUITER.toString(), response.tokenResponseDto().role());
 
 		verify(adminRepository).findByAdminAuthCode(authCode);
 		verify(recruiterRepository).findByRecruiterAuthCode(authCode);

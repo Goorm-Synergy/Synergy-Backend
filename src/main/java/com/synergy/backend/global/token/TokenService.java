@@ -2,10 +2,10 @@ package com.synergy.backend.global.token;
 
 public interface TokenService {
 
-	void storeRefreshToken(String email, String refreshToken);
+	void storeRefreshToken(String identifier, String refreshToken);
 
-	String getStoredRefreshToken(String email);
+	String getStoredRefreshToken(String identifier);
 
-	void deleteRefreshToken(String email);
+	void deleteRefreshToken(String identifier);
 
 }

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.TokenWithRefreshToken;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.User;
 import com.synergy.backend.domain.member.exception.DuplicateEmailException;
@@ -28,7 +29,6 @@ import com.synergy.backend.global.token.CookieUtils;
 import com.synergy.backend.global.token.TokenService;
 import com.synergy.backend.global.token.exception.InvalidRefreshTokenException;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,27 +66,35 @@ public class AuthServiceImpl implements AuthService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public TokenResponseDto loginAsAttendee(String email, String rawPassword) {
+	public TokenWithRefreshToken loginAsAttendee(String email, String rawPassword) {
 		Attendee attendee = findAttendeeByEmail(email);
 
 		if (!isPasswordMatch(rawPassword, attendee.getPassword())) {
 			throw new UnauthorizedException();
 		}
 
-		String token = jwtProvider.generateAccessToken(new CustomUserDetails(attendee));
-		return TokenResponseDto.of(token, attendee);
+		String accessToken = jwtProvider.generateAccessToken(new CustomUserDetails(attendee));
+		String refreshToken = jwtProvider.generateRefreshToken(new CustomUserDetails(attendee));
+
+		tokenService.storeRefreshToken(email, refreshToken);
+
+		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.of(accessToken, attendee));
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public TokenResponseDto loginAsAdminOrRecruiter(String authCode) {
+	public TokenWithRefreshToken loginAsAdminOrRecruiter(String authCode) {
 		User user = adminRepository.findByAdminAuthCode(authCode)
 			.map(User.class::cast)
 			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode).map(User.class::cast))
 			.orElseThrow(InvalidAuthCodeException::new);
 
-		String token = jwtProvider.generateAccessToken(new CustomUserDetails(user));
-		return TokenResponseDto.of(token, user);
+		String accessToken = jwtProvider.generateAccessToken(new CustomUserDetails(user));
+
+		String refreshToken = jwtProvider.generateRefreshToken(new CustomUserDetails(user));
+		tokenService.storeRefreshToken(authCode, refreshToken);
+
+		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.of(accessToken, user));
 	}
 
 	@Transactional
@@ -117,16 +125,16 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public TokenResponseDto reissueRefreshToken(String refreshToken, HttpServletResponse response) {
+	public TokenWithRefreshToken reissueRefreshToken(String currentRefreshToken) {
 
-		if (!jwtProvider.validateToken(refreshToken)) {
+		if (!jwtProvider.validateToken(currentRefreshToken)) {
 			throw new InvalidRefreshTokenException();
 		}
 
-		String identifier = jwtProvider.getIdentifierFromToken(refreshToken);
+		String identifier = jwtProvider.getIdentifierFromToken(currentRefreshToken);
 		String savedRefreshToken = tokenService.getStoredRefreshToken(identifier);
 
-		if (!refreshToken.equals(savedRefreshToken)) {
+		if (!currentRefreshToken.equals(savedRefreshToken)) {
 			throw new InvalidRefreshTokenException();
 		}
 
@@ -136,9 +144,8 @@ public class AuthServiceImpl implements AuthService {
 		String newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
 
 		tokenService.storeRefreshToken(identifier, newRefreshToken);
-		cookieUtils.addRefreshTokenToCookie(response, newRefreshToken);
 
-		return TokenResponseDto.of(newAccessToken, userDetails.getUser());
+		return TokenWithRefreshToken.of(newRefreshToken, TokenResponseDto.of(newAccessToken, userDetails.getUser()));
 	}
 
 	@Transactional(readOnly = true)

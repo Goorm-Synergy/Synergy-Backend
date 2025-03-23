@@ -14,9 +14,11 @@ import com.synergy.backend.domain.member.api.dto.request.PasswordResetConfirmDto
 import com.synergy.backend.domain.member.api.dto.request.PasswordResetRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.TokenWithRefreshToken;
 import com.synergy.backend.domain.member.service.AuthService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.mail.MailService;
+import com.synergy.backend.global.token.CookieUtils;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +32,7 @@ public class AuthController {
 
 	private final AuthService authService;
 	private final MailService mailService;
+	private final CookieUtils cookieUtils;
 
 	@PostMapping("/attendee/signup")
 	public ApiResponse<?> registerAttendee(@Valid @RequestBody SignupAttendeeRequestDto request) {
@@ -37,13 +40,25 @@ public class AuthController {
 	}
 
 	@PostMapping("/attendee/login")
-	public ApiResponse<TokenResponseDto> loginAttendee(@RequestBody LoginAttendeeRequestDto request) {
-		return ApiResponse.ok(authService.loginAsAttendee(request.email(), request.password()), 200);
+	public ApiResponse<TokenResponseDto> loginAttendee(@RequestBody LoginAttendeeRequestDto request,
+		HttpServletResponse response) {
+
+		TokenWithRefreshToken tokenWithRefreshToken = authService.loginAsAttendee(request.email(), request.password());
+
+		cookieUtils.addRefreshTokenToCookie(response, tokenWithRefreshToken.refreshToken());
+
+		return ApiResponse.ok(tokenWithRefreshToken.tokenResponseDto(), 200);
 	}
 
 	@PostMapping("/admin/login")
-	public ApiResponse<TokenResponseDto> loginAdmin(@RequestBody LoginAdminRequestDto request) {
-		return ApiResponse.ok(authService.loginAsAdminOrRecruiter(request.adminAuthCode()), 200);
+	public ApiResponse<TokenResponseDto> loginAdmin(@RequestBody LoginAdminRequestDto request,
+		HttpServletResponse response) {
+
+		TokenWithRefreshToken tokenWithRefreshToken = authService.loginAsAdminOrRecruiter(request.adminAuthCode());
+
+		cookieUtils.addRefreshTokenToCookie(response, tokenWithRefreshToken.refreshToken());
+
+		return ApiResponse.ok(tokenWithRefreshToken.tokenResponseDto(), 200);
 	}
 
 	@PostMapping("/password/reset/request")
@@ -74,6 +89,12 @@ public class AuthController {
 	@PostMapping("/refresh-token/reissue")
 	public ApiResponse<TokenResponseDto> reissueRefreshToken(@CookieValue("refreshToken") String refreshToken,
 		HttpServletResponse response) {
-		return ApiResponse.ok(authService.reissueRefreshToken(refreshToken, response), 200);
+
+		TokenWithRefreshToken tokenWithRefreshToken = authService.reissueRefreshToken(refreshToken);
+
+		cookieUtils.addRefreshTokenToCookie(response, tokenWithRefreshToken.refreshToken());
+
+
+		return ApiResponse.ok(tokenWithRefreshToken.tokenResponseDto(), 200);
 	}
 }

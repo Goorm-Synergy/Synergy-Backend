@@ -22,13 +22,13 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public String getStoredRefreshToken(String email) {
-		return redisTemplate.opsForValue().get(REFRESH_PREFIX + email);
+	public String getStoredRefreshToken(String identifier) {
+		return redisTemplate.opsForValue().get(REFRESH_PREFIX + identifier);
 	}
 
 	@Override
-	public void deleteRefreshToken(String email) {
-		redisTemplate.delete(REFRESH_PREFIX + email);
+	public void deleteRefreshToken(String identifier) {
+		redisTemplate.delete(REFRESH_PREFIX + identifier);
 	}
 
 }
