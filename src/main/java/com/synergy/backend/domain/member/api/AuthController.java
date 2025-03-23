@@ -18,6 +18,8 @@ import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.mail.MailService;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -69,4 +71,8 @@ public class AuthController {
 		return ApiResponse.ok(null, 200);
 	}
 
+	@PostMapping("/refresh-token/reissue")
+	public ApiResponse<TokenResponseDto> reissueRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+		return ApiResponse.ok(authService.reissueRefreshToken(request, response), 200);
+	}
 }

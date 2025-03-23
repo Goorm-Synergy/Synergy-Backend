@@ -4,6 +4,8 @@ import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDt
 import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 public interface AuthService {
@@ -16,4 +18,6 @@ public interface AuthService {
 	void passwordResetRequest(String email, String name, String phone);
 
 	void passwordReset(String email, String newPassword);
+
+	TokenResponseDto reissueRefreshToken(HttpServletRequest request, HttpServletResponse response);
 }
