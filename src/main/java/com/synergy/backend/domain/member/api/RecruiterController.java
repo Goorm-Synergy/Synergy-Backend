@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Recruiter Controller", description = "채용담당자 관련 API 제공")
+@Tag(name = "Recruiter Controller", description = "채용담당자 관련 API")
 @RestController
 @RequestMapping("/api/v1/recruiter")
 @RequiredArgsConstructor

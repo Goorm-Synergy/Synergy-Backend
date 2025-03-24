@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Admin Controller", description = "관리자의 등급별 회원 랭킹 조회 API 제공")
+@Tag(name = "Admin Controller", description = "관리자의 회원 랭킹 조회 API")
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor

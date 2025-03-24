@@ -24,7 +24,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Auth Controller", description = "인증/인가 API 제공")
+@Tag(name = "Auth Controller", description = "인증/인가 관련 API")
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
