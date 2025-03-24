@@ -1,12 +1,16 @@
 package com.synergy.backend.global.security;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-import java.util.Base64;
+import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
@@ -15,16 +19,18 @@ import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.global.jwt.JwtProperties;
 import com.synergy.backend.global.jwt.JwtProvider;
 
+@ExtendWith(MockitoExtension.class)
 class JwtProviderTest {
-
-	private final String TEST_SECRET_KEY = Base64.getEncoder()
-		.encodeToString("SuperSecureKeyForJWTAuthWhichIsLongEnough123!".getBytes());
+	@Mock
+	private JwtProperties jwtProperties;
 
 	private JwtProvider jwtProvider;
-	private JwtProperties jwtProperties;
 
 	@BeforeEach
 	void setUp() {
+		when(jwtProperties.secret()).thenReturn("your-secret-key-which-is-at-least-32-bytes-long!!!");
+		lenient().when(jwtProperties.accessTokenExpiration()).thenReturn(Duration.ofMinutes(30));
+		lenient().when(jwtProperties.refreshTokenExpiration()).thenReturn(Duration.ofDays(30));
 		jwtProvider = new JwtProvider(jwtProperties);
 	}
 

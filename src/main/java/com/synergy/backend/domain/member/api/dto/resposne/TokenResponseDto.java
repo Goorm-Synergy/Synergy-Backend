@@ -6,13 +6,15 @@ import com.synergy.backend.domain.member.entity.User;
 public record TokenResponseDto(
 	String accessToken,
 	String identifier,
-	RoleType role) {
+	RoleType role,
+	Long id) {
 
 	public static TokenResponseDto of(String token, User user) {
 		return new TokenResponseDto(
 			token,
 			user.getIdentifier(),
-			user.getRole()
+			user.getRole(),
+			user.getId()
 		);
 	}
 }
