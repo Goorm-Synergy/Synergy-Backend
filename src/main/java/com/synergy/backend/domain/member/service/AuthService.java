@@ -2,10 +2,8 @@ package com.synergy.backend.domain.member.service;
 
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.TokenWithRefreshToken;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 public interface AuthService {

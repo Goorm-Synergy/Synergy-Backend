@@ -25,7 +25,6 @@ import com.synergy.backend.global.mail.MailService;
 import com.synergy.backend.global.mail.exception.EmailNotVerifiedException;
 import com.synergy.backend.global.security.CustomUserDetails;
 import com.synergy.backend.global.security.CustomUserDetailsService;
-import com.synergy.backend.global.token.CookieUtils;
 import com.synergy.backend.global.token.TokenService;
 import com.synergy.backend.global.token.exception.InvalidRefreshTokenException;
 
@@ -45,7 +44,6 @@ public class AuthServiceImpl implements AuthService {
 	private final PointService pointService;
 	private final MailService mailService;
 	private final TokenService tokenService;
-	private final CookieUtils cookieUtils;
 	private final CustomUserDetailsService userDetailsService;
 
 	@Transactional
