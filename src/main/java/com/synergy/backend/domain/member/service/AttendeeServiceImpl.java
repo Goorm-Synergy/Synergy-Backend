@@ -116,7 +116,6 @@ public class AttendeeServiceImpl implements AttendeeService {
 	}
 
 	// 관심사 추가
-	@Transactional
 	private Set<Interest> addInterests(Attendee attendee, Set<Integer> interestCodes) {
 		// 요청된 숫자 코드에 해당하는 Interest 엔티티 조회
 		Set<Interest> interestsToAdd = getValidInterests(interestCodes);
