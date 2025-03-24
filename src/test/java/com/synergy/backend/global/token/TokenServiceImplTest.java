@@ -35,9 +35,6 @@ class TokenServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(jwtProperties.refreshTokenExpiration()).thenReturn(Duration.ofDays(30));
-
 		tokenService = new TokenServiceImpl(redisTemplate, jwtProperties);
 	}
 
@@ -47,6 +44,9 @@ class TokenServiceImplTest {
 		// given
 		String identifier = "user@example.com";
 		String token = "refreshToken";
+
+		when(jwtProperties.refreshTokenExpiration()).thenReturn(Duration.ofDays(30));
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
 		// when
 		tokenService.storeRefreshToken(identifier, token);
@@ -62,6 +62,7 @@ class TokenServiceImplTest {
 		String identifier = "user@example.com";
 		String token = "refreshToken";
 		when(valueOperations.get("refresh:" + identifier)).thenReturn(token);
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
 		// when
 		String result = tokenService.getStoredRefreshToken(identifier);
