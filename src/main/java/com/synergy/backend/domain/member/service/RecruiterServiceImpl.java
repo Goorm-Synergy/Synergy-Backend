@@ -37,16 +37,6 @@ public class RecruiterServiceImpl implements RecruiterService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public AttendeeDetailResponse getAttendeeFrom(Long attendeeId) {
-		Attendee findAttendee = attendeeRepository.findAttendeeBy(attendeeId).orElseThrow(NotFoundUserException::new);
-		if(!findAttendee.getIsHiringInterested()) {
-			throw new ForbiddenAccessAttendee();
-		}
-		return AttendeeDetailResponse.of(findAttendee);
-	}
-
-	@Transactional(readOnly = true)
-	@Override
 	public AttendeeListResponse getAttendeesBy(Pageable pageable, Long recruiterId, AttendeeFilterRequest requestCondition) {
 		log.info(requestCondition.toString());
 		Page<AttendeeSimpleResponseDto> pageAttendees = attendeeRepository.searchPageAttendeesBy(pageable, recruiterId, requestCondition);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
 import com.synergy.backend.domain.member.api.dto.AttendeeListResponse;
+import com.synergy.backend.domain.member.api.dto.AttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.service.AttendeeDetailResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -11,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import com.synergy.backend.domain.member.api.dto.resposne.LikedAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
 import com.synergy.backend.domain.member.service.RecruiterAttendeeLikeService;
 import com.synergy.backend.domain.member.service.RecruiterService;
@@ -57,15 +57,9 @@ public class RecruiterController {
 
 	@PreAuthorize("hasRole('RECRUITER')")
 	@GetMapping("/me/liked-attendees")
-	public ApiResponse<List<LikedAttendeeResponseDto>> getLikedAttendees(
+	public ApiResponse<List<AttendeeSimpleResponseDto>> getLikedAttendees(
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ApiResponse.ok(recruiterAttendeeLikeService.getLikedAttendees(userDetails.getId()), 200);
-	}
-
-	@PreAuthorize("hasRole('RECRUITER')")
-	@GetMapping("/attendee/{id}")
-	public ApiResponse<AttendeeDetailResponse> getAttendee(@PathVariable("id") Long id) {
-		return ApiResponse.ok(recruiterService.getAttendeeFrom(id), 200);
 	}
 
 	@PreAuthorize("hasRole('RECRUITER')")
