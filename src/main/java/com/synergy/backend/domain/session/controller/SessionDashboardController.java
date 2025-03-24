@@ -14,6 +14,7 @@ import com.synergy.backend.domain.session.service.SessionParticipateService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +26,10 @@ public class SessionDashboardController {
 
 	private final SessionParticipateService sessionParticipateService;
 
+	@Operation(
+		summary = "세션별 참여율 조회",
+		description = "컨퍼런스 ID에 해당하는 세션들의 전체 참여율(%)을 조회합니다."
+	)
 	@GetMapping
 	public ApiResponse<List<SessionParticipateRateResDto>> getSessionParticipateRates(
 		@AuthenticationPrincipal CustomUserDetails user,
@@ -34,6 +39,10 @@ public class SessionDashboardController {
 			200);
 	}
 
+	@Operation(
+		summary = "세션별 상세 참여율 조회",
+		description = "컨퍼런스 ID에 해당하는 세션들의 상세 참여율 정보를 조회합니다."
+	)
 	@GetMapping("/detail")
 	public ApiResponse<List<SessionParticipateRateDetailResDto>> getSessionParticipateRateDetails(
 		@AuthenticationPrincipal CustomUserDetails user,

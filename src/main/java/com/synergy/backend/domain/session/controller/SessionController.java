@@ -23,6 +23,7 @@ import com.synergy.backend.domain.session.service.SessionService;
 import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class SessionController {
 	private final SessionService sessionService;
 
 	@PreAuthorize("hasRole('ADMIN')")
+	@Operation(summary = "세션 생성", description = "관리자가 세션을 생성합니다.")
 	@PostMapping
 	public ApiResponse createSession(@AuthenticationPrincipal CustomUserDetails user,
 		@PathVariable(name = "conferenceId") Long conferenceId,
@@ -47,6 +49,7 @@ public class SessionController {
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN', 'ATTENDEE', 'RECRUITER')")
+	@Operation(summary = "세션 목록 조회", description = "관리자, 참가자, 채용담당자가 세션 목록을 조회합니다.")
 	@GetMapping
 	public ApiResponse getSessions(@AuthenticationPrincipal CustomUserDetails user,
 		@PathVariable(name = "conferenceId") Long conferenceId) {
@@ -56,6 +59,7 @@ public class SessionController {
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN', 'ATTENDEE', 'RECRUITER')")
+	@Operation(summary = "세션 상세 조회", description = "관리자, 참가자, 채용담당자가 특정 세션의 상세 정보를 조회합니다.")
 	@GetMapping("/{sessionId}")
 	public ApiResponse getSession(@AuthenticationPrincipal CustomUserDetails user,
 		@PathVariable(name = "conferenceId") Long conferenceId,
@@ -67,6 +71,7 @@ public class SessionController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
+	@Operation(summary = "세션 수정", description = "관리자가 세션 정보를 수정합니다.")
 	@PatchMapping
 	public ApiResponse updateSession(@AuthenticationPrincipal CustomUserDetails user,
 		@RequestParam Long sessionId,
@@ -78,6 +83,7 @@ public class SessionController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
+	@Operation(summary = "세션 삭제", description = "관리자가 세션을 삭제합니다.")
 	@DeleteMapping
 	public ApiResponse deleteSession(@AuthenticationPrincipal CustomUserDetails user,
 		@RequestParam Long sessionId) {
