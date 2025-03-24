@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class CookieUtils {
-	private static final String REFRESH_TOKEN_NAME = "refreshToken";
+	public static final String REFRESH_TOKEN_NAME = "refreshToken";
 
 	public String extractRefreshToken(HttpServletRequest request) {
 		if (request.getCookies() == null)

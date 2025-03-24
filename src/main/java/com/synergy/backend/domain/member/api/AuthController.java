@@ -64,30 +64,31 @@ public class AuthController {
 	@PostMapping("/password/reset/request")
 	public ApiResponse<?> passwordResetRequest(@Valid @RequestBody PasswordResetRequestDto request) {
 		authService.passwordResetRequest(request.email(), request.name(), request.phone());
-		return ApiResponse.ok(null, 200);
+		return ApiResponse.emptyOk();
 	}
 
 	@PostMapping("/password/reset")
 	public ApiResponse<?> newPassword(@Valid @RequestBody PasswordResetConfirmDto request) {
 		authService.passwordReset(request.email(), request.newPassword());
-		return ApiResponse.ok(null, 200);
+		return ApiResponse.emptyOk();
 	}
 
 	@PostMapping("/email/verification/request")
 	public ApiResponse<?> emailVerificationRequest(@Valid @RequestBody EmailVerificationRequestDto request) throws
 		MessagingException {
 		mailService.sendVerificationCodeToMail(request.email());
-		return ApiResponse.ok(null, 200);
+		return ApiResponse.emptyOk();
 	}
 
 	@PostMapping("/email/verification/confirm")
 	public ApiResponse<?> emailVerificationConfirm(@Valid @RequestBody EmailVerificationConfirmDto request) {
 		mailService.mailVerificationConfirm(request.email(), request.code());
-		return ApiResponse.ok(null, 200);
+		return ApiResponse.emptyOk();
 	}
 
 	@PostMapping("/refresh-token/reissue")
-	public ApiResponse<TokenResponseDto> reissueRefreshToken(@CookieValue("refreshToken") String refreshToken,
+	public ApiResponse<TokenResponseDto> reissueRefreshToken(
+		@CookieValue(CookieUtils.REFRESH_TOKEN_NAME) String refreshToken,
 		HttpServletResponse response) {
 
 		TokenWithRefreshToken tokenWithRefreshToken = authService.reissueRefreshToken(refreshToken);
