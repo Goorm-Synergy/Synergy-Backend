@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorType {
 
-	_INVALID_REFRESH_TOKEN(400, "이전에 사용한 비밀번호와 동일한 비밀번호는 사용할 수 없습니다."),
+	_INVALID_REFRESH_TOKEN(401, "유효하지 않은 리프레시 토큰입니다."),
 	;
 
 	private final int code;
