@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.synergy.backend.domain.booth.dto.BoothRequestDto;
 import com.synergy.backend.domain.booth.dto.BoothResponseDto;
 import com.synergy.backend.domain.booth.service.BoothService;
+import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.global.annotation.SwaggerSummaryRole;
 import com.synergy.backend.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +30,7 @@ public class BoothController {
 
 	private final BoothService boothService;
 
+	@SwaggerSummaryRole({RoleType.ADMIN, RoleType.RECRUITER, RoleType.ATTENDEE})
 	@Operation(summary = "부스 단건 조회", description = "ID를 통해 특정 부스를 조회합니다.")
 	@GetMapping("/{id}")
 	public ApiResponse<BoothResponseDto> getBoothById(
@@ -37,6 +40,7 @@ public class BoothController {
 		return ApiResponse.ok(boothService.getBoothById(conferenceId, id), 200);
 	}
 
+	@SwaggerSummaryRole({RoleType.ADMIN, RoleType.RECRUITER, RoleType.ATTENDEE})
 	@Operation(summary = "전체 부스 목록 조회", description = "해당 컨퍼런스의 전체 부스 목록을 페이지네이션으로 조회합니다.")
 	@GetMapping
 	public ApiResponse<Page<BoothResponseDto>> getAllBooths(
@@ -46,6 +50,7 @@ public class BoothController {
 		return ApiResponse.ok(boothService.getAllBooths(conferenceId, pageable), 200);
 	}
 
+	@SwaggerSummaryRole({RoleType.ADMIN})
 	@Operation(summary = "부스 생성", description = "해당 컨퍼런스에 새로운 부스를 생성합니다.")
 	@PostMapping
 	public ApiResponse<BoothResponseDto> createBooth(
@@ -55,6 +60,7 @@ public class BoothController {
 		return ApiResponse.ok(boothService.createBooth(conferenceId, request), 201);
 	}
 
+	@SwaggerSummaryRole({RoleType.ADMIN})
 	@Operation(summary = "부스 정보 수정", description = "부스 ID를 기준으로 부스 정보를 수정합니다.")
 	@PutMapping("/{id}")
 	public ApiResponse<BoothResponseDto> updateBooth(
@@ -65,6 +71,7 @@ public class BoothController {
 		return ApiResponse.ok(boothService.updateBooth(conferenceId, id, request), 200);
 	}
 
+	@SwaggerSummaryRole({RoleType.ADMIN})
 	@Operation(summary = "부스 삭제", description = "부스 ID를 기준으로 해당 부스를 삭제합니다.")
 	@DeleteMapping("/{id}")
 	public ApiResponse<Void> deleteBooth(
