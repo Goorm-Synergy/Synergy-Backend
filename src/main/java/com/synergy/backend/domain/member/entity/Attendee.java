@@ -1,47 +1,24 @@
 package com.synergy.backend.domain.member.entity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 import com.synergy.backend.domain.job.JobGroup;
 import com.synergy.backend.domain.job.JobPosition;
-import com.synergy.backend.domain.member.entity.details.AgeGroup;
-import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
-import com.synergy.backend.domain.member.entity.details.EducationLevelType;
-import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
-import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
-import com.synergy.backend.domain.member.entity.details.PreferredCorporateCulture;
-import com.synergy.backend.domain.member.entity.details.RegionType;
-import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
+import com.synergy.backend.domain.member.entity.details.*;
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.session.entity.AttendeeSession;
 import com.synergy.backend.global.common.BaseEntity;
-import com.synergy.backend.global.util.file.dto.FileInformationDto;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -139,19 +116,22 @@ public class Attendee extends BaseEntity implements User {
 
 	// 직장 선택 요소
 	@ElementCollection
-	@CollectionTable(name = "attendee_workplace_selection_factors", joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_workplace_selection_factors",
+		joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<WorkplaceSelectionFactor> workplaceSelectionFactors = new HashSet<>();
 
 	// 선호하는 기업 문화
 	@ElementCollection
-	@CollectionTable(name = "attendee_preferred_corporate_cultures", joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_preferred_corporate_cultures",
+		joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<PreferredCorporateCulture> preferredCorporateCultures = new HashSet<>();
 
 	// 컨퍼런스 참여 목적
 	@ElementCollection
-	@CollectionTable(name = "attendee_conference_participation_purposes", joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_conference_participation_purposes",
+		joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<ConferenceParticipationPurpose> conferenceParticipationPurposes = new HashSet<>();
 
@@ -176,7 +156,12 @@ public class Attendee extends BaseEntity implements User {
 	}
 
 	public static Attendee of(String email, String encodedPassword, String name, String phone) {
-		return Attendee.builder().email(email).password(encodedPassword).name(name).phone(phone).build();
+		return Attendee.builder()
+			.email(email)
+			.password(encodedPassword)
+			.name(name)
+			.phone(phone)
+			.build();
 	}
 
 	@Override
@@ -196,25 +181,41 @@ public class Attendee extends BaseEntity implements User {
 
 	@Override
 	public String toString() {
-		return "Attendee{" + "id=" + id + ", name='" + name + '\'' + ", currentJobPosition="
-			+ currentJobPosition.getName() + ", isHiringInterested=" + isHiringInterested + ", educationLevel="
-			+ educationLevel.getDescription() + ", desiredJobPosition=" + desiredJobPosition.getName() + ", ageGroup="
-			+ ageGroup.getDescription() + ", experienceLevel=" + experienceLevel.getDescription()
-			+ ", desiredWorkRegion=" + desiredWorkRegion.toString() + '}';
+		return "Attendee{" +
+			"id=" + id +
+			", name='" + name + '\'' +
+			", currentJobPosition=" + currentJobPosition.getName() +
+			", isHiringInterested=" + isHiringInterested +
+			", educationLevel=" + educationLevel.getDescription() +
+			", desiredJobPosition=" + desiredJobPosition.getName() +
+			", ageGroup=" + ageGroup.getDescription() +
+			", experienceLevel=" + experienceLevel.getDescription() +
+			", desiredWorkRegion=" + desiredWorkRegion.toString() +
+			'}';
 	}
 
-	public void updateJobInfo(JobPosition jobPosition, JobGroup jobGroup, Boolean isHiringInterested) {
+	public void updateJobInfo(JobPosition jobPosition, JobGroup jobGroup,
+		Boolean isHiringInterested) {
 		this.currentJobPosition = jobPosition;
 		this.currentJobGroup = jobGroup;
 		this.isHiringInterested = isHiringInterested;
 	}
 
-	public void updateJobInfoDetails(JobGroup desiredJobGroup, JobPosition desiredJobPosition,
-		EducationLevelType educationLevel, AgeGroup ageGroup, String techStacks, ExperienceLevelType experienceLevel,
-		Set<RegionType> desiredWorkRegion, String selfIntroduction, String information,
+	public void updateJobInfoDetails(
+		JobGroup desiredJobGroup,
+		JobPosition desiredJobPosition,
+		EducationLevelType educationLevel,
+		AgeGroup ageGroup,
+		String techStacks,
+		ExperienceLevelType experienceLevel,
+		Set<RegionType> desiredWorkRegion,
+		String selfIntroduction,
+		String profilePhotoUrl,
+		String information,
 		Set<WorkplaceSelectionFactor> workplaceSelectionFactors,
 		Set<PreferredCorporateCulture> preferredCorporateCultures,
-		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes) {
+		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes
+	) {
 		this.desiredJobGroup = desiredJobGroup;
 		this.desiredJobPosition = desiredJobPosition;
 		this.educationLevel = educationLevel;
@@ -223,8 +224,10 @@ public class Attendee extends BaseEntity implements User {
 		this.experienceLevel = experienceLevel;
 		this.desiredWorkRegion = desiredWorkRegion != null ? desiredWorkRegion : new HashSet<>();
 		this.selfIntroduction = selfIntroduction;
+		this.profilePhotoUrl = profilePhotoUrl;
 		this.information = information;
-		this.attendeeInterests = attendeeInterests != null ? attendeeInterests : new HashSet<>();
+		this.attendeeInterests =
+			attendeeInterests != null ? attendeeInterests : new HashSet<>();
 		this.workplaceSelectionFactors =
 			workplaceSelectionFactors != null ? workplaceSelectionFactors : new HashSet<>();
 		this.preferredCorporateCultures =

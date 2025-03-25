@@ -16,6 +16,7 @@ public record AttendeeBaseInfoResponseDto(
 	@Schema(description = "경력", example = "1~2년 이하")
 	String experience,
 
+	@Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg")
 	String profileImg
 ) {
 	public static AttendeeBaseInfoResponseDto from(Attendee attendee) {
