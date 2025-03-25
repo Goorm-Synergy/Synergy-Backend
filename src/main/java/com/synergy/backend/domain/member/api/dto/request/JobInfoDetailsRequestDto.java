@@ -26,7 +26,7 @@ public record JobInfoDetailsRequestDto(
 	Integer experienceLevelCode, // 경력 (코드값)
 
 	@NotNull
-	Set<Integer> preferredRegionCodes, // 희망 근무 지역 (코드값 리스트)
+	Set<Integer> desiredWorkRegionCodes, // 희망 근무 지역 (코드값 리스트)
 
 	String selfIntroduction, // 자기소개서
 

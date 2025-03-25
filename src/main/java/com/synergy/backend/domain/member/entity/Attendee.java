@@ -133,8 +133,10 @@ public class Attendee extends BaseEntity implements User {
 	private String selfIntroduction;
 
 	// 프로필 사진
-	private String imageKey;
-	private String imageUrl;
+	private String profileImageKey;
+
+	@Column(length = 1024)
+	private String profileImageUrl;
 
 	// 경험 및 기타 정보
 	private String information;
@@ -218,6 +220,7 @@ public class Attendee extends BaseEntity implements User {
 		AgeGroup ageGroup,
 		String techStacks,
 		ExperienceLevelType experienceLevel,
+		Set<RegionType> desiredWorkRegion,
 		String selfIntroduction,
 		String information,
 		Set<WorkplaceSelectionFactor> workplaceSelectionFactors,
@@ -230,6 +233,7 @@ public class Attendee extends BaseEntity implements User {
 		this.ageGroup = ageGroup;
 		this.techStacks = techStacks;
 		this.experienceLevel = experienceLevel;
+		this.desiredWorkRegion = desiredWorkRegion != null ? desiredWorkRegion : new HashSet<>();
 		this.selfIntroduction = selfIntroduction;
 		this.information = information;
 		this.attendeeInterests =
@@ -261,7 +265,7 @@ public class Attendee extends BaseEntity implements User {
 	}
 
 	public void addImage(FileInformationDto fileInformationDto) {
-		this.imageKey = fileInformationDto.fileKey();
-		this.imageUrl = fileInformationDto.accessUrl();
+		this.profileImageKey = fileInformationDto.fileKey();
+		this.profileImageUrl = fileInformationDto.accessUrl();
 	}
 }
