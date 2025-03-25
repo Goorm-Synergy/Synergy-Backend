@@ -23,6 +23,7 @@ import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDt
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeFullInfoResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.MyInfoResponseDto;
+import com.synergy.backend.domain.member.api.dto.resposne.NextPointResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
@@ -30,7 +31,9 @@ import com.synergy.backend.domain.member.entity.details.BaseAttendeeDetailEnum;
 import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
 import com.synergy.backend.domain.member.entity.details.EducationLevelType;
 import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
+import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
 import com.synergy.backend.domain.member.entity.details.PreferredCorporateCulture;
+import com.synergy.backend.domain.member.entity.details.RegionType;
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 import com.synergy.backend.domain.member.exception.AccessDeniedException;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
