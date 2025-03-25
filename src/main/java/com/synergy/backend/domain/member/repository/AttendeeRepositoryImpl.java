@@ -3,7 +3,7 @@ package com.synergy.backend.domain.member.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.synergy.backend.domain.member.api.dto.request.AttendeeFilterRequest;
+import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.QAttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
