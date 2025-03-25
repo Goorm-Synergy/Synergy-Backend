@@ -46,10 +46,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-	indexes = {
-		@Index(name = "idx_total_points", columnList = "total_points DESC")
-	})
+@Table(indexes = {@Index(name = "idx_total_points", columnList = "total_points DESC")})
 public class Attendee extends BaseEntity implements User {
 
 	@Id
@@ -123,8 +120,7 @@ public class Attendee extends BaseEntity implements User {
 
 	// 희망 근무 지역
 	@ElementCollection
-	@CollectionTable(name = "attendee_desired_work_region",
-		joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_desired_work_region", joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<RegionType> desiredWorkRegion = new HashSet<>();
 
@@ -143,22 +139,19 @@ public class Attendee extends BaseEntity implements User {
 
 	// 직장 선택 요소
 	@ElementCollection
-	@CollectionTable(name = "attendee_workplace_selection_factors",
-		joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_workplace_selection_factors", joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<WorkplaceSelectionFactor> workplaceSelectionFactors = new HashSet<>();
 
 	// 선호하는 기업 문화
 	@ElementCollection
-	@CollectionTable(name = "attendee_preferred_corporate_cultures",
-		joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_preferred_corporate_cultures", joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<PreferredCorporateCulture> preferredCorporateCultures = new HashSet<>();
 
 	// 컨퍼런스 참여 목적
 	@ElementCollection
-	@CollectionTable(name = "attendee_conference_participation_purposes",
-		joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_conference_participation_purposes", joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<ConferenceParticipationPurpose> conferenceParticipationPurposes = new HashSet<>();
 
@@ -183,12 +176,7 @@ public class Attendee extends BaseEntity implements User {
 	}
 
 	public static Attendee of(String email, String encodedPassword, String name, String phone) {
-		return Attendee.builder()
-			.email(email)
-			.password(encodedPassword)
-			.name(name)
-			.phone(phone)
-			.build();
+		return Attendee.builder().email(email).password(encodedPassword).name(name).phone(phone).build();
 	}
 
 	@Override
@@ -206,27 +194,27 @@ public class Attendee extends BaseEntity implements User {
 		return this.email;
 	}
 
-	public void updateJobInfo(JobPosition jobPosition, JobGroup jobGroup,
-		Boolean isHiringInterested) {
+	@Override
+	public String toString() {
+		return "Attendee{" + "id=" + id + ", name='" + name + '\'' + ", currentJobPosition="
+			+ currentJobPosition.getName() + ", isHiringInterested=" + isHiringInterested + ", educationLevel="
+			+ educationLevel.getDescription() + ", desiredJobPosition=" + desiredJobPosition.getName() + ", ageGroup="
+			+ ageGroup.getDescription() + ", experienceLevel=" + experienceLevel.getDescription()
+			+ ", desiredWorkRegion=" + desiredWorkRegion.toString() + '}';
+	}
+
+	public void updateJobInfo(JobPosition jobPosition, JobGroup jobGroup, Boolean isHiringInterested) {
 		this.currentJobPosition = jobPosition;
 		this.currentJobGroup = jobGroup;
 		this.isHiringInterested = isHiringInterested;
 	}
 
-	public void updateJobInfoDetails(
-		JobGroup desiredJobGroup,
-		JobPosition desiredJobPosition,
-		EducationLevelType educationLevel,
-		AgeGroup ageGroup,
-		String techStacks,
-		ExperienceLevelType experienceLevel,
-		Set<RegionType> desiredWorkRegion,
-		String selfIntroduction,
-		String information,
+	public void updateJobInfoDetails(JobGroup desiredJobGroup, JobPosition desiredJobPosition,
+		EducationLevelType educationLevel, AgeGroup ageGroup, String techStacks, ExperienceLevelType experienceLevel,
+		Set<RegionType> desiredWorkRegion, String selfIntroduction, String information,
 		Set<WorkplaceSelectionFactor> workplaceSelectionFactors,
 		Set<PreferredCorporateCulture> preferredCorporateCultures,
-		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes
-	) {
+		Set<ConferenceParticipationPurpose> conferenceParticipationPurposes) {
 		this.desiredJobGroup = desiredJobGroup;
 		this.desiredJobPosition = desiredJobPosition;
 		this.educationLevel = educationLevel;
@@ -236,8 +224,7 @@ public class Attendee extends BaseEntity implements User {
 		this.desiredWorkRegion = desiredWorkRegion != null ? desiredWorkRegion : new HashSet<>();
 		this.selfIntroduction = selfIntroduction;
 		this.information = information;
-		this.attendeeInterests =
-			attendeeInterests != null ? attendeeInterests : new HashSet<>();
+		this.attendeeInterests = attendeeInterests != null ? attendeeInterests : new HashSet<>();
 		this.workplaceSelectionFactors =
 			workplaceSelectionFactors != null ? workplaceSelectionFactors : new HashSet<>();
 		this.preferredCorporateCultures =

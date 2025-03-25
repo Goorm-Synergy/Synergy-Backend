@@ -90,7 +90,7 @@ public class RecruiterController {
 			"""
 	)
 	@SwaggerSummaryRole({RoleType.RECRUITER})
-	@PreAuthorize("hasRole('RECRUITER')")
+	@PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")
 	@GetMapping("/{id}/attendees")
 	public ApiResponse<AttendeeListResponse> getAttendees(
 		@Parameter(description = "페이징 처리 정보 (기본: page=0, size=20)") @PageableDefault(page = 0, size = 20) Pageable pageable,

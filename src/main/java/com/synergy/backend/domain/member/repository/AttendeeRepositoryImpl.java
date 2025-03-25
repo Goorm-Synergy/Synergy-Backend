@@ -54,9 +54,9 @@ public class AttendeeRepositoryImpl implements AttendeeRepositoryCustom {
 			.leftJoin(recruiterAttendeeLike)
 			.on(recruiterAttendeeLike.attendee.eq(attendee)
 				.and(recruiterAttendeeLike.recruiter.id.eq(recruiterId))) // 현재 로그인 리크루터의 좋아요 여부
-			.join(attendee.currentJobPosition, jobPosition)
+			.join(attendee.desiredJobPosition, jobPosition)
 			.where(
-				occupationIn(requestCondition.occupations()),
+				jobPositionIn(requestCondition.desiredJobPosition()),
 				educationEq(requestCondition.educationLevel()),
 				ageGroupEq(requestCondition.ageGroup()),
 				experienceEq(requestCondition.experienceLevel()),
@@ -70,8 +70,9 @@ public class AttendeeRepositoryImpl implements AttendeeRepositoryCustom {
 		return new PageImpl<>(content, pageable, content.size());
 	}
 
-	private BooleanExpression occupationIn(List<String> occupations) {
-		return (occupations == null || occupations.isEmpty()) ? null : attendee.currentJobPosition.name.in(occupations);
+	private BooleanExpression jobPositionIn(List<String> jobPositions) {
+		return (jobPositions == null || jobPositions.isEmpty()) ? null :
+			attendee.desiredJobPosition.name.in(jobPositions);
 
 	}
 
