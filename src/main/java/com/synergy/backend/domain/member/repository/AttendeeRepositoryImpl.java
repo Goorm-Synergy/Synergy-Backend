@@ -45,6 +45,7 @@ public class AttendeeRepositoryImpl implements AttendeeRepositoryCustom {
 					jobPosition.name,
 					attendee.experienceLevel,
 					attendee.techStacks,
+					attendee.profileImageUrl,
 					new CaseBuilder()
 						.when(recruiterAttendeeLike.id.isNotNull()).then(true)
 						.otherwise(false)

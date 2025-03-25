@@ -56,20 +56,14 @@ public class AttendeeController {
 
 	@Operation(
 		summary = "참가자 상세 직무 정보 등록",
-		description = "온보딩 과정에서 참가자의 희망 직무, 경력 및 기술 스택 등 상세 직무 정보를 등록합니다.",
-		requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-			content = @Content(
-				mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-				schema = @Schema(implementation = JobInfoDetailsRequestDto.class)
-			)
-		)
+		description = "온보딩 과정에서 참가자의 희망 직무, 경력 및 기술 스택 등 상세 직무 정보를 등록합니다."
 	)
 	@PreAuthorize("hasRole('ATTENDEE')")
 	@PatchMapping(path = "/onboarding/job-info-details", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<JobInfoResponseDto> addJobInfoDetails(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestPart("request") JobInfoDetailsRequestDto request,
-		@RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile) {
+		@RequestPart(value = "multipartFile") MultipartFile multipartFile) {
 
 		String identifier = userDetails.getIdentifier();
 		attendeeService.addJobInfoDetails(identifier, request, multipartFile);
