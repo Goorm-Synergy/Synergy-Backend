@@ -14,17 +14,13 @@ public record AttendeeBaseInfoResponseDto(
 	String jobName,
 
 	@Schema(description = "경력", example = "1~2년 이하")
-	String experience,
-
-	@Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg")
-	String profilePhotoUrl
+	String experience
 ) {
 	public static AttendeeBaseInfoResponseDto from(Attendee attendee) {
 		return new AttendeeBaseInfoResponseDto(
 			attendee.getName(),
 			attendee.getCurrentJobPosition() != null ? attendee.getCurrentJobPosition().getName() : "",
-			attendee.getExperienceLevel() != null ? attendee.getExperienceLevel().getDescription() : "",
-			attendee.getProfilePhotoUrl()
+			attendee.getExperienceLevel() != null ? attendee.getExperienceLevel().getDescription() : ""
 		);
 	}
 }

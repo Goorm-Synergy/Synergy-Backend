@@ -7,18 +7,19 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 import com.synergy.backend.domain.interest.entity.Interest;
 import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
 import com.synergy.backend.domain.interest.repository.AttendeeInterestRepository;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
-import com.synergy.backend.domain.job.JobPosition;
-import com.synergy.backend.domain.job.JobPositionRepository;
 import com.synergy.backend.domain.job.JobGroup;
 import com.synergy.backend.domain.job.JobGroupRepository;
-import com.synergy.backend.domain.job.exception.NotFoundJobPositionException;
+import com.synergy.backend.domain.job.JobPosition;
+import com.synergy.backend.domain.job.JobPositionRepository;
 import com.synergy.backend.domain.job.exception.NotFoundJobGroupException;
+import com.synergy.backend.domain.job.exception.NotFoundJobPositionException;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeFullInfoResponseDto;
@@ -35,6 +36,7 @@ import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor
 import com.synergy.backend.domain.member.exception.AccessDeniedException;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
+import com.synergy.backend.global.util.file.util.FileS3Util;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +49,7 @@ public class AttendeeServiceImpl implements AttendeeService {
 	private final AttendeeInterestRepository attendeeInterestRepository;
 	private final JobPositionRepository jobPositionRepository;
 	private final JobGroupRepository jobGroupRepository;
+	private final FileS3Util fileS3Util;
 
 	/** 직무 정보 추가 */
 	@Transactional
@@ -66,8 +69,9 @@ public class AttendeeServiceImpl implements AttendeeService {
 	/** 직무 상세 정보 추가 */
 	@Transactional
 	@Override
-	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request) {
+	public void addJobInfoDetails(String email, JobInfoDetailsRequestDto request, MultipartFile multipartFile) {
 		Attendee attendee = findAttendeeByEmail(email);
+		attendee.addImage(fileS3Util.uploadFile(multipartFile));
 
 		attendee.updateJobInfoDetails(
 			findJobGroupByCode(request.desiredJobGroupCode()),
@@ -78,7 +82,6 @@ public class AttendeeServiceImpl implements AttendeeService {
 			convertToEnum(request.experienceLevelCode(),
 				ExperienceLevelType.class),
 			request.selfIntroduction(),
-			request.profileImageUrl(),
 			request.additionalInfo(),
 			convertToEnumSet(
 				request.workplaceSelectionFactorCodes(), WorkplaceSelectionFactor.class),
