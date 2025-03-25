@@ -69,7 +69,7 @@ public class AttendeeController {
 	public ApiResponse<JobInfoResponseDto> addJobInfoDetails(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestPart("request") JobInfoDetailsRequestDto request,
-		@RequestPart("multipartFile") MultipartFile multipartFile) {
+		@RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile) {
 
 		String identifier = userDetails.getIdentifier();
 		attendeeService.addJobInfoDetails(identifier, request, multipartFile);
