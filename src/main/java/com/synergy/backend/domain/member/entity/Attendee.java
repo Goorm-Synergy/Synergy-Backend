@@ -20,7 +20,6 @@ import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.session.entity.AttendeeSession;
 import com.synergy.backend.global.common.BaseEntity;
-import com.synergy.backend.global.util.file.dto.FileInformationDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -46,7 +45,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(indexes = {@Index(name = "idx_total_points", columnList = "total_points DESC")})
+@Table(
+	indexes = {
+		@Index(name = "idx_total_points", columnList = "total_points DESC")
+	})
 public class Attendee extends BaseEntity implements User {
 
 	@Id
@@ -120,7 +122,8 @@ public class Attendee extends BaseEntity implements User {
 
 	// 희망 근무 지역
 	@ElementCollection
-	@CollectionTable(name = "attendee_desired_work_region", joinColumns = @JoinColumn(name = "attendee_id"))
+	@CollectionTable(name = "attendee_desired_work_region",
+		joinColumns = @JoinColumn(name = "attendee_id"))
 	@Enumerated(EnumType.ORDINAL)
 	private Set<RegionType> desiredWorkRegion = new HashSet<>();
 

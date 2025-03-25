@@ -5,30 +5,34 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
+import com.synergy.backend.domain.member.api.dto.AttendeeListResponse;
+import com.synergy.backend.domain.member.api.dto.AttendeeSimpleResponseDto;
+import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
+import com.synergy.backend.domain.member.repository.AttendeeRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
+import com.synergy.backend.domain.member.entity.Recruiter;
+import com.synergy.backend.domain.member.exception.NotFoundRecruiterException;
+import com.synergy.backend.domain.member.repository.RecruiterRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import com.synergy.backend.domain.member.api.dto.request.AttendeeFilterRequest;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeListResponse;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeSimpleResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
-import com.synergy.backend.domain.member.entity.Recruiter;
-import com.synergy.backend.domain.member.exception.NotFoundRecruiterException;
-import com.synergy.backend.domain.member.repository.AttendeeRepository;
-import com.synergy.backend.domain.member.repository.RecruiterRepository;
 
 @ExtendWith(MockitoExtension.class)
 class RecruiterServiceImplTest {
