@@ -1,9 +1,12 @@
 package com.synergy.backend.domain.member.service;
 
+import static com.synergy.backend.domain.auth.LoginFailedRepository.*;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.synergy.backend.domain.auth.LoginFailedRepository;
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.conference.exception.InvalidTicketCodeException;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
@@ -49,6 +52,8 @@ public class AuthServiceImpl implements AuthService {
 	private final MailService mailService;
 	private final TokenService tokenService;
 	private final CustomUserDetailsService userDetailsService;
+	private final LoginFailedRepository loginFailedRepository;
+	private final AccountLockService accountLockService;
 
 	@Transactional
 	@Override
@@ -78,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
 		Attendee attendee = findAttendeeByEmail(email);
 
 		if (!isPasswordMatch(rawPassword, attendee.getPassword())) {
+			countLoginFailed(attendee);
 			throw new UnauthorizedException();
 		}
 
@@ -158,6 +164,24 @@ public class AuthServiceImpl implements AuthService {
 			.<User>map(admin -> admin)
 			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode))
 			.orElseThrow(InvalidAuthCodeException::new);
+	}
+
+	private void countLoginFailed(Attendee attendee) {
+		Long attemptCount = incrementFailedCount(attendee);
+
+		log.info("attemptCount : {}", attemptCount);
+
+		if (attemptCount >= MAX_ATTEMPT_COUNT) {
+			accountLockService.lockUserAccount(attendee);
+			loginFailedRepository.delete(attendee.getEmail()); // 계정 잠금 후 실패 횟수 초기화
+		}
+	}
+
+	private Long incrementFailedCount(Attendee attendee) {
+		if (loginFailedRepository.getValues(attendee.getEmail()) == null) {
+			loginFailedRepository.setValue(attendee.getEmail(), INIT_LOGIN_TRIAL_COUNT);
+		}
+		return loginFailedRepository.increment(attendee.getEmail());
 	}
 
 	private void validateSignupRequest(SignupAttendeeRequestDto request) {

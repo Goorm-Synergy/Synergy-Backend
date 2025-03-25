@@ -71,7 +71,7 @@ public class Attendee extends BaseEntity implements User {
 
 	// 계정 잠금 상태
 	@Column(nullable = false)
-	private boolean isLocked;
+	private boolean isLocked = false;
 
 	// 현재 포인트 합계
 	@Column(nullable = false)
@@ -275,5 +275,13 @@ public class Attendee extends BaseEntity implements User {
 
 	public void assignConference(Conference conference) {
 		this.conference = conference;
+	}
+
+	public void lockAccount() {
+		this.isLocked = true;
+	}
+
+	public void unlockAccount() {
+		this.isLocked = false;
 	}
 }
