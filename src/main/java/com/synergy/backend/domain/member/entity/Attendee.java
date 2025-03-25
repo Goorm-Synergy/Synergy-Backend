@@ -20,6 +20,7 @@ import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.session.entity.AttendeeSession;
 import com.synergy.backend.global.common.BaseEntity;
+import com.synergy.backend.global.util.file.dto.FileInformationDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -131,8 +132,9 @@ public class Attendee extends BaseEntity implements User {
 	@Column(length = 1000)
 	private String selfIntroduction;
 
-	// 증명사진
-	private String profilePhotoUrl;
+	// 프로필 사진
+	private String imageKey;
+	private String imageUrl;
 
 	// 경험 및 기타 정보
 	private String information;
@@ -217,7 +219,6 @@ public class Attendee extends BaseEntity implements User {
 		String techStacks,
 		ExperienceLevelType experienceLevel,
 		String selfIntroduction,
-		String profilePhotoUrl,
 		String information,
 		Set<WorkplaceSelectionFactor> workplaceSelectionFactors,
 		Set<PreferredCorporateCulture> preferredCorporateCultures,
@@ -230,7 +231,6 @@ public class Attendee extends BaseEntity implements User {
 		this.techStacks = techStacks;
 		this.experienceLevel = experienceLevel;
 		this.selfIntroduction = selfIntroduction;
-		this.profilePhotoUrl = profilePhotoUrl;
 		this.information = information;
 		this.attendeeInterests =
 			attendeeInterests != null ? attendeeInterests : new HashSet<>();
@@ -258,5 +258,10 @@ public class Attendee extends BaseEntity implements User {
 
 	public void updatePassword(String newEncodePassword) {
 		this.password = newEncodePassword;
+	}
+
+	public void addImage(FileInformationDto fileInformationDto) {
+		this.imageKey = fileInformationDto.fileKey();
+		this.imageUrl = fileInformationDto.accessUrl();
 	}
 }

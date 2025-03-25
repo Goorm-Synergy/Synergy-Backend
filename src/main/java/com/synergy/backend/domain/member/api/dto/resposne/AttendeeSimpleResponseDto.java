@@ -12,18 +12,16 @@ import lombok.NoArgsConstructor;
 public class AttendeeSimpleResponseDto {
 	private Long attendeeId;
 	private String name;
-	private String profileUrl;
 	private String desiredJobPosition;
 	private String techStacks;
 	private String experienceLevel;
 	private boolean isLiked;
 
 	@QueryProjection
-	public AttendeeSimpleResponseDto(Long attendeeId, String name, String profileUrl, String desiredJobPosition,
+	public AttendeeSimpleResponseDto(Long attendeeId, String name, String desiredJobPosition,
 		ExperienceLevelType experienceLevel, String techStacks, boolean isLiked) {
 		this.attendeeId = attendeeId;
 		this.name = name;
-		this.profileUrl = profileUrl;
 		this.desiredJobPosition = desiredJobPosition;
 		this.experienceLevel = experienceLevel != null ? experienceLevel.getDescription() : null;
 		this.techStacks = techStacks;
@@ -34,7 +32,6 @@ public class AttendeeSimpleResponseDto {
 		return new AttendeeSimpleResponseDto(
 			attendee.getId(),
 			attendee.getName(),
-			attendee.getProfilePhotoUrl(),
 			attendee.getDesiredJobPosition() != null ? attendee.getDesiredJobPosition().getName() : "",
 			attendee.getExperienceLevel(),
 			attendee.getTechStacks(),

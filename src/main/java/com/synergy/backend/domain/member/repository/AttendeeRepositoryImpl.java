@@ -42,7 +42,6 @@ public class AttendeeRepositoryImpl implements AttendeeRepositoryCustom {
 				new QAttendeeSimpleResponseDto(
 					attendee.id,
 					attendee.name,
-					attendee.profilePhotoUrl,
 					jobPosition.name,
 					attendee.experienceLevel,
 					attendee.techStacks,
