@@ -14,13 +14,17 @@ import com.synergy.backend.domain.conference.dto.requset.ConferenceUpdateRequest
 import com.synergy.backend.domain.conference.dto.response.ConferenceCreateResponse;
 import com.synergy.backend.domain.conference.dto.response.ConferenceUpdateResponse;
 import com.synergy.backend.domain.conference.service.ConferenceService;
-import com.synergy.backend.global.CurrentUser;
+
+import com.synergy.backend.global.security.CurrentUser;
 import com.synergy.backend.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Conference Controller", description = "컨퍼런스 관련 API")
 @RestController
