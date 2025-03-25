@@ -89,7 +89,7 @@ public class RecruiterController {
 			페이징 처리를 통해 응답을 분할하여 제공합니다.
 			"""
 	)
-	@SwaggerSummaryRole({RoleType.RECRUITER})
+	@SwaggerSummaryRole({RoleType.RECRUITER, RoleType.ADMIN})
 	@PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")
 	@GetMapping("/{id}/attendees")
 	public ApiResponse<AttendeeListResponse> getAttendees(
