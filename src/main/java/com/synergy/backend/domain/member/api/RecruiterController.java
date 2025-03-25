@@ -18,6 +18,7 @@ import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
 import com.synergy.backend.domain.member.api.dto.AttendeeListResponse;
 import com.synergy.backend.domain.member.api.dto.AttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
+import com.synergy.backend.domain.member.service.AttendeeDetailResponse;
 import com.synergy.backend.domain.member.service.RecruiterAttendeeLikeService;
 import com.synergy.backend.domain.member.service.RecruiterService;
 import com.synergy.backend.global.common.ApiResponse;
