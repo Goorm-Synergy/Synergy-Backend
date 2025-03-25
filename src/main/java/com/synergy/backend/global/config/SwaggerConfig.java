@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.global.annotation.DisableSwaggerSecurity;
@@ -36,6 +38,7 @@ public class SwaggerConfig {
 	}
 
 	@Bean
+	@Primary
 	public OperationCustomizer swaggerOperationCustomizer() {
 		return (operation, handlerMethod) -> {
 			// Disable security
@@ -55,5 +58,24 @@ public class SwaggerConfig {
 
 			return operation;
 		};
+	}
+
+	@Bean
+	public GroupedOpenApi allApis(OperationCustomizer customize) {
+		return GroupedOpenApi.builder()
+			.group("전체 API 보기")
+			.pathsToMatch("/api/**")
+			.packagesToExclude("com.synergy.backend.domain.meta")
+			.addOperationCustomizer(customize)
+			.build();
+	}
+
+	@Bean
+	public GroupedOpenApi frontendOnlyApi(OperationCustomizer customize) {
+		return GroupedOpenApi.builder()
+			.group("프론트엔드 전용 API")
+			.packagesToScan("com.synergy.backend.domain.meta")
+			.addOperationCustomizer(customize)
+			.build();
 	}
 }
