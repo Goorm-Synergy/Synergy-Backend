@@ -23,8 +23,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.synergy.backend.global.jwt.JwtAuthenticationFilter;
-
 import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +39,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http,
 		JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 		http
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
@@ -76,8 +78,9 @@ public class SecurityConfig {
 			"http://localhost:3000", // 로컬 프론트엔드 허용
 			"http://localhost:8080" // 로컬 백엔드 테스트 허용
 		));
+
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("*"));
+		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
