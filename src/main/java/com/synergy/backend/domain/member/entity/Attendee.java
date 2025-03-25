@@ -69,6 +69,10 @@ public class Attendee extends BaseEntity implements User {
 	@Column(nullable = false)
 	private String phone;
 
+	// 계정 잠금 상태
+	@Column(nullable = false)
+	private boolean isLocked;
+
 	// 현재 포인트 합계
 	@Column(nullable = false)
 	private int totalPoints = 0;
