@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
-import com.synergy.backend.domain.member.api.dto.AttendeeListResponse;
+import com.synergy.backend.domain.member.api.dto.request.AttendeeFilterRequest;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeListResponse;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;

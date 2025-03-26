@@ -21,8 +21,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
-import com.synergy.backend.domain.member.api.dto.AttendeeListResponse;
+import com.synergy.backend.domain.member.api.dto.request.AttendeeFilterRequest;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeListResponse;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.RecruiterMyInfoResponseDto;
 import com.synergy.backend.domain.member.entity.Recruiter;

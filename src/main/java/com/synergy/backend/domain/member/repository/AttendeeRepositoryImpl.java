@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
+import com.synergy.backend.domain.member.api.dto.request.AttendeeFilterRequest;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.QAttendeeSimpleResponseDto;
 import com.synergy.backend.domain.member.entity.details.AgeGroup;
@@ -56,7 +56,7 @@ public class AttendeeRepositoryImpl implements AttendeeRepositoryCustom {
 				.and(recruiterAttendeeLike.recruiter.id.eq(recruiterId))) // 현재 로그인 리크루터의 좋아요 여부
 			.join(attendee.desiredJobPosition, jobPosition)
 			.where(
-				jobPositionIn(requestCondition.desiredJobPosition()),
+				jobPositionIn(requestCondition.desiredJobPositions()),
 				educationEq(requestCondition.educationLevel()),
 				ageGroupEq(requestCondition.ageGroup()),
 				experienceEq(requestCondition.experienceLevel()),

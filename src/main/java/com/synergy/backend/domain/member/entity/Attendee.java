@@ -1,24 +1,47 @@
 package com.synergy.backend.domain.member.entity;
 
-import com.synergy.backend.domain.conference.entity.Conference;
-import com.synergy.backend.domain.interest.entity.AttendeeInterest;
-import com.synergy.backend.domain.job.JobGroup;
-import com.synergy.backend.domain.job.JobPosition;
-import com.synergy.backend.domain.member.entity.details.*;
-import com.synergy.backend.domain.point.entity.Point;
-import com.synergy.backend.domain.session.entity.AttendeeSession;
-import com.synergy.backend.global.common.BaseEntity;
-
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.synergy.backend.domain.conference.entity.Conference;
+import com.synergy.backend.domain.interest.entity.AttendeeInterest;
+import com.synergy.backend.domain.job.JobGroup;
+import com.synergy.backend.domain.job.JobPosition;
+import com.synergy.backend.domain.member.entity.details.AgeGroup;
+import com.synergy.backend.domain.member.entity.details.ConferenceParticipationPurpose;
+import com.synergy.backend.domain.member.entity.details.EducationLevelType;
+import com.synergy.backend.domain.member.entity.details.ExperienceLevelType;
+import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
+import com.synergy.backend.domain.member.entity.details.PreferredCorporateCulture;
+import com.synergy.backend.domain.member.entity.details.RegionType;
+import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
+import com.synergy.backend.domain.point.entity.Point;
+import com.synergy.backend.domain.session.entity.AttendeeSession;
+import com.synergy.backend.global.common.BaseEntity;
+import com.synergy.backend.global.util.file.dto.FileInformationDto;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -210,7 +233,6 @@ public class Attendee extends BaseEntity implements User {
 		ExperienceLevelType experienceLevel,
 		Set<RegionType> desiredWorkRegion,
 		String selfIntroduction,
-		String profilePhotoUrl,
 		String information,
 		Set<WorkplaceSelectionFactor> workplaceSelectionFactors,
 		Set<PreferredCorporateCulture> preferredCorporateCultures,
@@ -224,7 +246,6 @@ public class Attendee extends BaseEntity implements User {
 		this.experienceLevel = experienceLevel;
 		this.desiredWorkRegion = desiredWorkRegion != null ? desiredWorkRegion : new HashSet<>();
 		this.selfIntroduction = selfIntroduction;
-		this.profilePhotoUrl = profilePhotoUrl;
 		this.information = information;
 		this.attendeeInterests =
 			attendeeInterests != null ? attendeeInterests : new HashSet<>();

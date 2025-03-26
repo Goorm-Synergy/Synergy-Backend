@@ -7,18 +7,19 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.synergy.backend.domain.interest.entity.AttendeeInterest;
 import com.synergy.backend.domain.interest.entity.Interest;
 import com.synergy.backend.domain.interest.exception.NotFoundInterestException;
 import com.synergy.backend.domain.interest.repository.AttendeeInterestRepository;
 import com.synergy.backend.domain.interest.repository.InterestRepository;
-import com.synergy.backend.domain.job.JobPosition;
-import com.synergy.backend.domain.job.JobPositionRepository;
 import com.synergy.backend.domain.job.JobGroup;
 import com.synergy.backend.domain.job.JobGroupRepository;
-import com.synergy.backend.domain.job.exception.NotFoundJobPositionException;
+import com.synergy.backend.domain.job.JobPosition;
+import com.synergy.backend.domain.job.JobPositionRepository;
 import com.synergy.backend.domain.job.exception.NotFoundJobGroupException;
+import com.synergy.backend.domain.job.exception.NotFoundJobPositionException;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoDetailsRequestDto;
 import com.synergy.backend.domain.member.api.dto.request.JobInfoRequestDto;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeFullInfoResponseDto;

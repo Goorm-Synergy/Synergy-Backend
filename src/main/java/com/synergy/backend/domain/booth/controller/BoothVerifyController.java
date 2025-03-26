@@ -1,6 +1,5 @@
 package com.synergy.backend.domain.booth.controller;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,15 +29,5 @@ public class BoothVerifyController {
 		@PathVariable Long attendeeId) {
 		boothParticipationService.participateInBooth(attendeeId, boothId);
 		return ApiResponse.ok("부스 참여가 완료되었습니다.", 201);
-	}
-
-	@SwaggerSummaryRole({RoleType.ATTENDEE})
-	@DeleteMapping("/{boothId}/cancel/{attendeeId}")
-	public ApiResponse<String> cancelParticipation(
-		@PathVariable Long conferenceId,
-		@PathVariable Long boothId,
-		@PathVariable Long attendeeId) {
-		boothParticipationService.cancelParticipation(attendeeId, boothId);
-		return ApiResponse.ok("부스 참여가 취소되었습니다.", 200);
 	}
 }
