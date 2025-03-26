@@ -118,4 +118,8 @@ public class Conference {
         admin.getConferences().add(this);
     }
 
+    public void addTicketCode(String ticketCode) {
+        this.ticketCode = ticketCode;
+    }
+
 }

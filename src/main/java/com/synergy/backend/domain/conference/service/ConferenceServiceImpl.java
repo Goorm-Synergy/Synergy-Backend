@@ -38,10 +38,12 @@ public class ConferenceServiceImpl implements ConferenceService {
         Admin findAdmin = adminRepository.findByAdminAuthCode(identifier).orElseThrow(NotFoundUserException::new);
         TimePeriod timePeriod = TimePeriod.of(request.startDate(), request.endDate(), request.startTime(), request.endTime());
 
-        String s = RandomCodeGenerator.lowercaseAlphaNumericCode();
 
         Conference conference = Conference.of(request.name(), timePeriod, request.host(), request.location(), request.place(), request.conferenceType());
         Conference savedConference = conferenceRepository.save(conference);
+
+		// 랜덤 티켓 코드 자동 추가
+        savedConference.addTicketCode(RandomCodeGenerator.lowercaseAlphaNumericCode());
 
         findAdmin.addConference(conference);
 
