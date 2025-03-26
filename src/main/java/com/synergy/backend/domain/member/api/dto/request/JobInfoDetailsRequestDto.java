@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 
 public record JobInfoDetailsRequestDto(
 	@NotNull(message = "희망 직군은 필수입니다.")
-	@Schema(description = "희망 직군 코드", example = "10")
+	@Schema(description = "희망 직군 코드", example = "1")
 	Integer desiredJobGroupCode,
 
 	@NotNull(message = "희망 직무는 필수입니다.")
