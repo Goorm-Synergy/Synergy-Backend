@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.synergy.backend.domain.booth.dto.InterestParticipationDto;
 import com.synergy.backend.domain.booth.service.BoothParticipationService;
+import com.synergy.backend.domain.member.entity.RoleType;
+import com.synergy.backend.global.annotation.SwaggerSummaryRole;
 import com.synergy.backend.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class BoothDashboardController {
 
 	private final BoothParticipationService boothParticipationService;
 
+	@SwaggerSummaryRole({RoleType.ADMIN})
 	@GetMapping("/booths/{boothId}/participation/interest")
 	public ApiResponse<List<InterestParticipationDto>> getParticipationCountByInterest(
 		@PathVariable Long conferenceId,
