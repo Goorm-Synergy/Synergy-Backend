@@ -13,13 +13,13 @@ import com.synergy.backend.domain.member.entity.details.RegionType;
 import com.synergy.backend.domain.member.entity.details.WorkplaceSelectionFactor;
 
 public enum EnumType {
-	REGION_TYPE(RegionType.class),
-	AGE_GROUPS(AgeGroup.class),
-	CONFERENCE_PARTICIPATION_PURPOSE(ConferenceParticipationPurpose.class),
-	WORKPLACE_SELECTION_FACTOR(WorkplaceSelectionFactor.class),
-	PREFERRED_CORPORATE_CULTURE(PreferredCorporateCulture.class),
-	EXPERIENCE_LEVEL_TYPE(ExperienceLevelType.class),
-	EDUCATION_LEVELS(EducationLevelType.class);;
+	지역(RegionType.class),
+	연령대(AgeGroup.class),
+	컨퍼런스_참여_목적(ConferenceParticipationPurpose.class),
+	직장_선택_요소(WorkplaceSelectionFactor.class),
+	선호하는_기업_문화(PreferredCorporateCulture.class),
+	경력(ExperienceLevelType.class),
+	학력(EducationLevelType.class);;
 
 	private final Class<? extends
 		BaseAttendeeDetailEnum> enumClass;
