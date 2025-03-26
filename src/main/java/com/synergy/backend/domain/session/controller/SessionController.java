@@ -26,10 +26,11 @@ import com.synergy.backend.global.common.ApiResponse;
 import com.synergy.backend.global.security.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-// @Tag(name = "Session Controller", name = "세션 관련 API")
+@Tag(name = "Session Controller", description = "세션 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/conference/{conferenceId}/session")
@@ -77,9 +78,9 @@ public class SessionController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "세션 수정", description = "관리자가 세션 정보를 수정합니다.")
 	@SwaggerSummaryRole({RoleType.ADMIN})
-	@PatchMapping
+	@PatchMapping("/{sessionId}")
 	public ApiResponse updateSession(@AuthenticationPrincipal CustomUserDetails user,
-		@RequestParam Long sessionId,
+		@PathVariable Long sessionId,
 		@RequestPart @Valid SessionReqDto sessionReqDto,
 		@RequestPart MultipartFile multipartFile) {
 		sessionService.updateSession(user.getIdentifier(), sessionId, sessionReqDto, multipartFile);
@@ -90,9 +91,9 @@ public class SessionController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "세션 삭제", description = "관리자가 세션을 삭제합니다.")
 	@SwaggerSummaryRole({RoleType.ADMIN})
-	@DeleteMapping
+	@DeleteMapping("/{sessionId}")
 	public ApiResponse deleteSession(@AuthenticationPrincipal CustomUserDetails user,
-		@RequestParam Long sessionId) {
+		@PathVariable Long sessionId) {
 		sessionService.deleteSession(user.getIdentifier(), sessionId);
 
 		return ApiResponse.ok("Session deleted successfully!", 200);

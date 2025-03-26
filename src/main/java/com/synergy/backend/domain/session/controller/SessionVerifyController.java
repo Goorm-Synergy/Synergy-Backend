@@ -31,7 +31,7 @@ public class SessionVerifyController {
 
     @PreAuthorize("hasAnyRole('ATTENDEE')")
     @SwaggerSummaryRole({RoleType.ATTENDEE})
-    @PostMapping("/{sessionId}/participation")
+    @PostMapping("/conference/{conferenceId}/session/{sessionId}/participation")
     public ApiResponse createQuestion(@AuthenticationPrincipal CustomUserDetails user,
                                       @PathVariable(name = "conferenceId") Long conferenceId,
                                       @PathVariable(name = "sessionId") Long sessionId,
