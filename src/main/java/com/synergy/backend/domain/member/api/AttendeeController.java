@@ -74,7 +74,7 @@ public class AttendeeController {
 			)
 		)
 		@Valid @RequestPart("request") JobInfoDetailsRequestDto request,
-		@RequestPart(value = "profileImage") MultipartFile profileImage) {
+		@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
 		String identifier = userDetails.getIdentifier();
 		attendeeService.addJobInfoDetails(identifier, request, profileImage);
