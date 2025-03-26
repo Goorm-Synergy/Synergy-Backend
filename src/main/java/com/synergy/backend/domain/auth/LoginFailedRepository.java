@@ -48,4 +48,5 @@ public class LoginFailedRepository {
 	public void delete(String email) {
 		redisTemplate.delete(getKey(email));
 	}
+
 }

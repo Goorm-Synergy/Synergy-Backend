@@ -15,6 +15,7 @@ import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponse
 import com.synergy.backend.domain.member.api.dto.resposne.TokenResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.User;
+import com.synergy.backend.domain.member.exception.AccountLockedException;
 import com.synergy.backend.domain.member.exception.DuplicateEmailException;
 import com.synergy.backend.domain.member.exception.InvalidAccountInformationException;
 import com.synergy.backend.domain.member.exception.InvalidAuthCodeException;
@@ -77,10 +78,22 @@ public class AuthServiceImpl implements AuthService {
 		return SignupAttendeeResponseDto.from(attendee);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public TokenWithRefreshToken loginAsAttendee(String email, String rawPassword) {
 		Attendee attendee = findAttendeeByEmail(email);
+
+		// 계정 잠김 상태인지 확인
+		if (attendee.isLocked()) {
+			// // Redis 키가 존재하는지 확인
+			// if (loginFailedRepository.exists(email)) {
+			// 	// 아직 TTL 남아있음 → 계속 잠금 유지
+				throw new AccountLockedException();
+			// } else {
+			// 	attendee.unlockAccount();
+			// 	attendeeRepository.save(attendee);
+			// }
+		}
 
 		if (!isPasswordMatch(rawPassword, attendee.getPassword())) {
 			countLoginFailed(attendee);

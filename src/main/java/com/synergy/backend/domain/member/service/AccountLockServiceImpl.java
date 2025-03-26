@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.User;
+import com.synergy.backend.domain.member.exception.NotFoundUserException;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.global.mail.MailService;
 
@@ -30,9 +31,9 @@ public class AccountLockServiceImpl implements AccountLockService {
 		//  트랜잭션 안에서 영속성 컨텍스트에 관리되는 객체
 		// REQUIRES_NEW: 별도 트랜잭션이므로 전달받은 객체가 deteched일 수 있음
 		Attendee attendee = attendeeRepository.findById(user.getId())
-			.orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자입니다."));
+			.orElseThrow(NotFoundUserException::new);
 
 		attendee.lockAccount();
-		// mailService.sendVerificationCodeToMail(attendee.getEmail());
+		mailService.sendVerificationCodeToMail(attendee.getEmail());
 	}
 }
