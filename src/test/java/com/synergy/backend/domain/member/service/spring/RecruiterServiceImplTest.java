@@ -1,8 +1,7 @@
 package com.synergy.backend.domain.member.service.spring;
 
-import com.synergy.backend.domain.member.api.dto.AttendeeFilterRequest;
-import com.synergy.backend.domain.member.api.dto.AttendeeListResponse;
-import com.synergy.backend.domain.member.entity.Attendee;
+import com.synergy.backend.domain.member.api.dto.request.AttendeeFilterRequest;
+import com.synergy.backend.domain.member.api.dto.resposne.AttendeeListResponse;
 import com.synergy.backend.domain.member.entity.Recruiter;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 import com.synergy.backend.domain.member.repository.RecruiterRepository;
@@ -47,12 +46,12 @@ class RecruiterServiceImplTest {
 		 */
 
 		Pageable pageable = PageRequest.of(0, 10);
-		List<String> desiredOccupations = List.of("백엔드 개발자", "그래픽 디자이너");
+		List<String> desiredJobPositions = List.of("백엔드 개발자", "그래픽 디자이너");
 		String educationLevel = null;
 		String ageGroup = "20~24세 이하";
 		String experienceLevel = "1~2년 이하";
 		List<String> regions = List.of();
-		AttendeeFilterRequest requestCondition = AttendeeFilterRequest.of(desiredOccupations, educationLevel, ageGroup,
+		AttendeeFilterRequest requestCondition = AttendeeFilterRequest.of(desiredJobPositions, educationLevel, ageGroup,
 			experienceLevel, regions);
 
 		// when

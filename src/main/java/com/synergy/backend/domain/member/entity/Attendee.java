@@ -8,6 +8,7 @@ import com.synergy.backend.domain.member.entity.details.*;
 import com.synergy.backend.domain.point.entity.Point;
 import com.synergy.backend.domain.session.entity.AttendeeSession;
 import com.synergy.backend.global.common.BaseEntity;
+import com.synergy.backend.global.util.file.dto.FileInformationDto;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
