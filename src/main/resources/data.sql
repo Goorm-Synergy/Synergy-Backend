@@ -48,8 +48,8 @@ INSERT INTO admin (admin_auth_code) VALUES ('ADM12345');
 INSERT INTO admin (admin_auth_code) VALUES ('ADM67890');
 
 -- 채용 담당자
-INSERT INTO recruiter (recruiter_id, recruiter_auth_code, company, responsibility, name) VALUES (1, 'RC12345', 'CodeSphere', 'HR팀 매니저', '박수진');
-INSERT INTO recruiter (recruiter_id, recruiter_auth_code, company, responsibility, name) VALUES (2, 'RC67890', 'OpenStack Korea', 'HR팀 매니저', '김주은');
+INSERT INTO recruiter (recruiter_id, recruiter_auth_code, company, responsibility, name, company_photo_url) VALUES (1, 'RC12345', 'CodeSphere', 'HR팀 매니저', '박수진', 'https://synergy-conference-bucket.s3.ap-northeast-2.amazonaws.com/all/dummydata+v.0.1/boothlogo-rectangle/CodeSphere.png');
+INSERT INTO recruiter (recruiter_id, recruiter_auth_code, company, responsibility, name, company_photo_url) VALUES (2, 'RC67890', 'OpenStack Korea', 'HR팀 매니저', '김주은', 'https://synergy-conference-bucket.s3.ap-northeast-2.amazonaws.com/all/dummydata+v.0.1/boothlogo-rectangle/OpenStackKorea.png');
 
 -- 참가자 기본 데이터
 INSERT INTO attendee (email, password, name, phone, total_points, membership_level_type, profile_image_url)
