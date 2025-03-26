@@ -1,3 +1,6 @@
+-- INSERT 순서 상관없이 다 넣기 맨밑에서 다시 변경
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- id값 테이블은 1부터, enum은 0부터
 ---- 관심 분야
 INSERT INTO interest (name, code) VALUES ('데이터 분석 / AI', 101);
@@ -52,14 +55,14 @@ INSERT INTO recruiter (recruiter_id, recruiter_auth_code, company, responsibilit
 INSERT INTO recruiter (recruiter_id, recruiter_auth_code, company, responsibility, name) VALUES (2, 'RC67890', 'OpenStack Korea', 'HR팀 매니저', '김주은');
 
 -- 참가자 기본 데이터
-INSERT INTO attendee (email, password, name, phone, total_points, membership_level_type)
+INSERT INTO attendee (email, password, name, phone, total_points, membership_level_type, conference_id)
 VALUES
-    ('jiwon.kim@example.com', '$2a$10$aO4mzbreIOHJiJDgPaUtG.BS81l7i92I2.D2qkwvM5hvUB8BGBsk2', '김지원', '01012345678', 250, 'BRONZE'),
-    ('youngho.choi@example.com', '$2a$10$hashedpassword2', '최영호', '01056781234', 1200, 'GOLD'),
-    ('seoyeon.jung@example.com', '$2a$10$hashedpassword3', '정서연', '01055556666', 1200, 'GOLD'),
-    ('sihyung.park@example.com', '$2a$10$hashedpassword4', '박시형', '01077778888', 300, 'SILVER'),
-    ('dayoung.lee@example.com', '$2a$10$hashedpassword5', '이다영', '01099990000', 1500, 'GOLD'),
-    ('dahye.kim@example.com', '$2a$10$hashedpassword6', '김다혜', '01011112222', 50, 'DEFAULT');
+    ('jiwon.kim@example.com', '$2a$10$aO4mzbreIOHJiJDgPaUtG.BS81l7i92I2.D2qkwvM5hvUB8BGBsk2', '김지원', '01012345678', 250, 'BRONZE', 1),
+    ('youngho.choi@example.com', '$2a$10$hashedpassword2', '최영호', '01056781234', 1200, 'GOLD', 1),
+    ('seoyeon.jung@example.com', '$2a$10$hashedpassword3', '정서연', '01055556666', 1200, 'GOLD', 1),
+    ('sihyung.park@example.com', '$2a$10$hashedpassword4', '박시형', '01077778888', 300, 'SILVER', 1),
+    ('dayoung.lee@example.com', '$2a$10$hashedpassword5', '이다영', '01099990000', 1500, 'GOLD', 1),
+    ('dahye.kim@example.com', '$2a$10$hashedpassword6', '김다혜', '01011112222', 50, 'DEFAULT', 1);
 
 -- 김지원 (attendee_id = 1) → 수도권, 부산
 INSERT INTO attendee_desired_work_region (attendee_id, desired_work_region) VALUES (1, 0); -- CAPITAL_AREA
@@ -240,9 +243,9 @@ VALUES
 
 
 -- 컨퍼런스
-INSERT INTO conference (start_date, end_date, start_time, end_time, organizer, name, type, location, position)
+INSERT INTO conference (start_date, end_date, start_time, end_time, organizer, name, type, location, position, ticket_code)
 VALUES
-    ('2025-09-15', '2025-09-16','09:00', '18:00', 'FlowLink', 'F’LINK 2025', 'IT', '그랜드볼룸', '로비 A');
+    ('2025-09-15', '2025-09-16','09:00', '18:00', 'FlowLink', 'F’LINK 2025', 'IT', '그랜드볼룸', '로비 A', 'abc123');
 
 -- 부스
 INSERT INTO booth (conference_id, company_name, company_type, booth_location, booth_number, booth_description, image)
@@ -273,3 +276,4 @@ VALUES
     (6, CURRENT_TIMESTAMP, 'SIGN_UP', null, null, null);
 
 
+SET FOREIGN_KEY_CHECKS = 1;

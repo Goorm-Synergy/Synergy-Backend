@@ -32,12 +32,13 @@ public class MailServiceImpl implements MailService {
 	private final MailProperties mailProperties;
 
 	@Override
-	public void sendVerificationCodeToMail(String email) {
+	public String sendVerificationCodeToMail(String email) {
 		String code = RandomCodeGenerator.lowercaseAlphaNumericCode();
 		storeToRedis(getVerifyCodeKey(email), code, VERIFICATION_CODE_TTL_MINUTES);
 
 		String body = buildEmailBody(code);
 		sendHtmlEmail(email, "이메일 인증", body);
+		return code;
 	}
 
 	@Override
@@ -64,9 +65,12 @@ public class MailServiceImpl implements MailService {
 		if (!"true".equals(verified)) {
 			throw new EmailNotVerifiedException();
 		}
-
-		deleteFromRedis(getVerifiedKey(email));
 		return true;
+	}
+
+	@Override
+	public void clearVerification(String email) {
+		deleteFromRedis(getVerifiedKey(email));
 	}
 
 	// --- Redis Helpers ---
