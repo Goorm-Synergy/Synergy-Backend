@@ -152,8 +152,8 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	private void validateSignupRequest(SignupAttendeeRequestDto request) {
-		validateEmailVerification(request.email());
 		validateEmailDuplicate(request.email());
+		validateEmailVerification(request.email());
 	}
 
 	private void validateEmailDuplicate(String email) {
