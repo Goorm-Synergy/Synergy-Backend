@@ -167,7 +167,7 @@ public class AuthServiceImpl implements AuthService {
 
 	private Conference validateTicketCodeAndGetConference(String ticketCode) {
 		if (ticketCode == null || ticketCode.isBlank()) {
-			return null;
+			throw new InvalidTicketCodeException();
 		}
 		return conferenceRepository.findByTicketCode(ticketCode)
 			.orElseThrow(InvalidTicketCodeException::new);

@@ -401,4 +401,21 @@ class AuthServiceImplTest {
 		assertThatThrownBy(() -> authService.reissueRefreshToken(currentRefreshToken))
 			.isInstanceOf(InvalidRefreshTokenException.class);
 	}
+
+	@DisplayName("로그아웃 시 저장된 리프레시 토큰을 삭제한다.")
+	@Test
+	void logout_success() {
+		// given
+		String refreshToken = "validRefreshToken";
+		String identifier = mockAttendee.getIdentifier();
+
+		when(jwtProvider.getIdentifierFromToken(refreshToken)).thenReturn(identifier);
+
+		// when
+		authService.logout(refreshToken);
+
+		// then
+		verify(tokenService).deleteRefreshToken(identifier);
+	}
+
 }
