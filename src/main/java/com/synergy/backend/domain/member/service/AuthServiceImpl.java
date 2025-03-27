@@ -81,12 +81,7 @@ public class AuthServiceImpl implements AuthService {
 			throw new UnauthorizedException();
 		}
 
-		String accessToken = jwtProvider.generateAccessToken(new CustomUserDetails(attendee));
-		String refreshToken = jwtProvider.generateRefreshToken(new CustomUserDetails(attendee));
-
-		tokenService.storeRefreshToken(email, refreshToken);
-
-		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.of(accessToken, attendee));
+		return generateAndStoreTokens(attendee);
 	}
 
 	@Transactional(readOnly = true)
@@ -97,12 +92,7 @@ public class AuthServiceImpl implements AuthService {
 			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode).map(User.class::cast))
 			.orElseThrow(InvalidAuthCodeException::new);
 
-		String accessToken = jwtProvider.generateAccessToken(new CustomUserDetails(user));
-
-		String refreshToken = jwtProvider.generateRefreshToken(new CustomUserDetails(user));
-		tokenService.storeRefreshToken(authCode, refreshToken);
-
-		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.of(accessToken, user));
+		return generateAndStoreTokens(user);
 	}
 
 	@Transactional
@@ -197,5 +187,13 @@ public class AuthServiceImpl implements AuthService {
 
 	private String encodePassword(String rawPassword) {
 		return passwordEncoder.encode(rawPassword);
+	}
+
+	private TokenWithRefreshToken generateAndStoreTokens(User user) {
+		CustomUserDetails userDetails = new CustomUserDetails(user);
+		String accessToken = jwtProvider.generateAccessToken(userDetails);
+		String refreshToken = jwtProvider.generateRefreshToken(userDetails);
+		tokenService.storeRefreshToken(user.getIdentifier(), refreshToken);
+		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.of(accessToken, user));
 	}
 }
