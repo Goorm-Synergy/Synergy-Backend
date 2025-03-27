@@ -87,10 +87,7 @@ public class AuthServiceImpl implements AuthService {
 	@Transactional(readOnly = true)
 	@Override
 	public TokenWithRefreshToken loginAsAdminOrRecruiter(String authCode) {
-		User user = adminRepository.findByAdminAuthCode(authCode)
-			.map(User.class::cast)
-			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode).map(User.class::cast))
-			.orElseThrow(InvalidAuthCodeException::new);
+		User user = findUserByAuthCode(authCode);
 
 		return generateAndStoreTokens(user);
 	}
@@ -154,6 +151,13 @@ public class AuthServiceImpl implements AuthService {
 
 	private Attendee findAttendeeByEmail(String email) {
 		return attendeeRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
+	}
+
+	private User findUserByAuthCode(String authCode) {
+		return adminRepository.findByAdminAuthCode(authCode)
+			.<User>map(admin -> admin)
+			.or(() -> recruiterRepository.findByRecruiterAuthCode(authCode))
+			.orElseThrow(InvalidAuthCodeException::new);
 	}
 
 	private void validateSignupRequest(SignupAttendeeRequestDto request) {
