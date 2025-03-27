@@ -418,4 +418,16 @@ class AuthServiceImplTest {
 		verify(tokenService).deleteRefreshToken(identifier);
 	}
 
+	@DisplayName("재설정 요청 시 존재하지 않는 이메일이면 예외 발생")
+	@Test
+	void passwordResetRequest_emailNotFound_ThrowsException() {
+		// given
+		when(mailService.isVerified(requestDto.email())).thenReturn(true);
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.empty());
+
+		// when&then
+		assertThatThrownBy(() -> authService.passwordResetRequest(
+			requestDto.email(), requestDto.name(), requestDto.phone()))
+			.isInstanceOf(InvalidAccountInformationException.class);
+	}
 }
