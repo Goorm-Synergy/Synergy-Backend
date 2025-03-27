@@ -156,6 +156,12 @@ public class AuthServiceImpl implements AuthService {
 		return TokenWithRefreshToken.of(newRefreshToken, TokenResponseDto.of(newAccessToken, userDetails.getUser()));
 	}
 
+	@Override
+	public void logout(String refreshToken) {
+		String identifier = jwtProvider.getIdentifierFromToken(refreshToken);
+		tokenService.deleteRefreshToken(identifier);
+	}
+
 	private Attendee findAttendeeByEmail(String email) {
 		return attendeeRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
 	}
