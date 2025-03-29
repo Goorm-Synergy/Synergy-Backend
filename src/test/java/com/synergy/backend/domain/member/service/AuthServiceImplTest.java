@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.synergy.backend.domain.auth.LoginFailedRepository;
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.conference.exception.InvalidTicketCodeException;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
@@ -67,6 +68,9 @@ class AuthServiceImplTest {
 	private ConferenceRepository conferenceRepository;
 
 	@Mock
+	private LoginFailedRepository loginFailedRepository;
+
+	@Mock
 	private PasswordEncoder passwordEncoder;
 
 	@Mock
@@ -103,6 +107,7 @@ class AuthServiceImplTest {
 			requestDto.name(),
 			requestDto.phone()
 		);
+		ReflectionTestUtils.setField(mockAttendee, "isLocked", false);
 	}
 
 	@DisplayName("참가자가 회원가입을 하면 새로운 회원이 정상적으로 저장된다.")
