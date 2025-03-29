@@ -86,13 +86,13 @@ public class AuthServiceImpl implements AuthService {
 		// 계정 잠김 상태인지 확인
 		if (attendee.isLocked()) {
 			// // Redis 키가 존재하는지 확인
-			// if (loginFailedRepository.exists(email)) {
+			if (loginFailedRepository.exists(email)) {
 			// 	// 아직 TTL 남아있음 → 계속 잠금 유지
 				throw new AccountLockedException();
-			// } else {
-			// 	attendee.unlockAccount();
-			// 	attendeeRepository.save(attendee);
-			// }
+			} else {
+				attendee.unlockAccount();
+				attendeeRepository.save(attendee);
+			}
 		}
 
 		if (!isPasswordMatch(rawPassword, attendee.getPassword())) {
@@ -187,6 +187,7 @@ public class AuthServiceImpl implements AuthService {
 		if (attemptCount >= MAX_ATTEMPT_COUNT) {
 			accountLockService.lockUserAccount(attendee);
 			loginFailedRepository.delete(attendee.getEmail()); // 계정 잠금 후 실패 횟수 초기화
+			throw new AccountLockedException();
 		}
 	}
 

@@ -34,6 +34,7 @@ public class AccountLockServiceImpl implements AccountLockService {
 			.orElseThrow(NotFoundUserException::new);
 
 		attendee.lockAccount();
+		attendeeRepository.save(attendee);
 		mailService.sendVerificationCodeToMail(attendee.getEmail());
 	}
 }

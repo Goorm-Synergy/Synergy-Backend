@@ -49,4 +49,8 @@ public class LoginFailedRepository {
 		redisTemplate.delete(getKey(email));
 	}
 
+	public boolean exists(String email) {
+		String key = getKey(email);
+		return redisTemplate.hasKey(key);
+	}
 }
