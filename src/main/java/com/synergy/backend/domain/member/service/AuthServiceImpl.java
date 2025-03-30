@@ -11,7 +11,6 @@ import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.conference.exception.InvalidTicketCodeException;
 import com.synergy.backend.domain.conference.repository.ConferenceRepository;
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
-import com.synergy.backend.domain.member.api.dto.response.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.api.dto.response.TokenResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.User;
@@ -58,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Transactional
 	@Override
-	public SignupAttendeeResponseDto registerAttendee(SignupAttendeeRequestDto request) {
+	public TokenWithRefreshToken registerAttendee(SignupAttendeeRequestDto request) {
 
 		validateSignupRequest(request);
 
@@ -74,7 +73,8 @@ public class AuthServiceImpl implements AuthService {
 		pointService.addSignupPoint(attendee.getId());
 
 		mailService.clearVerification(request.email());
-		return SignupAttendeeResponseDto.from(attendee);
+
+		return generateAndStoreTokens(attendee);
 	}
 
 	@Transactional
@@ -158,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
 
 		tokenService.storeRefreshToken(identifier, newRefreshToken);
 
-		return TokenWithRefreshToken.of(newRefreshToken, TokenResponseDto.of(newAccessToken, userDetails.getUser()));
+		return TokenWithRefreshToken.of(newRefreshToken, TokenResponseDto.from(newAccessToken, userDetails.getUser()));
 	}
 
 	@Override
@@ -246,6 +246,6 @@ public class AuthServiceImpl implements AuthService {
 		String accessToken = jwtProvider.generateAccessToken(userDetails);
 		String refreshToken = jwtProvider.generateRefreshToken(userDetails);
 		tokenService.storeRefreshToken(user.getIdentifier(), refreshToken);
-		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.of(accessToken, user));
+		return TokenWithRefreshToken.of(refreshToken, TokenResponseDto.from(accessToken, user));
 	}
 }
