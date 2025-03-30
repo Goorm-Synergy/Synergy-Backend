@@ -1,9 +1,11 @@
 package com.synergy.backend.domain.member.service;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.synergy.backend.domain.auth.AccountLockedEvent;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.User;
 import com.synergy.backend.domain.member.exception.NotFoundUserException;
@@ -17,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class AccountLockServiceImpl implements AccountLockService {
 
 	private final AttendeeRepository attendeeRepository;
-	private final MailService mailService;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -35,6 +37,8 @@ public class AccountLockServiceImpl implements AccountLockService {
 
 		attendee.lockAccount();
 		attendeeRepository.save(attendee);
-		mailService.sendVerificationCodeToMail(attendee.getEmail());
+
+		// 이벤트 발행
+		applicationEventPublisher.publishEvent(new AccountLockedEvent(attendee.getEmail()));
 	}
 }

@@ -8,10 +8,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
+import com.synergy.backend.domain.auth.AccountLockedEvent;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.User;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
@@ -24,7 +27,7 @@ class AccountLockServiceImplTest {
 	private AttendeeRepository attendeeRepository;
 
 	@Mock
-	private MailService mailService;
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	@InjectMocks
 	private AccountLockServiceImpl accountLockService;
@@ -48,6 +51,10 @@ class AccountLockServiceImplTest {
 		// then
 		assertTrue(attendee.isLocked(), "계정이 잠겨야 함");
 		verify(attendeeRepository).save(attendee);
-		verify(mailService).sendVerificationCodeToMail(email);
+
+		// ArgumentCaptor로 정확한 이벤트 객체 확인
+		ArgumentCaptor<AccountLockedEvent> captor = ArgumentCaptor.forClass(AccountLockedEvent.class);
+		verify(applicationEventPublisher).publishEvent(captor.capture());
+		assertEquals(email, captor.getValue().email());
 	}
 }
