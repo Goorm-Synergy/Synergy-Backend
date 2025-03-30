@@ -28,8 +28,8 @@ jobs:
       - name: Grant Execute Permission For Gradlew
         run: chmod +x gradlew
 
-      - name: Build With Gradle
-        run: ./gradlew bootJar
+      - name: Run Tests with Coverage
+        run: ./gradlew test jacocoTestReport
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
@@ -40,8 +40,8 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-      - name: Run Tests with Coverage
-        run: ./gradlew test jacocoTestReport
+      - name: Build With Gradle
+        run: ./gradlew bootJar
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
