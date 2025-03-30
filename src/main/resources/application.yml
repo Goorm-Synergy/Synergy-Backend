@@ -20,7 +20,7 @@ spring:
         open-in-view: false
         dialect: org.hibernate.dialect.MySQL8Dialect
         default_batch_fetch_size: 200
-        generate_statistics: true
+    #        generate_statistics: true
     defer-datasource-initialization: true
 
   sql:

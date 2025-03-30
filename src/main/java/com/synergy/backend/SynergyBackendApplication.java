@@ -9,4 +9,5 @@ public class SynergyBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SynergyBackendApplication.class, args);
 	}
+
 }
