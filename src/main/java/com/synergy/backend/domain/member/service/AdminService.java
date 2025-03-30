@@ -8,7 +8,7 @@ import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingRe
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
 
 public interface AdminService {
-	Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(MembershipLevelType grade, Pageable pageable);
+	Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(Long conferenceId, MembershipLevelType grade, Pageable pageable);
 
-	Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Pageable pageable);
+	Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Long conferenceId, Pageable pageable);
 }

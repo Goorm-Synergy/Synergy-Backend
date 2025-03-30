@@ -23,7 +23,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(MembershipLevelType membershipLevel,
+	public Page<AttendeeLevelRankingResponseDto> getAttendeeLevelRankings(Long conferenceId,
+		MembershipLevelType membershipLevel,
 		Pageable pageable) {
 
 		if (membershipLevel != null) {
@@ -32,22 +33,22 @@ public class AdminServiceImpl implements AdminService {
 				.map(AttendeeLevelRankingResponseDto::from);
 		}
 
-		return getSortedAttendeePage(pageable)
+		return getSortedAttendeePage(conferenceId, pageable)
 			.map(AttendeeLevelRankingResponseDto::from);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Pageable pageable) {
-		return getSortedAttendeePage(pageable).map(AttendeePointRankingResponseDto::from);
+	public Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Long conferenceId, Pageable pageable) {
+		return getSortedAttendeePage(conferenceId, pageable).map(AttendeePointRankingResponseDto::from);
 	}
 
-	private Page<Attendee> getSortedAttendeePage(Pageable pageable) {
+	private Page<Attendee> getSortedAttendeePage(Long conferenceId, Pageable pageable) {
 		Pageable sortedPageable = PageRequest.of(
 			pageable.getPageNumber(),
 			pageable.getPageSize(),
 			Sort.by(Sort.Direction.DESC, "totalPoints")
 		);
-		return attendeeRepository.findAllByOrderByTotalPointsDesc(sortedPageable);
+		return attendeeRepository.findByConferenceIdOrderByTotalPointsDesc(conferenceId, sortedPageable);
 	}
 }

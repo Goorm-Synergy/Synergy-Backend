@@ -3,6 +3,9 @@ package com.synergy.backend.domain.member.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Period;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import com.synergy.backend.domain.conference.entity.Conference;
+import com.synergy.backend.domain.conference.entity.TimePeriod;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
 import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
@@ -41,12 +47,24 @@ class AdminServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
+		Conference conference = Conference.of(
+			"conference1",
+			TimePeriod.of(LocalDate.now(), LocalDate.now().plusDays(1), LocalTime.of(9, 0), LocalTime.of(18, 0)),
+			"주최자",
+			"서울",
+			"개발",
+			"ONLINE"
+		);
+		ReflectionTestUtils.setField(conference, "id", 1L);
+
 		attendee1 = Attendee.of("user1@email.com", "pass", "user1", "010110");
 		attendee1.addTotalPoints(1000);
+		attendee1.assignConference(conference);
 		assertThat(attendee1.getMembershipLevelType()).isEqualTo(MembershipLevelType.GOLD);
 
 		attendee2 = Attendee.of("user2@email.com", "pass", "user2", "010110");
 		attendee2.addTotalPoints(50);
+		attendee2.assignConference(conference);
 		assertThat(attendee2.getMembershipLevelType()).isEqualTo(MembershipLevelType.DEFAULT);
 
 		pageable = PageRequest.of(0, 10);
@@ -64,7 +82,7 @@ class AdminServiceImplTest {
 		)).thenReturn(attendeePage);
 
 		// when
-		Page<AttendeeLevelRankingResponseDto> response = adminService.getAttendeeLevelRankings(
+		Page<AttendeeLevelRankingResponseDto> response = adminService.getAttendeeLevelRankings(1L,
 			MembershipLevelType.GOLD, pageable);
 
 		// then
@@ -79,10 +97,11 @@ class AdminServiceImplTest {
 		List<Attendee> attendees = List.of(attendee1, attendee2);
 		Page<Attendee> attendeePage = new PageImpl<>(attendees, pageable, attendees.size());
 
-		when(attendeeRepository.findAllByOrderByTotalPointsDesc(any(Pageable.class))).thenReturn(attendeePage);
+		when(attendeeRepository.findByConferenceIdOrderByTotalPointsDesc(eq(1L), any(Pageable.class))).thenReturn(
+			attendeePage);
 
 		// when
-		Page<AttendeeLevelRankingResponseDto> response = adminService.getAttendeeLevelRankings(null,
+		Page<AttendeeLevelRankingResponseDto> response = adminService.getAttendeeLevelRankings(1L, null,
 			pageable);
 
 		// then
@@ -96,10 +115,11 @@ class AdminServiceImplTest {
 		List<Attendee> attendees = List.of(attendee1, attendee2);
 		Page<Attendee> attendeePage = new PageImpl<>(attendees, pageable, attendees.size());
 
-		when(attendeeRepository.findAllByOrderByTotalPointsDesc(any(Pageable.class))).thenReturn(attendeePage);
+		when(attendeeRepository.findByConferenceIdOrderByTotalPointsDesc(eq(1L), any(Pageable.class))).thenReturn(
+			attendeePage);
 
 		// when
-		Page<AttendeePointRankingResponseDto> response = adminService.getAttendeePointRankings(pageable);
+		Page<AttendeePointRankingResponseDto> response = adminService.getAttendeePointRankings(1L, pageable);
 
 		// then
 		assertThat(response).hasSize(2);
