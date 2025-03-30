@@ -144,6 +144,31 @@ class AuthServiceImplTest {
 		assertThrows(DuplicateEmailException.class, () -> authService.registerAttendee(requestDto));
 	}
 
+	@DisplayName("회원가입 시 티켓 코드가 유효하면 참가자에 컨퍼런스가 할당된다.")
+	@Test
+	void registerAttendee_AssignsConference_WhenTicketCodeIsValid() {
+		// Given
+		Conference mockConference = mock(Conference.class);
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.empty());
+		when(passwordEncoder.encode(requestDto.password())).thenReturn("encodedPassword");
+		when(mailService.isVerified(requestDto.email())).thenReturn(true);
+		when(conferenceRepository.findByTicketCode(requestDto.ticketCode())).thenReturn(Optional.of(mockConference));
+		when(attendeeRepository.save(any(Attendee.class))).thenAnswer(invocation -> {
+			Attendee attendee = invocation.getArgument(0);
+			ReflectionTestUtils.setField(attendee, "id", 1L);
+			return attendee;
+		});
+
+		// When
+		SignupAttendeeResponseDto response = authService.registerAttendee(requestDto);
+
+		// Then
+		assertThat(response).isNotNull();
+		ArgumentCaptor<Attendee> captor = ArgumentCaptor.forClass(Attendee.class);
+		verify(attendeeRepository).save(captor.capture());
+		assertThat(captor.getValue().getConference()).isEqualTo(mockConference);
+	}
+
 	@DisplayName("참가자 로그인 시 이메일과 비밀번호가 일치하면 JWT 토큰이 정상적으로 생성된다.")
 	@Test
 	void loginAsAttendee_Success() {
@@ -238,7 +263,6 @@ class AuthServiceImplTest {
 		assertThat(response.tokenResponseDto().accessToken()).isEqualTo("token");
 	}
 
-
 	@DisplayName("잠긴 계정에 대해 unlockAccountIfLocked 호출 시 잠금이 해제되고 저장된다.")
 	@Test
 	void unlockAccountIfLocked_shouldUnlockAndDeleteLoginFailures() {
@@ -255,6 +279,20 @@ class AuthServiceImplTest {
 		verify(loginFailedRepository).delete(mockAttendee.getEmail());
 	}
 
+	@DisplayName("잠기지 않은 계정에 대해 unlockAccountIfLocked 호출 시 아무 일도 일어나지 않는다.")
+	@Test
+	void unlockAccountIfLocked_notLockedAccount_doesNothing() {
+		// given
+		when(attendeeRepository.findByEmail(mockAttendee.getEmail()))
+			.thenReturn(Optional.of(mockAttendee)); // 잠기지 않은 상태
+
+		// when
+		authService.unlockAccountIfLocked(mockAttendee.getEmail());
+
+		// then
+		verify(attendeeRepository, never()).save(any());
+		verify(loginFailedRepository, never()).delete(any());
+	}
 
 	@DisplayName("관리자가 올바른 인증 코드로 로그인하면 JWT 토큰이 발급된다.")
 	@Test
@@ -361,6 +399,19 @@ class AuthServiceImplTest {
 			.isInstanceOf(EmailNotVerifiedException.class);
 	}
 
+	@DisplayName("비밀번호 재설정 요청 시 이름과 전화번호가 일치하면 예외가 발생하지 않는다.")
+	@Test
+	void passwordResetRequest_Success() {
+		// Given
+		when(mailService.isVerified(requestDto.email())).thenReturn(true);
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
+
+		// When & Then
+		assertThatCode(() -> authService.passwordResetRequest(
+			requestDto.email(), requestDto.name(), requestDto.phone()))
+			.doesNotThrowAnyException();
+	}
+
 	@DisplayName("비밀번호 재설정 요청 시 이름 또는 전화번호가 일치하지 않으면 예외가 발생한다.")
 	@Test
 	void passwordResetRequest_InvalidAccountInformation_ThrowsException() {
@@ -374,6 +425,28 @@ class AuthServiceImplTest {
 
 		// When & Then
 		assertThatThrownBy(() -> authService.passwordResetRequest(requestDto.email(), wrongName, wrongPhone))
+			.isInstanceOf(InvalidAccountInformationException.class);
+	}
+
+	@DisplayName("비밀번호 재설정 요청 시 이름만 다르면 예외가 발생한다.")
+	@Test
+	void passwordResetRequest_InvalidName_ThrowsException() {
+		when(mailService.isVerified(requestDto.email())).thenReturn(true);
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
+
+		assertThatThrownBy(() -> authService.passwordResetRequest(
+			requestDto.email(), "WrongName", requestDto.phone()))
+			.isInstanceOf(InvalidAccountInformationException.class);
+	}
+
+	@DisplayName("비밀번호 재설정 요청 시 전화번호만 다르면 예외가 발생한다.")
+	@Test
+	void passwordResetRequest_InvalidPhone_ThrowsException() {
+		when(mailService.isVerified(requestDto.email())).thenReturn(true);
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
+
+		assertThatThrownBy(() -> authService.passwordResetRequest(
+			requestDto.email(), requestDto.name(), "00000000000"))
 			.isInstanceOf(InvalidAccountInformationException.class);
 	}
 

@@ -67,9 +67,8 @@ public class AuthServiceImpl implements AuthService {
 		Attendee attendee = Attendee.of(request.email(), encodePassword(request.password()), request.name(),
 			request.phone());
 
-		if (conference != null) {
-			attendee.assignConference(conference);
-		}
+		attendee.assignConference(conference);
+
 		attendeeRepository.save(attendee);
 
 		pointService.addSignupPoint(attendee.getId());
@@ -87,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
 		if (attendee.isLocked()) {
 			// // Redis 키가 존재하는지 확인
 			if (loginFailedRepository.exists(email)) {
-			// 	// 아직 TTL 남아있음 → 계속 잠금 유지
+				// 	// 아직 TTL 남아있음 → 계속 잠금 유지
 				throw new AccountLockedException();
 			} else {
 				attendee.unlockAccount();
