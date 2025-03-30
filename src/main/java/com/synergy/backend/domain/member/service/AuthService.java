@@ -1,7 +1,7 @@
 package com.synergy.backend.domain.member.service;
 
 import com.synergy.backend.domain.member.api.dto.request.SignupAttendeeRequestDto;
-import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.SignupAttendeeResponseDto;
 import com.synergy.backend.domain.member.vo.TokenWithRefreshToken;
 
 import jakarta.validation.Valid;

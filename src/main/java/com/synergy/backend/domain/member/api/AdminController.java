@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
 import com.synergy.backend.domain.member.service.AdminService;

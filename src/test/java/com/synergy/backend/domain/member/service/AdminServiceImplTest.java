@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Period;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +22,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.synergy.backend.domain.conference.entity.Conference;
 import com.synergy.backend.domain.conference.entity.TimePeriod;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
+import com.synergy.backend.domain.member.repository.AttendeeRedisRankingRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +37,9 @@ class AdminServiceImplTest {
 
 	@Mock
 	AttendeeRepository attendeeRepository;
+
+	@Mock
+	AttendeeRedisRankingRepository attendeeRedisRankingRepository;
 
 	@InjectMocks
 	AdminServiceImpl adminService;
@@ -112,11 +115,13 @@ class AdminServiceImplTest {
 	@Test
 	void getAttendeePointRankings() {
 		// given
-		List<Attendee> attendees = List.of(attendee1, attendee2);
-		Page<Attendee> attendeePage = new PageImpl<>(attendees, pageable, attendees.size());
+		AttendeePointRankingResponseDto dto1 = AttendeePointRankingResponseDto.from(attendee1);
+		AttendeePointRankingResponseDto dto2 = AttendeePointRankingResponseDto.from(attendee2);
 
-		when(attendeeRepository.findByConferenceIdOrderByTotalPointsDesc(eq(1L), any(Pageable.class))).thenReturn(
-			attendeePage);
+		List<AttendeePointRankingResponseDto> dtoList = List.of(dto1, dto2);
+		Page<AttendeePointRankingResponseDto> rankingPage = new PageImpl<>(dtoList, pageable, dtoList.size());
+
+		when(attendeeRedisRankingRepository.getRankingPage(eq(1L), any(Pageable.class))).thenReturn(rankingPage);
 
 		// when
 		Page<AttendeePointRankingResponseDto> response = adminService.getAttendeePointRankings(1L, pageable);

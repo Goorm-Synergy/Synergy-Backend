@@ -18,8 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.RoleType;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;

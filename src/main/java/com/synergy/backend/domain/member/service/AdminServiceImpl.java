@@ -1,5 +1,7 @@
 package com.synergy.backend.domain.member.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -7,10 +9,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeeLevelRankingResponseDto;
-import com.synergy.backend.domain.member.api.dto.resposne.AttendeePointRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeeLevelRankingResponseDto;
+import com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.details.MembershipLevelType;
+import com.synergy.backend.domain.member.repository.AttendeeRedisRankingRepository;
 import com.synergy.backend.domain.member.repository.AttendeeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminServiceImpl implements AdminService {
 
 	private final AttendeeRepository attendeeRepository;
+	private final AttendeeRedisRankingRepository attendeeRedisRankingRepository;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -40,7 +44,24 @@ public class AdminServiceImpl implements AdminService {
 	@Transactional(readOnly = true)
 	@Override
 	public Page<AttendeePointRankingResponseDto> getAttendeePointRankings(Long conferenceId, Pageable pageable) {
-		return getSortedAttendeePage(conferenceId, pageable).map(AttendeePointRankingResponseDto::from);
+		Page<AttendeePointRankingResponseDto> page = attendeeRedisRankingRepository.getRankingPage(conferenceId,
+			pageable);
+
+		if (page.getTotalElements() == 0) {
+			// 캐시 미스 시 DB 조회
+			List<AttendeePointRankingResponseDto> allRankedAttendees = attendeeRepository.findAttendeePointRankingsDtoByConferenceId(
+				conferenceId);
+
+			// Redis에 저장
+			for (AttendeePointRankingResponseDto dto : allRankedAttendees) {
+				attendeeRedisRankingRepository.saveRanking(conferenceId, dto);
+			}
+
+			// Redis에서 다시 조회
+			page = attendeeRedisRankingRepository.getRankingPage(conferenceId, pageable);
+		}
+
+		return page;
 	}
 
 	private Page<Attendee> getSortedAttendeePage(Long conferenceId, Pageable pageable) {

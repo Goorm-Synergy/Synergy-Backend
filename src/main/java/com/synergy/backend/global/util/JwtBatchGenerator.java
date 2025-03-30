@@ -35,11 +35,11 @@ public class JwtBatchGenerator {
 		Duration expiration = Duration.ofMinutes(30);
 
 		// Recruiters
-		for (Recruiter recruiter : recruiterRepository.findAll()) {
-			CustomUserDetails details = new CustomUserDetails(recruiter);
-			String token = jwtProvider.generateAccessToken(details);
-			rows.add(new String[] {recruiter.getRecruiterAuthCode(), "RECRUITER", token});
-		}
+		// for (Recruiter recruiter : recruiterRepository.findAll()) {
+		// 	CustomUserDetails details = new CustomUserDetails(recruiter);
+		// 	String token = jwtProvider.generateAccessToken(details);
+		// 	rows.add(new String[] {recruiter.getRecruiterAuthCode(), "RECRUITER", token});
+		// }
 
 		// Admins
 		for (Admin admin : adminRepository.findAll()) {
@@ -49,11 +49,11 @@ public class JwtBatchGenerator {
 		}
 
 		// Attendees
-		for (Attendee attendee : attendeeRepository.findAll()) {
-			CustomUserDetails details = new CustomUserDetails(attendee);
-			String token = jwtProvider.generateAccessToken(details);
-			rows.add(new String[] {attendee.getEmail(), "ATTENDEE", token});
-		}
+		// for (Attendee attendee : attendeeRepository.findAll()) {
+		// 	CustomUserDetails details = new CustomUserDetails(attendee);
+		// 	String token = jwtProvider.generateAccessToken(details);
+		// 	rows.add(new String[] {attendee.getEmail(), "ATTENDEE", token});
+		// }
 
 		// Save to CSV
 		try (PrintWriter writer = new PrintWriter("jwt_tokens.csv")) {
