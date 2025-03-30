@@ -27,8 +27,12 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long>, Atten
 
 	List<Attendee> findByConferenceIdOrderByTotalPointsDesc(Long conferenceId);
 
+	@Query(
+		"SELECT new com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto(a.id, a.name, a.totalPoints) "
+			+
+			"FROM Attendee a WHERE a.conference.id = :conferenceId ORDER BY a.totalPoints DESC")
+	List<AttendeePointRankingResponseDto> findAttendeePointRankingsDtoByConferenceId(
+		@Param("conferenceId") Long conferenceId);
 
-	@Query("SELECT new com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto(a.id, a.name, a.totalPoints) " +
-		"FROM Attendee a WHERE a.conference.id = :conferenceId ORDER BY a.totalPoints DESC")
-	List<AttendeePointRankingResponseDto> findAttendeePointRankingsDtoByConferenceId(@Param("conferenceId") Long conferenceId);
+	Long countAttendeeByConferenceId(Long conferenceId);
 }
