@@ -168,6 +168,17 @@ public class AuthServiceImpl implements AuthService {
 		tokenService.deleteRefreshToken(identifier);
 	}
 
+	@Override
+	public void unlockAccountIfLocked(String email) {
+		attendeeRepository.findByEmail(email).ifPresent(attendee -> {
+			if (attendee.isLocked()) {
+				attendee.unlockAccount();
+				attendeeRepository.save(attendee);
+				loginFailedRepository.delete(email);
+			}
+		});
+	}
+
 	private Attendee findAttendeeByEmail(String email) {
 		return attendeeRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
 	}
