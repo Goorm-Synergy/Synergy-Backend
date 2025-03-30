@@ -41,8 +41,9 @@ public class LoginFailedRepository {
 		return PREFIX_FOR_KEY + email;
 	}
 
-	public Long increment(String email) {
-		return redisTemplate.opsForValue().increment(getKey(email));
+	public Integer increment(String email) {
+		Long result = redisTemplate.opsForValue().increment(getKey(email));
+		return result != null ? result.intValue() : 0;
 	}
 
 	public void delete(String email) {

@@ -191,7 +191,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	private void countLoginFailed(Attendee attendee) {
-		Long attemptCount = incrementFailedCount(attendee);
+		Integer attemptCount = incrementFailedCount(attendee);
 
 		log.info("attemptCount : {}", attemptCount);
 
@@ -202,7 +202,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 	}
 
-	private Long incrementFailedCount(Attendee attendee) {
+	private Integer incrementFailedCount(Attendee attendee) {
 		if (loginFailedRepository.getValues(attendee.getEmail()) == null) {
 			loginFailedRepository.setValue(attendee.getEmail(), INIT_LOGIN_TRIAL_COUNT);
 		}

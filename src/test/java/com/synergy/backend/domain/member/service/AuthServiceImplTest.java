@@ -27,6 +27,7 @@ import com.synergy.backend.domain.member.api.dto.resposne.SignupAttendeeResponse
 import com.synergy.backend.domain.member.entity.Admin;
 import com.synergy.backend.domain.member.entity.Attendee;
 import com.synergy.backend.domain.member.entity.Recruiter;
+import com.synergy.backend.domain.member.exception.AccountLockedException;
 import com.synergy.backend.domain.member.exception.DuplicateEmailException;
 import com.synergy.backend.domain.member.exception.InvalidAccountInformationException;
 import com.synergy.backend.domain.member.exception.InvalidAuthCodeException;
@@ -87,6 +88,9 @@ class AuthServiceImplTest {
 
 	@Mock
 	private CustomUserDetailsService userDetailsService;
+
+	@Mock
+	private AccountLockService accountLockService;
 
 	private SignupAttendeeRequestDto requestDto;
 	private Attendee mockAttendee;
@@ -180,6 +184,77 @@ class AuthServiceImplTest {
 		assertThrows(UnauthorizedException.class,
 			() -> authService.loginAsAttendee(requestDto.email(), requestDto.password()));
 	}
+
+	@DisplayName("로그인 시도 5회를 초과하면 계정이 잠기고 AccountLockedException이 발생한다.")
+	@Test
+	void loginAsAttendee_ExceedsMaxAttempts_ThrowsAccountLockedException() {
+		// given
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
+		when(passwordEncoder.matches(requestDto.password(), mockAttendee.getPassword())).thenReturn(false);
+		when(loginFailedRepository.getValues(requestDto.email())).thenReturn(null, 1, 2, 3, 4); // 시도 1~5회
+		when(loginFailedRepository.increment(requestDto.email())).thenReturn(1, 2, 3, 4, 5);
+		// 첫 4번 시도는 UnauthorizedException 발생
+		for (int i = 0; i < 4; i++) {
+			assertThatThrownBy(() -> authService.loginAsAttendee(requestDto.email(), requestDto.password()))
+				.isInstanceOf(UnauthorizedException.class);
+		}        // 5번째 시도는 AccountLockedException 발생
+		assertThatThrownBy(() -> authService.loginAsAttendee(requestDto.email(), requestDto.password()))
+			.isInstanceOf(AccountLockedException.class);
+
+		// verify that lockUserAccount is called after 5th failure
+		verify(accountLockService).lockUserAccount(mockAttendee);
+		verify(loginFailedRepository).delete(requestDto.email());
+	}
+
+	@DisplayName("계정이 잠긴 참가자가 로그인하면 AccountLockedException이 발생한다.")
+	@Test
+	void loginAsAttendee_AccountLocked_ThrowsException() {
+		// given
+		mockAttendee.lockAccount(); // 계정 잠금
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
+		when(loginFailedRepository.exists(requestDto.email())).thenReturn(true); // Redis TTL이 남아있는 상태
+
+		// when & then
+		assertThatThrownBy(() -> authService.loginAsAttendee(requestDto.email(), requestDto.password()))
+			.isInstanceOf(AccountLockedException.class);
+	}
+
+	@DisplayName("TTL이 만료되어 로그인 실패 기록이 없으면 계정이 자동으로 잠금 해제된다.")
+	@Test
+	void loginAsAttendee_ExpiredTTL_UnlocksAccount() {
+		// given
+		mockAttendee.lockAccount(); // DB상으로는 잠김 상태
+		when(attendeeRepository.findByEmail(requestDto.email())).thenReturn(Optional.of(mockAttendee));
+		when(loginFailedRepository.exists(requestDto.email())).thenReturn(false); // Redis 키 만료
+		when(passwordEncoder.matches(requestDto.password(), mockAttendee.getPassword())).thenReturn(true);
+		when(jwtProvider.generateAccessToken(any())).thenReturn("token");
+
+		// when
+		TokenWithRefreshToken response = authService.loginAsAttendee(requestDto.email(), requestDto.password());
+
+		// then
+		assertFalse(mockAttendee.isLocked()); // 잠금 해제되었는지 확인
+		verify(attendeeRepository).save(mockAttendee); // DB 저장 확인
+		assertThat(response.tokenResponseDto().accessToken()).isEqualTo("token");
+	}
+
+
+	@DisplayName("잠긴 계정에 대해 unlockAccountIfLocked 호출 시 잠금이 해제되고 저장된다.")
+	@Test
+	void unlockAccountIfLocked_shouldUnlockAndDeleteLoginFailures() {
+		// given
+		mockAttendee.lockAccount(); // 잠긴 상태
+		when(attendeeRepository.findByEmail(mockAttendee.getEmail())).thenReturn(Optional.of(mockAttendee));
+
+		// when
+		authService.unlockAccountIfLocked(mockAttendee.getEmail());
+
+		// then
+		assertFalse(mockAttendee.isLocked(), "계정 잠금이 해제되어야 함");
+		verify(attendeeRepository).save(mockAttendee);
+		verify(loginFailedRepository).delete(mockAttendee.getEmail());
+	}
+
 
 	@DisplayName("관리자가 올바른 인증 코드로 로그인하면 JWT 토큰이 발급된다.")
 	@Test
