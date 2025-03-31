@@ -131,4 +131,35 @@ class AdminServiceImplTest {
 		assertThat(response.getContent().get(0).totalPoints())
 			.isGreaterThanOrEqualTo(response.getContent().get(1).totalPoints());
 	}
+
+	@DisplayName("캐시 미스 시 DB에서 1000명을 조회하고 Redis에 저장 후 다시 조회한다.")
+	@Test
+	void getAttendeePointRankings_cacheMissThenSaveThenRead() {
+		// given
+		Page<AttendeePointRankingResponseDto> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+		when(attendeeRedisRankingRepository.getRankingPage(eq(1L), any(Pageable.class)))
+			.thenReturn(emptyPage) // 첫 번째 호출: 캐시 미스
+			.thenReturn(new PageImpl<>(List.of(
+				AttendeePointRankingResponseDto.from(attendee1),
+				AttendeePointRankingResponseDto.from(attendee2)
+			), pageable, 2)); // 두 번째 호출: 저장 후 재조회
+
+		Page<AttendeePointRankingResponseDto> dbResultPage = new PageImpl<>(
+			List.of(
+				AttendeePointRankingResponseDto.from(attendee1),
+				AttendeePointRankingResponseDto.from(attendee2)
+			), PageRequest.of(0, 1000), 2
+		);
+		when(attendeeRepository.findTopAttendeeRankingsDtoByConferenceId(eq(1L), any(Pageable.class)))
+			.thenReturn(dbResultPage);
+
+		// when
+		Page<AttendeePointRankingResponseDto> response = adminService.getAttendeePointRankings(1L, pageable);
+
+		// then
+		assertThat(response).hasSize(2);
+		verify(attendeeRepository).findTopAttendeeRankingsDtoByConferenceId(eq(1L), any(Pageable.class));
+		verify(attendeeRedisRankingRepository, times(2)).getRankingPage(eq(1L), any(Pageable.class));
+		verify(attendeeRedisRankingRepository, times(2)).saveRanking(eq(1L), any());
+	}
 }
