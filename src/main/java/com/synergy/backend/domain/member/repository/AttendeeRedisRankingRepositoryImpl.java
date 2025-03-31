@@ -1,5 +1,6 @@
 package com.synergy.backend.domain.member.repository;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,12 @@ public class AttendeeRedisRankingRepositoryImpl implements AttendeeRedisRankingR
 		try {
 			String json = objectMapper.writeValueAsString(dto);
 			redisTemplate.opsForZSet().add(key, json, dto.totalPoints());
+
+			Long ttl = redisTemplate.getExpire(key);
+			if (ttl == null || ttl == -1 || ttl == -2) {
+				redisTemplate.expire(key, Duration.ofHours(1));
+			}
+
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Failed to serialize AttendeeRankingDto", e);
 		}
