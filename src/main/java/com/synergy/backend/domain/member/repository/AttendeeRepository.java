@@ -1,6 +1,5 @@
 package com.synergy.backend.domain.member.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -25,14 +24,15 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long>, Atten
 		"join fetch a.currentJobGroup where a.id = :id")
 	Optional<Attendee> findAttendeeBy(@Param("id") Long attendeeId);
 
-	List<Attendee> findByConferenceIdOrderByTotalPointsDesc(Long conferenceId);
+	Long countAttendeeByConferenceId(Long conferenceId);
 
 	@Query(
 		"SELECT new com.synergy.backend.domain.member.api.dto.response.AttendeePointRankingResponseDto(a.id, a.name, a.totalPoints) "
 			+
-			"FROM Attendee a WHERE a.conference.id = :conferenceId ORDER BY a.totalPoints DESC")
-	List<AttendeePointRankingResponseDto> findAttendeePointRankingsDtoByConferenceId(
-		@Param("conferenceId") Long conferenceId);
-
-	Long countAttendeeByConferenceId(Long conferenceId);
+			"FROM Attendee a WHERE a.conference.id = :conferenceId ORDER BY a.totalPoints DESC"
+	)
+	Page<AttendeePointRankingResponseDto> findTopAttendeeRankingsDtoByConferenceId(
+		@Param("conferenceId") Long conferenceId,
+		Pageable pageable
+	);
 }

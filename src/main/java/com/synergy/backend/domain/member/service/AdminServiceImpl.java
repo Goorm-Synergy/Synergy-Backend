@@ -48,9 +48,9 @@ public class AdminServiceImpl implements AdminService {
 			pageable);
 
 		if (page.getTotalElements() == 0) {
-			// 캐시 미스 시 DB 조회
-			List<AttendeePointRankingResponseDto> allRankedAttendees = attendeeRepository.findAttendeePointRankingsDtoByConferenceId(
-				conferenceId);
+			// 캐시 미스 시 DB 조회 (1000명)
+			Page<AttendeePointRankingResponseDto> allRankedAttendees = attendeeRepository.findTopAttendeeRankingsDtoByConferenceId(
+				conferenceId, PageRequest.of(0, 1000));
 
 			// Redis에 저장
 			for (AttendeePointRankingResponseDto dto : allRankedAttendees) {
