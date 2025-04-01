@@ -37,6 +37,7 @@ import com.synergy.backend.domain.session.entity.Session;
 import com.synergy.backend.domain.session.repository.AttendeeSessionRepository;
 import com.synergy.backend.domain.session.repository.sessionQuestionRepository.SessionQuestionRepository;
 import com.synergy.backend.domain.session.repository.sessionRepository.SessionRepository;
+import com.synergy.backend.global.exception.AuthorizedException;
 import com.synergy.backend.global.util.file.dto.FileInformationDto;
 import com.synergy.backend.global.util.file.util.FileS3Util;
 
@@ -44,7 +45,7 @@ import com.synergy.backend.global.util.file.util.FileS3Util;
 class SessionServiceImplTest {
 
 	@InjectMocks
-	SessionServiceImpl service;
+	SessionServiceImpl sessionService;
 
 	@Mock
 	AdminRepository adminRepository;
@@ -153,7 +154,7 @@ class SessionServiceImplTest {
 			List.of(session1, session2));
 
 		// When
-		List<SessionResDto> result = service.getSessions(identifier, conferenceId);
+		List<SessionResDto> result = sessionService.getSessions(identifier, conferenceId);
 
 		// Then
 		assertThat(result).hasSize(2);
@@ -193,7 +194,7 @@ class SessionServiceImplTest {
 		given(sessionQuestionRepository.findBySessionIdJoinAttendeeSession(sessionId)).willReturn(List.of(question1));
 
 		// When
-		SessionDetailResDto result = service.getSessionInfo(identifier, role, conferenceId, sessionId);
+		SessionDetailResDto result = sessionService.getSessionInfo(identifier, role, conferenceId, sessionId);
 
 		// Then
 		assertThat(result.title()).isEqualTo(session.getTitle());
@@ -229,7 +230,7 @@ class SessionServiceImplTest {
 		doNothing().when(session).addImage(any());
 
 		// When
-		service.updateSession(identifier, sessionId, reqDto, mockFile);
+		sessionService.updateSession(identifier, sessionId, reqDto, mockFile);
 
 		// Then
 		verify(sessionRepository).findById(sessionId);
@@ -258,7 +259,7 @@ class SessionServiceImplTest {
 		doNothing().when(sessionRepository).delete(session);
 
 		// When
-		service.deleteSession(identifier, sessionId);
+		sessionService.deleteSession(identifier, sessionId);
 
 		// Then
 		verify(sessionRepository).findById(sessionId);
@@ -295,11 +296,76 @@ class SessionServiceImplTest {
 		given(attendeeSessionRepository.findBySessionIdAndAttendeeId(sessionId, 1L)).willReturn(Optional.empty());
 
 		// When
-		SessionDetailResDto result = service.getSessionInfo(identifier, role, conferenceId, sessionId);
+		SessionDetailResDto result = sessionService.getSessionInfo(identifier, role, conferenceId, sessionId);
 
 		// Then
 		assertThat(result.title()).isEqualTo(session.getTitle());
 		assertThat(result.questionResDto()).isEmpty();
 		assertThat(result.isQRVerify()).isFalse();
 	}
+
+	@Test
+	@DisplayName("세션 수정 - 권한이 없는 관리자일 경우 예외 발생")
+	void updateSession_shouldThrowExceptionWhenUnauthorizedAdmin() {
+		// Given
+		String identifier = "ADM123";
+		Long sessionId = 1L;
+		SessionReqDto reqDto = new SessionReqDto("제목", "홍길동", "CTO",
+			LocalDate.of(2025, 6, 12),
+			LocalDateTime.of(2025, 6, 12, 10, 0),
+			LocalDateTime.of(2025, 6, 12, 11, 0),
+			"설명", 150);
+		MultipartFile mockFile = new MockMultipartFile("file", "file.png", "image/png", "fake".getBytes());
+
+		Session session = mock(Session.class);
+		Admin admin = mock(Admin.class);
+
+		given(session.getId()).willReturn(sessionId);
+		given(admin.getId()).willReturn(99L);
+		given(sessionRepository.findById(sessionId)).willReturn(Optional.of(session));
+		given(adminRepository.findByAdminAuthCode(identifier)).willReturn(Optional.of(admin));
+		given(sessionRepository.existsByIdAndAdmins_Id(sessionId, 99L)).willReturn(false);
+
+		// When & Then
+		assertThatThrownBy(() -> sessionService.updateSession(identifier, sessionId, reqDto, mockFile))
+			.isInstanceOf(AuthorizedException.class);
+
+		verify(sessionRepository).findById(sessionId);
+		verify(adminRepository).findByAdminAuthCode(identifier);
+		verify(sessionRepository).existsByIdAndAdmins_Id(sessionId, 99L);
+	}
+
+	@Test
+	@DisplayName("getSessionInfo - 관리자(ADMIN) 요청 시 질문 없이 세션 정보 반환")
+	void getSessionInfo_shouldReturnSessionDetailForAdmin() {
+		// Given
+		String identifier = "admin@email.com";
+		RoleType role = RoleType.ADMIN;
+		Long conferenceId = 1L;
+		Long sessionId = 10L;
+
+		Conference conference = Conference.of(
+			"conference1",
+			TimePeriod.of(LocalDate.now(), LocalDate.now().plusDays(1), LocalTime.of(9, 0), LocalTime.of(18, 0)),
+			"주최자",
+			"서울",
+			"개발",
+			"ONLINE"
+		);
+
+		Session session = mock(Session.class);
+
+		given(conferenceRepository.findById(conferenceId)).willReturn(Optional.of(conference));
+		given(sessionRepository.findByIdAndConference(sessionId, conference)).willReturn(Optional.of(session));
+		given(sessionQuestionRepository.findBySessionIdJoinAttendeeSession(sessionId)).willReturn(List.of());
+
+		// When
+		SessionDetailResDto result = sessionService.getSessionInfo(identifier, role, conferenceId, sessionId);
+
+		// Then
+		assertThat(result.title()).isEqualTo(session.getTitle());
+		assertThat(result.questionResDto()).isEmpty();
+		assertThat(result.isQRVerify()).isFalse(); // ADMIN은 기본적으로 QR 검증 대상이 아님
+	}
+
 }
